@@ -1,0 +1,107 @@
+Metadata-Version: 1.1
+Name: albopictus
+Version: 0.3
+Summary: Environmentally-driven population dynamics model of Aedes albopictus
+Home-page: https://github.com/kerguler/albopictus
+Author: Kamil Erguler
+Author-email: k.erguler@cyi.ac.cy
+License: GPLv3
+Download-URL: https://github.com/kerguler/albopictus/tarball/0.3
+Description: Environmentally-driven population dynamics model of Aedes albopictus
+        ====================================================================
+        
+        This is a python (v2.7) package implementing the environmentally-driven population dynamics model of Aedes albopictus. 
+        
+        Contents
+        --------
+        
+        1) Prerequisites
+        2) Linux installation
+        3) Usage
+        
+        1) Prerequisites
+        ----------------
+        
+        The model requires the following packages, which are not included in this package:
+        
+        	numpy
+        	pkg_resources
+        
+        2) Linux installation
+        ---------------------
+        
+        1) Easy way:
+        
+        If you have pip installed, you can use the following command to download and install the package.
+        	pip install albopictus
+        
+        Alternatively, you can download the source code from PyPI and run pip on the latest version xxx.
+        	pip install albopictus-xxx.tar.gz
+        
+        2) Hard way:
+        
+        If pip is not available, you can unpack the package contents and perform a manual install.
+        	tar -xvzf albopictus-xxx.tar.gz
+        	cd albopictus-xxx
+        	python setup.py install
+        
+        This will install the package in the site-packages directory of your python distribution. If you do not have root privileges or you wish to install to a different directory, you can use the --prefix argument.
+        
+        	python setup.py install --prefix=<dir>
+        
+        In this case, please make sure that <dir> is in your PYTHONPATH, or you can add it with the following command.
+        
+        In bash shell:
+        	export PYTHONPATH=<dir>:$PYTHONPATH
+        In c shell:
+        	setenv PYTHONPATH <dir>:$PYTHONPATH
+        
+        Usage
+        -----
+        
+        Information for usage and contents are documented in the package, and can be accessed with the help utility.
+        
+        	import albopictus
+        	help(albopictus)
+        
+        Credits
+        -------
+        
+        'modern-package-template' - http://pypi.python.org/pypi/modern-package-template
+        
+        
+        News
+        ====
+        
+        0.3
+        ---
+        
+        * Release date: 9 February 2016
+        
+        * This is the model as presented in
+          Erguler K, Smith-Unna SE, Waldock J, Proestos Y, Christophides GK, Lelieveld J, Parham PE. Large-scale modelling of the environmentally-driven population dynamics of temperate Aedes albopictus (Skuse). PLOS ONE. 2016 (in press)
+        
+        * This version also includes posterior Q1b, which is sampled from posterior mode Q1 for subsequent research
+        
+        0.2
+        ---
+        
+        * Release date: UNRELEASED*
+        
+        * Includes the prior distribution
+        
+        0.1
+        ---
+        
+        * Release date: UNRELEASED*
+        
+        * Initial commit
+        
+        
+Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily
+Platform: UNKNOWN
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Topic :: Scientific/Engineering :: Medical Science Apps.

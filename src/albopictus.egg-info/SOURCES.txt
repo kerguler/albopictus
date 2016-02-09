@@ -1,0 +1,17 @@
+MANIFEST.in
+NEWS.txt
+README.txt
+setup.py
+src/albopictus/__init__.py
+src/albopictus/incubator.c
+src/albopictus/incubator.h
+src/albopictus/modelAalbopictus.c
+src/albopictus/readModel.py
+src/albopictus.egg-info/PKG-INFO
+src/albopictus.egg-info/SOURCES.txt
+src/albopictus.egg-info/dependency_links.txt
+src/albopictus.egg-info/not-zip-safe
+src/albopictus.egg-info/top_level.txt
+src/albopictus/data/climate.json
+src/albopictus/data/posterior.json
+src/albopictus/data/prior.json

@@ -1,0 +1,8 @@
+include README.txt
+include NEWS.txt
+include src/albopictus/incubator.c
+include src/albopictus/incubator.h
+include src/albopictus/modelAalbopictus.c
+include src/albopictus/data/climate.json
+include src/albopictus/data/posterior.json
+include src/albopictus/data/prior.json

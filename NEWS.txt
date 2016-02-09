@@ -1,0 +1,27 @@
+News
+====
+
+0.3
+---
+
+* Release date: 9 February 2016
+
+* This is the model as presented in
+  Erguler K, Smith-Unna SE, Waldock J, Proestos Y, Christophides GK, Lelieveld J, Parham PE. Large-scale modelling of the environmentally-driven population dynamics of temperate Aedes albopictus (Skuse). PLOS ONE. 2016 (in press)
+
+* This version also includes posterior Q1b, which is sampled from posterior mode Q1 for subsequent research
+
+0.2
+---
+
+* Release date: UNRELEASED*
+
+* Includes the prior distribution
+
+0.1
+---
+
+* Release date: UNRELEASED*
+
+* Initial commit
+
