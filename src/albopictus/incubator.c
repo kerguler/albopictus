@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <gsl/gsl_cdf.h>
 #include "incubator.h"
 
 #define EPS 1e-14
@@ -41,6 +42,43 @@ void incubator_remove(incubator *s, double *val) {
       free(prev->next);
       prev->next = (*s);
     } else {
+      prev = (*s);
+      (*s) = (*s)->next;
+    }
+  }
+  (*s) = dummy->next;
+  free(dummy);
+}
+
+void incubator_develop(incubator *s, double time, double lambda, double sd, double *val) {
+  /*
+    Calculate daily survival according to 
+    1. expected life span (lambda) and
+    2. current age ((*s)->data.popdev)
+   */
+  double theta = sd * sd / lambda;
+  double k = lambda / theta;
+  double p4;
+  //
+  *val = 0; // total population size
+  incubator dummy = (incubator)malloc(sizeof(struct incubator_st));
+  dummy->next = *s;
+  incubator prev = dummy;
+  while (*s) {
+    // Probability of dying between day d-1 and d
+    // Q(x) = \int_{x}^{+\infty} dx' p(x')
+    p4 = (gsl_cdf_gamma_P((*s)->data.popdev + time, k, theta)
+          - gsl_cdf_gamma_P((*s)->data.popdev, k, theta))
+      / gsl_cdf_gamma_Q((*s)->data.popdev, k, theta);
+    //
+    (*s)->data.popsize *= 1.0-p4;
+    if ((*s)->data.popsize < EPS) { // remove this batch
+      (*s) = (*s)->next;
+      free(prev->next);
+      prev->next = (*s);
+    } else { // move on to the next batch
+      *val += (*s)->data.popsize;
+      (*s)->data.popdev += time;
       prev = (*s);
       (*s) = (*s)->next;
     }
