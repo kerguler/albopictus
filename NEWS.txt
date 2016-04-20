@@ -1,6 +1,13 @@
 News
 ====
 
+0.4
+---
+
+* Release date: UNRELEASED*
+
+* The 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
+
 0.3
 ---
 

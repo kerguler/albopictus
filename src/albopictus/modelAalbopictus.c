@@ -8,7 +8,7 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 
 #define NumParAea      48
-#define NumMetAea      10
+#define NumMetAea      11
 
 // --------------------------------------------
 // Incubators
@@ -349,14 +349,19 @@ void param_model(char **names, double *param) {
 }
 
 void sim_model(double               *envar,
-	       double               *param,
-	       int                 *finalT,
-	       double              *result,
-	       int                *success) {
+               double               *param,
+               int                 *finalT,
+               int                *control,
+               double              *result,
+               int                *success) {
   double *photoperiod          = envar + 0*(*finalT);
   double *mean_air_temp        = envar + 1*(*finalT);
   double *daily_precipitation  = envar + 2*(*finalT);
   double *popdens              = envar + 3*(*finalT);
+  double *controlpar;
+  if ((*control)) {
+    controlpar = param + NumParAea;
+  }
 	       
   double *colT    = result + 0*(*finalT);
   double *coln0   = result + 1*(*finalT);
@@ -387,6 +392,44 @@ void sim_model(double               *envar,
 
   int TIME;
   for (TIME=-1; TIME<(*finalT)-1; ) {
+    if ((*control)) { // Apply control measures
+      // Breeding site reduction (date0 - date1 - daily fraction)
+      if (TIME>=controlpar[0] && TIME<controlpar[1]) {
+        nBS *= controlpar[2];
+      }
+      // Egg reduction
+      if (TIME>=controlpar[3] && TIME<controlpar[4]) {
+        n0 *= controlpar[5];
+        n10 *= controlpar[5];
+        n1 *= controlpar[5];
+        double par[2];
+        par[0] = controlpar[5]; par[1] = 0;
+        incubator_update(conn1,update,par);
+        incubator_update(conn10,update,par);
+      }
+      // Larvae reduction
+      if (TIME>=controlpar[6] && TIME<controlpar[7]) {
+        n2 *= controlpar[8];
+        double par[2];
+        par[0] = controlpar[8]; par[1] = 0;
+        incubator_update(conn2,update,par);
+      }
+      // Pupae reduction
+      if (TIME>=controlpar[9] && TIME<controlpar[10]) {
+        n3 *= controlpar[11];
+        double par[2];
+        par[0] = controlpar[11]; par[1] = 0;
+        incubator_update(conn3,update,par);
+      }
+      // Adult reduction
+      if (TIME>=controlpar[12] && TIME<controlpar[13]) {
+        n4fj *= controlpar[14];
+        n4f *= controlpar[14];
+        double par[2];
+        par[0] = controlpar[14]; par[1] = 0;
+        incubator_update(conn4,update,par);
+      }
+    }
     calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&p4,&F4,&egg,&percent_strong,TIME);
     TIME++;
     colT[TIME] = TIME;
@@ -398,6 +441,8 @@ void sim_model(double               *envar,
     coln4f[TIME] = n4f;
     colK[TIME] = K;
     colp4[TIME] = p4;
+    if ((*control) && ((TIME-1)>=controlpar[12] && (TIME-1)<controlpar[13]))
+      colp4[TIME] *= controlpar[14];
     colF4[TIME] = F4;
     colegg[TIME] = egg;
     if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(p4) || isnan(F4) || isnan(egg) || isnan(percent_strong)) {

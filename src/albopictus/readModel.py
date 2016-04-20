@@ -56,6 +56,7 @@ class prepareModel:
         self.sim_model.argtypes = [array_1d_double,
                                    array_1d_double,
                                    array_1d_int,
+                                   array_1d_int,
                                    array_1d_double,
                                    array_1d_int]
     #
@@ -63,11 +64,35 @@ class prepareModel:
         fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
         envar = numpy.array(clim['envar'],dtype=numpy.float64)
         param = numpy.array(pr,dtype=numpy.float64)
+        control = numpy.array(0,dtype=numpy.int32,ndmin=1)
         result = numpy.ndarray((self.nummet+1)*fT[0],dtype=numpy.float64)
         success = numpy.array(0,dtype=numpy.int32,ndmin=1)
         ret = self.sim_model(envar,
                              param,
                              fT,
+                             control,
+                             result,
+                             success)
+        ret = {
+            'colT':result[0:fT[0]],
+            'success':success
+            }
+        for n in range(self.nummet):
+            ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
+        return ret
+    #
+    def simControl(self,clim,pr,cpr):
+        fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
+        envar = numpy.array(clim['envar'],dtype=numpy.float64)
+        param = numpy.array(pr,dtype=numpy.float64)
+        param = numpy.hstack([param,cpr])
+        control = numpy.array(1,dtype=numpy.int32,ndmin=1)
+        result = numpy.ndarray((self.nummet+1)*fT[0],dtype=numpy.float64)
+        success = numpy.array(0,dtype=numpy.int32,ndmin=1)
+        ret = self.sim_model(envar,
+                             param,
+                             fT,
+                             control,
                              result,
                              success)
         ret = {
