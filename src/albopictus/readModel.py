@@ -11,8 +11,6 @@ class prepareModel:
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
         #
-        # self.model.test()
-        #
         try:
             self.set_gamma_mode = self.model.set_gamma_mode
             self.set_gamma_mode.restype = None

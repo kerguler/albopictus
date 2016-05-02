@@ -1,4 +1,5 @@
 #include "Python.h"
+#include <time.h>
 #include <gsl/gsl_sf_gamma.h>
 #include <gsl/gsl_cdf.h>
 #include "incubator.h"
@@ -8,11 +9,11 @@
 #define n_MAX 400.0
 #define n_STEP 1.0
 #define n_i_MAX 400
-#define mean_MAX 401.0
-#define mean_STEP 0.01
-#define mean_i_MAX 40100
-#define gamma_SIZE 16040000
 #define row_SIZE 400
+#define mean_MAX 201.0
+#define mean_STEP 0.01
+#define mean_i_MAX 20100
+#define gamma_SIZE 8040000
 
 double gamma_matrix[gamma_SIZE];
 double gamma_matrix_done = 0;
@@ -24,33 +25,32 @@ double itime2here() {
   return idiff;
 }
 
-void test() {
-  double n=50, mean = 137.365, sd = 0.375*137.365;
-  double theta, k, p, r;
-  p = 0.5;
-  r = mean;
-  theta = sd * sd / mean;
-  k = mean / theta;
-  /*
-  printf("Test:\nmean:%g,sd:%g,n:%g\np:%g,r:%g\nk:%g,theta:%g\n%g,%g,%g\n",
-         mean,
-         sd,
-         n,
-         p,
-         r,
-         k,
-         theta,
-         prob_gamma(n,k,theta),
-         prob_nbinom((unsigned int)floor(n),p,r),
-         prob_gamma_matrix(n,mean));
-  */
-  for (n=0;n<mean;n++) {
-    printf("%g,%g,%g,%g\n",
-           n,
-           prob_gamma(n,k,theta),
-           prob_nbinom((unsigned int)floor(n),p,r),
-           prob_gamma_matrix(n,mean));
+void test_gamma_matrix() {
+  double eps = 1e-6;
+  int i;
+  double n, mean, sd;
+  double theta, k;
+  double r1, r2;
+  if (!gamma_matrix_done) {
+    prepare_gamma();
   }
+  srandom((unsigned int)time(NULL));
+  for (i=0; i<1000; i++) {
+    mean = (double)rand() / (double)RAND_MAX * mean_MAX;
+    sd = 0.375 * mean;
+    n = random() % n_i_MAX;
+    theta = sd * sd / mean;
+    k = mean / theta;
+    printf("Testing mean=%g, sd=%g, n=%g\n",mean,sd,n);
+    r1 = prob_gamma(n,k,theta);
+    r2 = prob_gamma_matrix(n,mean);
+    if (fabs(r1-r2)>eps) {
+      printf("Test failed: %g - %g = %g\n",r1,r2,r1-r2);
+      return;
+    }
+    printf("Success!\n");
+  }
+  printf("Accuracy at epsilon = %g\n",eps);
 }
 
 void prepare_gamma() {
@@ -85,12 +85,15 @@ void prepare_gamma() {
 }
 
 double prob_gamma_matrix(double n, double mean) {
-  int i = floor(mean / mean_STEP) * row_SIZE + floor(n / n_STEP);
-  if (i>=gamma_SIZE) {
+  double m1 = floor(mean / mean_STEP);
+  double m2 = ceil(mean / mean_STEP);
+  int i1 = m1 * row_SIZE + floor(n / n_STEP);
+  int i2 = m2 * row_SIZE + floor(n / n_STEP);
+  if (i1>=gamma_SIZE || i2>=gamma_SIZE) {
     printf("ERROR: Not in matrix (mean=%g, n=%g)\n",mean,n);
     exit(1);
   }
-  return gamma_matrix[i];
+  return (i1==i2) ? gamma_matrix[i1] : gamma_matrix[i1] + (mean/mean_STEP - m1)*(gamma_matrix[i2]-gamma_matrix[i1])/(m2-m1); // Linear interpolation
 }
 
 double prob_gamma(double n, double k, double theta) {

@@ -10,8 +10,7 @@ typedef struct incubator_st
   struct incubator_st *next;
 } *incubator;
 
-void test();
-
+void test_gamma_matrix();
 void prepare_gamma();
 double prob_gamma(double n, double k, double theta);
 double prob_nbinom(unsigned int k, double p, double n);
