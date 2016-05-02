@@ -177,61 +177,93 @@ void incubator_remove(incubator *s, double *val) {
   free(dummy);
 }
 
-void incubator_develop(incubator *s, double mean, double sd, double *val, double thr, double *valthr, char mode) { // This is custom-made for improved performance
-  //double timeall = 0;
-  //double timeof = 0;
+void incubator_develop_survive(incubator *s,
+                               double d_mean, // development time (ignore if < 0)
+                               double d_sd, // 
+                               double p_mean, // survival time (ignore if < 0)
+                               double p_sd, // 
+                               double juvthr, // days to become mature
+                               double *juv, // juveniles
+                               double *avec, // matures
+                               double *dev, // developed
+                               char mode) { // option for gamma distribution
   /*
-    Calculate daily survival according to 
-    1. expected life span (mean) and
-    2. current age ((*s)->data.popdev)
+    Calculate daily survival and development according to 
+    1. expected life span (d_mean),
+    2. expected development time (p_mean) and
+    3. current age ((*s)->data.popdev)
    */
   if (mode == 2 && !gamma_matrix_done) {
     prepare_gamma();
   }
   //
-  double theta, k, p, r;
+  double d_theta, d_k, d_p, d_r;
+  double p_theta, p_k, p_p, p_r;
   if (mode == 1) {
-    //p = mean / sd / sd;
-    //r = mean * p / (1.0 - p);
-    p = 0.5;
-    r = mean;
-    //printf("NBIN: %g,%g,%g,%g\n",mean,sd,p,r);
+    d_p = p_p = 0.5;
+    d_r = d_mean;
+    p_r = p_mean;
   } else if (mode == 0) {
-    //sd = sqrt(2.0*mean);
-    theta = sd * sd / mean;
-    k = mean / theta;
+    d_theta = d_sd * d_sd / d_mean;
+    d_k = d_mean / d_theta;
+    p_theta = p_sd * p_sd / p_mean;
+    p_k = p_mean / p_theta;
   }
   //
-  *val = 0; // total population size
-  *valthr = 0; // total (juvenile) population size
+  *avec = 0;
+  *juv = 0;
+  if (d_mean >= 0)
+    *dev = 0;
   incubator dummy = (incubator)malloc(sizeof(struct incubator_st));
   dummy->next = *s;
   incubator prev = dummy;
   double prob;
   while (*s) {
-    // Probability of dying between day d and d+1
+    // Probability of dying or developing between day d and d+1
     //
-    if (mode == 1)
-      prob = prob_nbinom((unsigned int)floor((*s)->data.popdev),p,r);
-    else if (mode == 0)
-      prob = prob_gamma((*s)->data.popdev,k,theta);
-    else if (mode == 2)
-      prob = prob_gamma_matrix((*s)->data.popdev,mean);
-    (*s)->data.popsize *= 1.0 - prob;
-    //
-    if ((*s)->data.popsize < EPS) { // remove this batch
-      (*s) = (*s)->next;
-      free(prev->next);
-      prev->next = (*s);
-    } else { // move on to the next batch
-      (*s)->data.popdev += 1.0;
-      if ((*s)->data.popdev < thr) // Juvenile adults
-        *valthr += (*s)->data.popsize;
-      else // Mature adults
-        *val += (*s)->data.popsize;        
-      prev = (*s);
-      (*s) = (*s)->next;
+    // survival
+    if (p_mean >= 0) {
+      if (mode == 1)
+        prob = 1.0 - prob_nbinom((unsigned int)floor((*s)->data.popdev),p_p,p_r);
+      else if (mode == 0)
+        prob = 1.0 - prob_gamma((*s)->data.popdev,p_k,p_theta);
+      else if (mode == 2)
+        prob = 1.0 - prob_gamma_matrix((*s)->data.popdev,p_mean);
+      (*s)->data.popsize *= prob;
+      //
+      if ((*s)->data.popsize < EPS) { // all dead, remove this batch
+        (*s) = (*s)->next;
+        free(prev->next);
+        prev->next = (*s);
+        continue;
+      }
     }
+    // development
+    if (d_mean >= 0) {
+      if (mode == 1)
+        prob = prob_nbinom((unsigned int)floor((*s)->data.popdev),d_p,d_r);
+      else if (mode == 0)
+        prob = prob_gamma((*s)->data.popdev,d_k,d_theta);
+      else if (mode == 2)
+        prob = prob_gamma_matrix((*s)->data.popdev,d_mean);
+      (*dev) = (*s)->data.popsize * prob;
+      (*s)->data.popsize *= 1.0 - prob;
+      //
+      if ((*s)->data.popsize < EPS) { // all developed, remove this batch
+        (*s) = (*s)->next;
+        free(prev->next);
+        prev->next = (*s);
+        continue;
+      }
+    }
+    // move on to the next batch
+    (*s)->data.popdev += 1.0;
+    if ((*s)->data.popdev < juvthr) // juveniles
+      (*juv) += (*s)->data.popsize;
+    else // matures
+      (*avec) += (*s)->data.popsize;
+    prev = (*s);
+    (*s) = (*s)->next;
   }
   (*s) = dummy->next;
   free(dummy);

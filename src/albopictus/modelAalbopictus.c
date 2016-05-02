@@ -230,7 +230,7 @@ void calculate(double *photoperiod,
   incubator_update(conn3,update,par);
   //
   // Adult females
-  incubator_develop(&conn4,dd4,dd4s,n4f,alpha_blood,n4fj,gamma_mode);
+  incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
   //
   // Check if it is winter or summer
   char short_days = photoperiod[TIME] < param[alpha_dp_thr];
