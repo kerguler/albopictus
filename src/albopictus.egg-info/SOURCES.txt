@@ -1,6 +1,7 @@
 MANIFEST.in
 NEWS.txt
 README.txt
+setup.cfg
 setup.py
 src/albopictus/__init__.py
 src/albopictus/incubator.c

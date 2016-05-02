@@ -1,8 +1,14 @@
+#include "Python.h"
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <time.h>
 #include "incubator.h"
+
+volatile clock_t start = 0, diff;
+double time2here() {
+  diff = clock() - start;
+  start = clock();
+  return diff;
+}
 
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
@@ -24,7 +30,7 @@ void update(double *size, double *dev, double *par) {
   *size *= par[0];
   *dev += par[1];
 }
-
+//
 void empty_incubators(void) {
   //
   incubator_empty(&conn10);
@@ -48,9 +54,9 @@ void empty_incubators(void) {
 #define alpha_p3_1        6
 #define alpha_p3_2        7
 #define alpha_p3_3        8
-#define alpha_p4_1        9
-#define alpha_p4_2        10
-#define alpha_p4_3        11
+#define alpha_d4_1        9
+#define alpha_d4_2        10
+#define alpha_d4_3        11
 #define alpha_F4_1        12
 #define alpha_F4_2        13
 #define alpha_F4_3        14
@@ -96,9 +102,19 @@ void empty_incubators(void) {
 
 #define flin(x, a1, a2) (max(0.0, min(1.0, (a1) + (a2)*(x))))
 #define dsig(x, a1, a2, a3) (max(0.0, min(1.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
+#define dsig2(x, a1, a2, a3) (max(0.0, min(100.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
 #define poly(x, a1, a2, a3) (max(0.0, (a1) + (a2)*(x) + (a3)*pow((x),2)))
 #define expd(x, k) (exp(-(k)*(x)))
 #define fpow(x, a1, a2) (min(1.0, (a1)*pow((x),(a2))))
+
+//double timebefore = 0;
+//double timeof = 0;
+//double timeafter = 0;
+
+char gamma_mode = 2;
+void set_gamma_mode(char mode) {
+  gamma_mode = mode;
+}
 
 void calculate(double *photoperiod,
 	       double *mean_air_temp,
@@ -114,7 +130,8 @@ void calculate(double *photoperiod,
 	       double *n4f,
 	       double *nBS,
 	       double *K,
-	       double *p4,
+	       double *d4,
+	       double *d4s,
 	       double *F4,
 	       double *egg,
 	       double *percent_strong,
@@ -131,7 +148,8 @@ void calculate(double *photoperiod,
     (*n4f) = param[alpha_3];
     (*nBS) = 0.0;
     (*K) = 0.0;
-    (*p4) = 1.0;
+    (*d4) = 0.0;
+    (*d4s) = 0.0;
     (*F4) = 0.0;
     (*egg) = (*n0) + (*n10) + (*n1);
     (*percent_strong) = 0.0;
@@ -140,7 +158,7 @@ void calculate(double *photoperiod,
     if ((*n1) > 0) incubator_add(&conn1,(*n1),0.0);
     if ((*n2) > 0) incubator_add(&conn2,(*n2),0.0);
     if ((*n3) > 0) incubator_add(&conn3,(*n3),0.0);
-    if ((*n4fj) > 0) incubator_add(&conn4,(*n4fj),0.0);
+    if ((*n4f) > 0) incubator_add(&conn4,(*n4f),0.0);
 
     return;
   }
@@ -176,19 +194,21 @@ void calculate(double *photoperiod,
   double p2_Tw = dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3])*densd;
   // Pupal survival
   double p3_Tw = dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3])*densd;
-  // Adult survival
-  double p4_Ta = dsig(Ta,param[alpha_p4_1],param[alpha_p4_2],param[alpha_p4_3]);
-  (*p4) = p4_Ta;
 
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
   // Egg development time
   double d1 = poly(Tw,param[alpha_d1_1],param[alpha_d1_2],param[alpha_d1_3]);
-  // Larval develpment time
+  // Larval development time
   double d2 = poly(Tw,param[alpha_d2_1],param[alpha_d2_2],param[alpha_d2_3])*densdev;
   // Pupal development time
   double d3 = poly(Tw,param[alpha_d3_1],param[alpha_d3_2],param[alpha_d3_3])*densdev;
   // Time to first blood meal
   double alpha_blood = poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);
+  // Adult lifetime (from emergence)
+  double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
+  double dd4s = 0.375*dd4;
+  (*d4) = dd4;
+  (*d4s) = dd4s;
 
   // Update development times and survival proportions
   // of the immature stages and juvenile adults
@@ -209,9 +229,8 @@ void calculate(double *photoperiod,
   par[0] = p3_Tw; par[1] = 1.0/max(1.0,d3);
   incubator_update(conn3,update,par);
   //
-  // Juvenile adults
-  par[0] = p4_Ta; par[1] = 1.0/max(1.0,alpha_blood);
-  incubator_update(conn4,update,par);
+  // Adult females
+  incubator_develop(&conn4,dd4,dd4s,n4f,alpha_blood,n4fj,gamma_mode);
   //
   // Check if it is winter or summer
   char short_days = photoperiod[TIME] < param[alpha_dp_thr];
@@ -260,18 +279,10 @@ void calculate(double *photoperiod,
   (*n2) = incubator_sum(conn2);
   (*n1) = incubator_sum(conn1) + incubator_sum(conn10);
   //
-  // Update adult female vector count
-  // 1. Calculate the survivors
-  // 2. Add the newly developed ones (females only)
-  double nn4;
-  incubator_remove(&conn4,&nn4);
-  if (alpha_blood<1.0) { // If maturation time is less than a day, add to mature females
-    nn4 += 0.5*nn3;
-  } else { // else, add to the set of juveniles to develop
-    incubator_add(&conn4,0.5*nn3,0.0);
-  }
-  (*n4fj) = incubator_sum(conn4);
-  (*n4f) = (*n4f) * p4_Ta + nn4;
+  // Add newly developed females to adults
+  nn3 *= 0.5;
+  incubator_add(&conn4,nn3,0.0);
+  (*n4f) += nn3;
 }
 
 // --------------------------------------------
@@ -285,8 +296,8 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","colp4","colF4","colegg",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","p4.1","p4.2","p4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.strong","PP.normal","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
+    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg",
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.strong","PP.normal","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -301,9 +312,9 @@ void param_model(char **names, double *param) {
   param[alpha_p3_1] = 0.9989963317439844;
   param[alpha_p3_2] = 12.682001028351872;
   param[alpha_p3_3] = 35.88839257040825;
-  param[alpha_p4_1] = 0.9816507230102193;
-  param[alpha_p4_2] = -3.0;
-  param[alpha_p4_3] = 37.5;
+  param[alpha_d4_1] = 40.546569688329726;
+  param[alpha_d4_2] = -3.0;
+  param[alpha_d4_3] = 34.5;
   param[alpha_F4_1] = -29.983659263234784;
   param[alpha_F4_2] = 2.547065674987852;
   param[alpha_F4_3] = -0.03703376793024484;
@@ -371,24 +382,26 @@ void sim_model(double               *envar,
   double *coln4fj = result + 5*(*finalT);
   double *coln4f  = result + 6*(*finalT);
   double *colK    = result + 7*(*finalT);
-  double *colp4   = result + 8*(*finalT);
-  double *colF4   = result + 9*(*finalT);
-  double *colegg  = result + 10*(*finalT);
+  double *cold4   = result + 8*(*finalT);
+  double *cold4s  = result + 9*(*finalT);
+  double *colF4   = result + 10*(*finalT);
+  double *colegg  = result + 11*(*finalT);
 
   double n0 = 0;
   double n1 = 0;
   double n2 = 0;
   double n3 = 0;
+  double n4fj = 0;
   double n4f = 0;
   double nBS = 0;
   double K = 0;
-  double p4 = 0;
+  double d4 = 0;
+  double d4s = 0;
   double F4 = 0;
   double egg = 0;
 
   double percent_strong = 0;
   double n10 = 0;
-  double n4fj = 0;
 
   int TIME;
   for (TIME=-1; TIME<(*finalT)-1; ) {
@@ -430,7 +443,7 @@ void sim_model(double               *envar,
         incubator_update(conn4,update,par);
       }
     }
-    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&p4,&F4,&egg,&percent_strong,TIME);
+    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&d4,&d4s,&F4,&egg,&percent_strong,TIME);
     TIME++;
     colT[TIME] = TIME;
     coln0[TIME] = n0;
@@ -440,12 +453,15 @@ void sim_model(double               *envar,
     coln4fj[TIME] = n4fj;
     coln4f[TIME] = n4f;
     colK[TIME] = K;
-    colp4[TIME] = p4;
-    if ((*control) && ((TIME-1)>=controlpar[12] && (TIME-1)<controlpar[13]))
-      colp4[TIME] *= controlpar[14];
+    cold4[TIME] = d4;
+    cold4s[TIME] = d4s;
     colF4[TIME] = F4;
     colegg[TIME] = egg;
-    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(p4) || isnan(F4) || isnan(egg) || isnan(percent_strong)) {
+    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg) || isnan(percent_strong)) {
+      //
+      // printf("ERROR: %g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong,d4,d4s);
+      incubator_print(conn4);
+      //
       (*success) = 0;
       empty_incubators();
       return;
@@ -453,6 +469,8 @@ void sim_model(double               *envar,
   }
   (*success) = 1;
   empty_incubators();
+  //
+  //printf("Times: %g %g %g\n",timebefore,timeof,timeafter);
 }
 
 // ---------------------------------------------------------------------------

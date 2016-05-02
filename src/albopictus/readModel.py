@@ -4,10 +4,21 @@ import numpy.ctypeslib as npct
 array_1d_double = npct.ndpointer(dtype=numpy.float64, ndim=1, flags='CONTIGUOUS')
 array_1d_int = npct.ndpointer(dtype=numpy.int32, ndim=1, flags='CONTIGUOUS')
 
+from scipy.stats import gamma
+
 class prepareModel:
     def __init__(self,modelname):
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
+        #
+        # self.model.test()
+        #
+        try:
+            self.set_gamma_mode = self.model.set_gamma_mode
+            self.set_gamma_mode.restype = None
+            self.set_gamma_mode.argtypes = [npct.c_char]
+        except:
+            pass
         #
         import atexit
         try:
