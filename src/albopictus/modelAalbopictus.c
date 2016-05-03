@@ -1,6 +1,7 @@
 #include "Python.h"
 #include <math.h>
 #include <time.h>
+#include "gamma.h"
 #include "incubator.h"
 
 volatile clock_t start = 0, diff;

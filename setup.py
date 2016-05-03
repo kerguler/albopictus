@@ -42,6 +42,6 @@ setup(name='albopictus',
     zip_safe=False,
     install_requires=install_requires,
     py_modules=['albopictus/__init__'],
-    ext_modules=[Extension("albopictus.modelAalbopictus", ["src/albopictus/incubator.c", "src/albopictus/modelAalbopictus.c"])],
+    ext_modules=[Extension("albopictus.modelAalbopictus", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus.c"])],
     include_dirs=include_dirs
 )

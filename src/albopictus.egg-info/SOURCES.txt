@@ -4,6 +4,8 @@ README.txt
 setup.cfg
 setup.py
 src/albopictus/__init__.py
+src/albopictus/gamma.c
+src/albopictus/gamma.h
 src/albopictus/incubator.c
 src/albopictus/incubator.h
 src/albopictus/modelAalbopictus.c
