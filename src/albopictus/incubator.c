@@ -4,28 +4,17 @@
 #include <gsl/gsl_cdf.h>
 #include "incubator.h"
 
-#define EPS 1e-14
-
-#define n_MAX 400.0
-#define n_STEP 1.0
-#define n_i_MAX 400
-#define row_SIZE 400
-#define mean_MAX 201.0
-#define mean_STEP 0.01
-#define mean_i_MAX 20100
-#define gamma_SIZE 8040000
-
 double gamma_matrix[gamma_SIZE];
 double gamma_matrix_done = 0;
 
 volatile clock_t istart = 0, idiff;
-double itime2here() {
+double itime2here(void) {
   idiff = clock() - istart;
   istart = clock();
   return idiff;
 }
 
-void test_gamma_matrix() {
+void test_gamma_matrix(void) {
   double eps = 1e-6;
   int i;
   double n, mean, sd;
@@ -37,7 +26,7 @@ void test_gamma_matrix() {
   srandom((unsigned int)time(NULL));
   for (i=0; i<1000; i++) {
     mean = (double)rand() / (double)RAND_MAX * mean_MAX;
-    sd = 0.375 * mean;
+    sd = gamma_sd * mean;
     n = random() % n_i_MAX;
     theta = sd * sd / mean;
     k = mean / theta;
@@ -53,7 +42,7 @@ void test_gamma_matrix() {
   printf("Accuracy at epsilon = %g\n",eps);
 }
 
-void prepare_gamma() {
+void prepare_gamma(void) {
   int i;
   int n_i;
   int mean_i;
@@ -72,7 +61,7 @@ void prepare_gamma() {
         continue;
       }
       n = n_i*n_STEP;
-      sd = 0.375 * mean;
+      sd = gamma_sd * mean;
       theta = sd * sd / mean;
       k = mean / theta;
       gamma_matrix[i] = prob_gamma(n,k,theta);
@@ -217,7 +206,7 @@ void incubator_develop_survive(incubator *s,
   incubator dummy = (incubator)malloc(sizeof(struct incubator_st));
   dummy->next = *s;
   incubator prev = dummy;
-  double prob;
+  double prob = 0.0;
   while (*s) {
     // Probability of dying or developing between day d and d+1
     //
