@@ -4,7 +4,7 @@
 #include "incubator.h"
 
 volatile clock_t start = 0, diff;
-double time2here() {
+double time2here(void) {
   diff = clock() - start;
   start = clock();
   return diff;
@@ -206,7 +206,7 @@ void calculate(double *photoperiod,
   double alpha_blood = poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);
   // Adult lifetime (from emergence)
   double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
-  double dd4s = 0.375*dd4;
+  double dd4s = gamma_sd*dd4;
   (*d4) = dd4;
   (*d4s) = dd4s;
 
@@ -369,7 +369,7 @@ void sim_model(double               *envar,
   double *mean_air_temp        = envar + 1*(*finalT);
   double *daily_precipitation  = envar + 2*(*finalT);
   double *popdens              = envar + 3*(*finalT);
-  double *controlpar;
+  double *controlpar = 0;
   if ((*control)) {
     controlpar = param + NumParAea;
   }
