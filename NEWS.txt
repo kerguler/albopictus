@@ -1,12 +1,19 @@
 News
 ====
 
-0.5
+0.6
 ---
 
 * Release date: UNRELEASED*
 
 * The 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
+
+0.5
+---
+
+* Release date: UNRELEASED*
+
+* Hash function for Gamma distribution was implemented for improved flexibility and performance
 
 0.4
 ---

@@ -9,7 +9,12 @@ src/albopictus/gamma.h
 src/albopictus/incubator.c
 src/albopictus/incubator.h
 src/albopictus/modelAalbopictus.c
+src/albopictus/modelStochCHIKV.c
+src/albopictus/ran_gen.c
+src/albopictus/ran_gen.h
 src/albopictus/readModel.py
+src/albopictus/spop.c
+src/albopictus/spop.h
 src/albopictus/uthash.h
 src/albopictus.egg-info/PKG-INFO
 src/albopictus.egg-info/SOURCES.txt

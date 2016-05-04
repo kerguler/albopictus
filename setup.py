@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
-version = '0.5'
+version = '0.6'
 
 # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
 install_requires = [
@@ -42,6 +42,8 @@ setup(name='albopictus',
     zip_safe=False,
     install_requires=install_requires,
     py_modules=['albopictus/__init__'],
-    ext_modules=[Extension("albopictus.modelAalbopictus", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus.c"])],
+    ext_modules=[
+        Extension("albopictus.modelAalbopictus", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus.c"]),
+        Extension("albopictus.modelStochCHIKV", ["src/albopictus/ran_gen.c", "src/albopictus/spop.c", "src/albopictus/gamma.c", "src/albopictus/modelStochCHIKV.c"])],
     include_dirs=include_dirs
 )

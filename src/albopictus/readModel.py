@@ -65,14 +65,30 @@ class prepareModel:
         for elm in self.parnames:
             self.parids[elm] = numpy.where(elm==self.parnames)[0][0]
         #
-        self.sim_model = self.model.sim_model
-        self.sim_model.restype = None
-        self.sim_model.argtypes = [array_1d_double,
-                                   array_1d_double,
-                                   array_1d_int,
-                                   array_1d_int,
-                                   array_1d_double,
-                                   array_1d_int]
+        try:
+            self.sim_model = self.model.sim_model
+            self.sim_model.restype = None
+            self.sim_model.argtypes = [array_1d_double,
+                                    array_1d_double,
+                                    array_1d_int,
+                                    array_1d_int,
+                                    array_1d_double,
+                                    array_1d_int]
+        except:
+            pass
+        #
+        try:
+            self.sim_spread = self.model.sim_spread
+            self.sim_spread.restype = None
+            self.sim_spread.argtypes = [array_1d_double,
+                                        array_1d_double,
+                                        array_1d_double,
+                                        array_1d_int,
+                                        array_1d_int,
+                                        array_1d_double,
+                                        array_1d_int]
+        except:
+            pass
     #
     def simPar(self,clim,pr):
         fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
@@ -94,7 +110,7 @@ class prepareModel:
         for n in range(self.nummet):
             ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
         return ret
-    #
+    # for albopictus
     def simControl(self,clim,pr,cpr):
         fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
         envar = numpy.array(clim['envar'],dtype=numpy.float64)
@@ -115,4 +131,37 @@ class prepareModel:
             }
         for n in range(self.nummet):
             ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
+        return ret
+    # for Chikungunya
+    def simSpread(self,clim,probs,pr):
+        numreg = numpy.array(len(clim),dtype=numpy.int32,ndmin=1)
+        mask = ~numpy.diag(numpy.repeat(True,numreg))
+        tprobs = []
+        envar = []
+        for i in numpy.arange(numreg):
+            a = probs[i].copy()
+            a[mask[i]] = numpy.cumsum(a[mask[i]])/numpy.sum(a[mask[i]])
+            tprobs.append(a)
+            envar.append(clim[i]['envar'])
+        tprobs = numpy.concatenate(tprobs)
+        envar = numpy.concatenate(envar)
+        fT = numpy.array(len(clim[0]['dates']),dtype=numpy.int32,ndmin=1)
+        param = numpy.array(pr,dtype=numpy.float64)
+        result = numpy.ndarray((self.nummet+1)*fT[0]*numreg[0],dtype=numpy.float64)
+        success = numpy.ndarray(numreg[0],dtype=numpy.int32)
+        ret = self.sim_spread(envar,
+                              tprobs,
+                              param,
+                              fT,
+                              numreg,
+                              result,
+                              success)
+        l = fT[0]*(self.nummet+1)
+        ret = [{
+            'colT':result[(m*l):(m*l+fT[0])],
+            'success':success[m]
+            } for m in range(numreg[0])]
+        for m in range(numreg[0]):
+            for n in range(self.nummet):
+                ret[m][self.metnames[n]] = result[(m*l+(n+1)*fT[0]):(m*l+(n+2)*fT[0])]
         return ret

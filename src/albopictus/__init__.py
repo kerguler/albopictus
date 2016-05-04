@@ -71,4 +71,5 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 from readModel import prepareModel
 
 vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus.so"))
+chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"))
 
