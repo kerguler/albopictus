@@ -51,6 +51,7 @@ void gamma_mean_destroy(void) {
 }
 
 double gamma_mean_prob(double mean, double sd, double n) {
+  gsl_set_error_handler_off();
   double tmp;
   //
   double theta = sd * sd / mean;
@@ -78,12 +79,14 @@ double gamma_mean_prob(double mean, double sd, double n) {
     tmp = gsl_sf_gamma_inc(k,(1.0+n)/theta);
     if (tmp == GSL_EMAXITER) {
       printf("WARNING: gsl_sf_gamma_inc returned GSK_EMAXITER\n");
+      gsl_set_error_handler(NULL);
       return 1.0;
     }
     val = tmp;
     tmp = gsl_sf_gamma_inc(k,n/theta);
     if (tmp == GSL_EMAXITER) {
       printf("WARNING: gsl_sf_gamma_inc returned GSK_EMAXITER\n");
+      gsl_set_error_handler(NULL);
       return 1.0;
     }
     val = 1.0 - (val / tmp);
@@ -91,6 +94,7 @@ double gamma_mean_prob(double mean, double sd, double n) {
   if (isnan(val)) val = 1.0;
 
   // return the value
+  gsl_set_error_handler(NULL);
   return val;
 }
 
