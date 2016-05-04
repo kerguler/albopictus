@@ -7,10 +7,12 @@
 #include "uthash.h"
 #include "gamma.h"
 
+#define MAKE_INT(x) (floor(1e8*(x)))
+
 typedef struct {
-  double n;
-  double k;
-  double theta;
+  int n;
+  int k;
+  int theta;
 } gamma_key_t;
 
 typedef struct {
@@ -35,9 +37,9 @@ double gamma_prob(double n, double k, double theta) {
   gamma_t gam;
   
   memset(&gam, 0, sizeof(gamma_t));
-  gam.key.n = n;
-  gam.key.k = k;
-  gam.key.theta = theta;
+  gam.key.n = MAKE_INT(n);
+  gam.key.k = MAKE_INT(k);
+  gam.key.theta = MAKE_INT(theta);
   HASH_FIND(hh, gammas, &gam.key, sizeof(gamma_key_t), elm);
 
   // if found return the value
@@ -70,9 +72,9 @@ double gamma_prob(double n, double k, double theta) {
   // add it to the hash
   elm = (gamma_t*)malloc( sizeof(gamma_t) );
   memset(elm, 0, sizeof(gamma_t));
-  elm->key.n = n;
-  elm->key.k = k;
-  elm->key.theta = theta;
+  elm->key.n = MAKE_INT(n);
+  elm->key.k = MAKE_INT(k);
+  elm->key.theta = MAKE_INT(theta);
   elm->value = val;
   HASH_ADD(hh, gammas, key, sizeof(gamma_key_t), elm);
   
