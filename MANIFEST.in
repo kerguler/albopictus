@@ -1,5 +1,6 @@
 include README.txt
 include NEWS.txt
+include src/albopictus/uthash.h
 include src/albopictus/gamma.c
 include src/albopictus/gamma.h
 include src/albopictus/incubator.c

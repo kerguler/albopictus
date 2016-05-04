@@ -7,9 +7,6 @@
 #include "gamma.h"
 #include "incubator.h"
 
-extern double gamma_matrix[gamma_SIZE];
-extern double gamma_matrix_done;
-
 volatile clock_t istart = 0, idiff;
 double itime2here(void) {
   idiff = clock() - istart;
@@ -78,10 +75,6 @@ void incubator_develop_survive(incubator *s,
     2. expected development time (p_mean) and
     3. current age ((*s)->data.popdev)
    */
-  if (mode == 2 && !gamma_matrix_done) {
-    prepare_gamma();
-  }
-  //
   double d_theta, d_k, d_p, d_r;
   double p_theta, p_k, p_p, p_r;
   if (mode == 1) {
@@ -109,11 +102,9 @@ void incubator_develop_survive(incubator *s,
     // survival
     if (p_mean >= 0) {
       if (mode == 1)
-        prob = 1.0 - prob_nbinom((unsigned int)floor((*s)->data.popdev),p_p,p_r);
+        prob = 1.0 - nbinom_prob((unsigned int)floor((*s)->data.popdev),p_p,p_r);
       else if (mode == 0)
-        prob = 1.0 - prob_gamma((*s)->data.popdev,p_k,p_theta);
-      else if (mode == 2)
-        prob = 1.0 - prob_gamma_matrix((*s)->data.popdev,p_mean);
+        prob = 1.0 - gamma_prob((*s)->data.popdev,p_k,p_theta);
       (*s)->data.popsize *= prob;
       //
       if ((*s)->data.popsize < EPS) { // all dead, remove this batch
@@ -126,11 +117,9 @@ void incubator_develop_survive(incubator *s,
     // development
     if (d_mean >= 0) {
       if (mode == 1)
-        prob = prob_nbinom((unsigned int)floor((*s)->data.popdev),d_p,d_r);
+        prob = nbinom_prob((unsigned int)floor((*s)->data.popdev),d_p,d_r);
       else if (mode == 0)
-        prob = prob_gamma((*s)->data.popdev,d_k,d_theta);
-      else if (mode == 2)
-        prob = prob_gamma_matrix((*s)->data.popdev,d_mean);
+        prob = gamma_prob((*s)->data.popdev,d_k,d_theta);
       (*dev) = (*s)->data.popsize * prob;
       (*s)->data.popsize *= 1.0 - prob;
       //

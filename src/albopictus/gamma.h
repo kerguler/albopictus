@@ -11,8 +11,6 @@
 
 #define gamma_sd 0.375
 
-void test_gamma_matrix(void);
-void prepare_gamma(void);
-double prob_gamma(double, double, double);
-double prob_nbinom(unsigned int, double, double);
-double prob_gamma_matrix(double, double);
+void gamma_destroy(void);
+double gamma_prob(double, double, double);
+double nbinom_prob(unsigned int, double, double);

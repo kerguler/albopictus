@@ -112,7 +112,7 @@ void empty_incubators(void) {
 //double timeof = 0;
 //double timeafter = 0;
 
-char gamma_mode = 2;
+char gamma_mode = 0;
 void set_gamma_mode(char mode) {
   gamma_mode = mode;
 }

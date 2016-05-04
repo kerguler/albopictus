@@ -10,6 +10,7 @@ src/albopictus/incubator.c
 src/albopictus/incubator.h
 src/albopictus/modelAalbopictus.c
 src/albopictus/readModel.py
+src/albopictus/uthash.h
 src/albopictus.egg-info/PKG-INFO
 src/albopictus.egg-info/SOURCES.txt
 src/albopictus.egg-info/dependency_links.txt

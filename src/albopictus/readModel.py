@@ -8,6 +8,7 @@ from scipy.stats import gamma
 
 class prepareModel:
     def __init__(self,modelname):
+        import atexit
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
         #
@@ -18,7 +19,11 @@ class prepareModel:
         except:
             pass
         #
-        import atexit
+        try:
+            atexit.register(self.model.gamma_destroy)
+        except:
+            pass
+        #
         try:
             self.model.rng_setup()
         except:
