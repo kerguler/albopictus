@@ -7,45 +7,52 @@
 #include "uthash.h"
 #include "gamma.h"
 
-#define MAKE_INT(x) (floor(1e8*(x)))
+#define MAKE_INT(x) (round(1e3*(x)))
+#define MAKE_DOUBLE(x) (1e-3*(x))
 
 typedef struct {
-  int n;
-  int k;
-  int theta;
-} gamma_key_t;
-
-typedef struct {
-  gamma_key_t key;
+  double n;
   double value;
   UT_hash_handle hh;
-} gamma_t;
+} gamma_n_t;
 
-gamma_t *gammas = NULL;
+typedef struct {
+  double sd;
+  gamma_n_t *n_hash;
+  UT_hash_handle hh;
+} gamma_sd_t;
 
-void gamma_destroy(void) {
-  gamma_t *p, *tmp;
-  HASH_ITER(hh, gammas, p, tmp) {
-    HASH_DEL(gammas, p);
+typedef struct {
+  double mean;
+  gamma_sd_t *sd_hash;
+  UT_hash_handle hh;
+} gamma_mean_t;
+
+gamma_mean_t *gamma_mean = NULL;
+
+void gamma_mean_destroy(void) {
+  gamma_mean_t *p, *tmp;
+  gamma_sd_t *p2, *tmp2;
+  gamma_n_t *p3, *tmp3;
+  HASH_ITER(hh, gamma_mean, p, tmp) {
+    HASH_ITER(hh, p->sd_hash, p2, tmp2) {
+      HASH_ITER(hh, p2->n_hash, p3, tmp3) {
+        HASH_DEL(p2->n_hash, p3);
+        free(p3);
+      }
+      HASH_DEL(p->sd_hash, p2);
+      free(p2);
+    }
+    HASH_DEL(gamma_mean, p);
     free(p);
   }
   // printf("Gamma hash is cleared\n");
 }
 
-double gamma_prob(double n, double k, double theta) {
-  gamma_t *elm;
-  gamma_t gam;
-  
-  memset(&gam, 0, sizeof(gamma_t));
-  gam.key.n = MAKE_INT(n);
-  gam.key.k = MAKE_INT(k);
-  gam.key.theta = MAKE_INT(theta);
-  HASH_FIND(hh, gammas, &gam.key, sizeof(gamma_key_t), elm);
-
-  // if found return the value
-  if (elm) return elm->value;
-  // if not found calculate the value and add it to the hash
-
+double gamma_mean_prob(double mean, double sd, double n) {
+  double theta = sd * sd / mean;
+  double k = mean / theta;
+  //
   // calculate the value
   double val;
   //
@@ -69,17 +76,49 @@ double gamma_prob(double n, double k, double theta) {
   }
   if (isnan(val)) val = 1.0;
 
-  // add it to the hash
-  elm = (gamma_t*)malloc( sizeof(gamma_t) );
-  memset(elm, 0, sizeof(gamma_t));
-  elm->key.n = MAKE_INT(n);
-  elm->key.k = MAKE_INT(k);
-  elm->key.theta = MAKE_INT(theta);
-  elm->value = val;
-  HASH_ADD(hh, gammas, key, sizeof(gamma_key_t), elm);
-  
   // return the value
   return val;
+}
+
+char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
+  (*value) = 0;
+  double mean = MAKE_INT(mean_d);
+  double sd = MAKE_INT(sd_d);
+  double n = MAKE_INT(n_d);
+  //
+  gamma_mean_t *g_mean;
+  HASH_FIND(hh, gamma_mean, &mean, sizeof(double), g_mean);
+  if (!g_mean) {
+    g_mean = (gamma_mean_t*)malloc(sizeof(gamma_mean_t));
+    if (g_mean == NULL) return 0;
+    g_mean->mean = mean;
+    g_mean->sd_hash = NULL;
+    HASH_ADD(hh, gamma_mean, mean, sizeof(double), g_mean);
+  }
+  //
+  gamma_sd_t *g_sd;
+  HASH_FIND(hh, g_mean->sd_hash, &sd, sizeof(double), g_sd);
+  if (!g_sd) {
+    g_sd = (gamma_sd_t*)malloc(sizeof(gamma_sd_t));
+    if (g_sd == NULL) return 0;
+    g_sd->sd = sd;
+    g_sd->n_hash = NULL;
+    HASH_ADD(hh, g_mean->sd_hash, sd, sizeof(double), g_sd);
+  }
+  //
+  gamma_n_t *g_n;
+  HASH_FIND(hh, g_sd->n_hash, &n, sizeof(double), g_n);
+  if (!g_n) {
+    g_n = (gamma_n_t*)malloc(sizeof(gamma_n_t));
+    if (g_n == NULL) return 0;
+    g_n->n = n;
+    //g_n->value = gamma_mean_prob(mean,sd,n);
+    g_n->value = gamma_mean_prob(MAKE_DOUBLE(mean),MAKE_DOUBLE(sd),MAKE_DOUBLE(n)); // precision is already lost with the keys
+    HASH_ADD(hh, g_sd->n_hash, n, sizeof(double), g_n);
+  }
+  //
+  (*value) = g_n->value;
+  return 1;
 }
 
 // This is to be implemented with a hash table!

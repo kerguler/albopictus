@@ -81,11 +81,6 @@ void incubator_develop_survive(incubator *s,
     d_p = p_p = 0.5;
     d_r = d_mean;
     p_r = p_mean;
-  } else if (mode == 0) {
-    d_theta = d_sd * d_sd / d_mean;
-    d_k = d_mean / d_theta;
-    p_theta = p_sd * p_sd / p_mean;
-    p_k = p_mean / p_theta;
   }
   //
   *avec = 0;
@@ -96,6 +91,7 @@ void incubator_develop_survive(incubator *s,
   dummy->next = *s;
   incubator prev = dummy;
   double prob = 0.0;
+  double tmp;
   while (*s) {
     // Probability of dying or developing between day d and d+1
     //
@@ -104,7 +100,15 @@ void incubator_develop_survive(incubator *s,
       if (mode == 1)
         prob = 1.0 - nbinom_prob((unsigned int)floor((*s)->data.popdev),p_p,p_r);
       else if (mode == 0)
-        prob = 1.0 - gamma_prob((*s)->data.popdev,p_k,p_theta);
+        prob = 1.0 - gamma_mean_prob(p_mean,p_sd,(*s)->data.popdev);
+      else if (mode == 2) {
+        if (gamma_mean_hash(p_mean,p_sd,(*s)->data.popdev,&tmp))
+          prob = 1.0 - tmp;
+        else {
+          printf("ERROR: Gamma distribution failed!\n");
+          exit(1);
+        }
+      }
       (*s)->data.popsize *= prob;
       //
       if ((*s)->data.popsize < EPS) { // all dead, remove this batch
@@ -119,7 +123,15 @@ void incubator_develop_survive(incubator *s,
       if (mode == 1)
         prob = nbinom_prob((unsigned int)floor((*s)->data.popdev),d_p,d_r);
       else if (mode == 0)
-        prob = gamma_prob((*s)->data.popdev,d_k,d_theta);
+        prob = gamma_mean_prob(d_mean,d_sd,(*s)->data.popdev);
+      else if (mode == 2) {
+        if (gamma_mean_hash(d_mean,d_sd,(*s)->data.popdev,&tmp))
+          prob = tmp;
+        else {
+          printf("ERROR: Gamma distribution failed!\n");
+          exit(1);
+        }
+      }
       (*dev) = (*s)->data.popsize * prob;
       (*s)->data.popsize *= 1.0 - prob;
       //

@@ -20,7 +20,7 @@ class prepareModel:
             pass
         #
         try:
-            atexit.register(self.model.gamma_destroy)
+            atexit.register(self.model.gamma_mean_destroy)
         except:
             pass
         #

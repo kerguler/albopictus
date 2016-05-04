@@ -18,6 +18,15 @@ double time2here(void) {
 #define NumMetAea      11
 
 // --------------------------------------------
+// Gamma distribution
+// --------------------------------------------
+
+char gamma_mode = 2;
+void set_gamma_mode(char mode) {
+  gamma_mode = mode;
+}
+
+// --------------------------------------------
 // Incubators
 // --------------------------------------------
 
@@ -111,11 +120,6 @@ void empty_incubators(void) {
 //double timebefore = 0;
 //double timeof = 0;
 //double timeafter = 0;
-
-char gamma_mode = 0;
-void set_gamma_mode(char mode) {
-  gamma_mode = mode;
-}
 
 void calculate(double *photoperiod,
 	       double *mean_air_temp,
