@@ -478,7 +478,7 @@ void sim_model(double               *envar,
  endall:
   //
   empty_incubators();
-  gamma_mean_trim();
+  gamma_mean_check();
   //
   //printf("Times: %g %g %g\n",timebefore,timeof,timeafter);
 }

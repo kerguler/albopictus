@@ -15,8 +15,6 @@
 #define MAKE_INT(x) (round(1e3*(x)))
 #define MAKE_DOUBLE(x) (1e-3*(x))
 
-#define MAX_COUNT INT_MAX
-#define MIN_COUNT 1000
 #define MAX_MEM   100000000
 
 typedef struct {
@@ -27,14 +25,12 @@ typedef struct {
 
 typedef struct {
   double sd;
-  size_t count;
   gamma_n_t *n_hash;
   UT_hash_handle hh;
 } gamma_sd_t;
 
 typedef struct {
   double mean;
-  size_t count;
   gamma_sd_t *sd_hash;
   UT_hash_handle hh;
 } gamma_mean_t;
@@ -47,9 +43,7 @@ void gamma_mean_destroy(void) {
   gamma_sd_t *p2, *tmp2;
   gamma_n_t *p3, *tmp3;
   HASH_ITER(hh, gamma_mean, p, tmp) {
-    printf("gamma_mean = %g, count = %zu\n",p->mean,p->count);
     HASH_ITER(hh, p->sd_hash, p2, tmp2) {
-      printf("gamma_mean = %g, count = %zu, gamma_sd = %g, count = %zu\n",p->mean,p->count,p2->sd,p2->count);
       HASH_ITER(hh, p2->n_hash, p3, tmp3) {
         HASH_DEL(p2->n_hash, p3);
         free(p3);
@@ -61,52 +55,14 @@ void gamma_mean_destroy(void) {
     free(p);
   }
   gamma_mean_sd_mem = 0;
+  gamma_mean = NULL;
+  //
   printf("Gamma hash is successfully cleared\n");
 }
 
-void gamma_mean_trim(void) {
-  printf("Memory used by the Gamma hash: %zu\n",gamma_mean_sd_mem);
-  if (gamma_mean_sd_mem < MAX_MEM) return;
-  //
-  gamma_mean_t *p, *tmp;
-  gamma_sd_t *p2, *tmp2;
-  gamma_n_t *p3, *tmp3;
-  HASH_ITER(hh, gamma_mean, p, tmp) {
-    if (p->count < MIN_COUNT) {
-      HASH_ITER(hh, p->sd_hash, p2, tmp2) {
-        if (p2->count < MIN_COUNT) {
-          if ((p->count)-- == 0) { // gamma_mean is checked in the next cal to this function
-            printf("ERROR trimming the gamma hash!\n");
-            exit(1);
-          }
-          HASH_ITER(hh, p2->n_hash, p3, tmp3) {
-            HASH_DEL(p2->n_hash, p3);
-            free(p3);
-            if (gamma_mean_sd_mem < sizeof(gamma_n_t)) {
-              printf("ERROR trimming the gamma hash (n)!\n");
-              exit(1);
-            }
-            gamma_mean_sd_mem -= sizeof(gamma_n_t);
-          }
-          HASH_DEL(p->sd_hash, p2);
-          free(p2);
-          if (gamma_mean_sd_mem < sizeof(gamma_sd_t)) {
-            printf("ERROR trimming the gamma hash (sd)!\n");
-            exit(1);
-          }
-          gamma_mean_sd_mem -= sizeof(gamma_sd_t);
-        }
-      }
-      HASH_DEL(gamma_mean, p);
-      free(p);
-      if (gamma_mean_sd_mem < sizeof(gamma_mean_t)) {
-        printf("ERROR trimming the gamma hash (mean)!\n");
-        exit(1);
-      }
-      gamma_mean_sd_mem -= sizeof(gamma_mean_t);
-    }
-  }
-  printf("Gamma hash is trimmed down = %zu\n",gamma_mean_sd_mem);
+void gamma_mean_check(void) {
+  if (gamma_mean_sd_mem > MAX_MEM)
+    gamma_mean_destroy();
 }
 
 double gamma_mean_prob(double mean, double sd, double n) {
@@ -169,12 +125,9 @@ char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
     g_mean = (gamma_mean_t*)malloc(sizeof(gamma_mean_t));
     if (g_mean == NULL) return 0;
     g_mean->mean = mean;
-    g_mean->count = 1;
     g_mean->sd_hash = NULL;
     HASH_ADD(hh, gamma_mean, mean, sizeof(double), g_mean);
     gamma_mean_sd_mem += sizeof(gamma_mean_t);
-  } else {
-    g_mean->count = min( g_mean->count+1, MAX_COUNT );
   }
   //
   gamma_sd_t *g_sd;
@@ -183,12 +136,9 @@ char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
     g_sd = (gamma_sd_t*)malloc(sizeof(gamma_sd_t));
     if (g_sd == NULL) return 0;
     g_sd->sd = sd;
-    g_sd->count = 1;
     g_sd->n_hash = NULL;
     HASH_ADD(hh, g_mean->sd_hash, sd, sizeof(double), g_sd);
     gamma_mean_sd_mem += sizeof(gamma_sd_t);
-  } else {
-    g_sd->count = min( g_sd->count+1, MAX_COUNT );
   }
   //
   gamma_n_t *g_n;
@@ -197,7 +147,6 @@ char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
     g_n = (gamma_n_t*)malloc(sizeof(gamma_n_t));
     if (g_n == NULL) return 0;
     g_n->n = n;
-    //g_n->value = gamma_mean_prob(mean,sd,n);
     g_n->value = gamma_mean_prob(MAKE_DOUBLE(mean),MAKE_DOUBLE(sd),MAKE_DOUBLE(n)); // precision is already lost with the keys
     HASH_ADD(hh, g_sd->n_hash, n, sizeof(double), g_n);
     gamma_mean_sd_mem += sizeof(gamma_n_t);
