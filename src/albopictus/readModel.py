@@ -19,10 +19,10 @@ class prepareModel:
         except:
             pass
         #
-        try:
-            atexit.register(self.model.gamma_mean_destroy)
-        except:
-            pass
+        #try:
+        #    atexit.register(self.model.gamma_mean_destroy)
+        #except:
+        #    pass
         #
         try:
             self.model.rng_setup()

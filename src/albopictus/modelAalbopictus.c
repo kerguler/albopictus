@@ -469,11 +469,13 @@ void sim_model(double               *envar,
       //
       (*success) = 0;
       empty_incubators();
+      gamma_mean_destroy();
       return;
     }
   }
   (*success) = 1;
   empty_incubators();
+  gamma_mean_destroy();
   //
   //printf("Times: %g %g %g\n",timebefore,timeof,timeafter);
 }
