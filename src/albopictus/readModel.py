@@ -6,8 +6,16 @@ array_1d_int = npct.ndpointer(dtype=numpy.int32, ndim=1, flags='CONTIGUOUS')
 
 from scipy.stats import gamma
 
+exit_gamma = False
+exit_rng_setup = False
+exit_rng_destroy = False
+
 class prepareModel:
     def __init__(self,modelname):
+        global exit_gamma
+        global exit_rng_setup
+        global exit_rng_destroy
+        #
         import atexit
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
@@ -19,17 +27,23 @@ class prepareModel:
         except:
             pass
         #
-        #try:
-        #    atexit.register(self.model.gamma_mean_destroy)
-        #except:
-        #    pass
+        try:
+            if not exit_gamma:
+                atexit.register(self.model.gamma_mean_destroy)
+                exit_gamma = True
+        except:
+            pass
         #
         try:
-            self.model.rng_setup()
+            if not exit_rng_setup:
+                self.model.rng_setup()
+                exit_rng_setup = True
         except:
             pass
         try:
-            atexit.register(self.model.rng_destroy)
+            if not exit_rng_destroy:
+                atexit.register(self.model.rng_destroy)
+                exit_rng_destroy = True
         except:
             pass
         #

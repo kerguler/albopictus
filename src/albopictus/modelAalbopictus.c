@@ -26,6 +26,8 @@ void set_gamma_mode(char mode) {
   gamma_mode = mode;
 }
 
+#define gamma_sd 0.375
+
 // --------------------------------------------
 // Incubators
 // --------------------------------------------
@@ -468,14 +470,15 @@ void sim_model(double               *envar,
       incubator_print(conn4);
       //
       (*success) = 0;
-      empty_incubators();
-      gamma_mean_destroy();
-      return;
+      goto endall;
     }
   }
   (*success) = 1;
+  //
+ endall:
+  //
   empty_incubators();
-  gamma_mean_destroy();
+  gamma_mean_trim();
   //
   //printf("Times: %g %g %g\n",timebefore,timeof,timeafter);
 }
