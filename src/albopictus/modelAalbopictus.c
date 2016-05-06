@@ -21,12 +21,10 @@ double time2here(void) {
 // Gamma distribution
 // --------------------------------------------
 
-char gamma_mode = MODE_GAMMA_ALBO;
+char gamma_mode = MODE_GAMMA_MATRIX;
 void set_gamma_mode(char mode) {
   gamma_mode = mode;
 }
-
-#define gamma_sd 0.375
 
 // --------------------------------------------
 // Incubators
@@ -213,7 +211,7 @@ void calculate(double *photoperiod,
   double alpha_blood = poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);
   // Adult lifetime (from emergence)
   double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
-  double dd4s = gamma_sd*dd4;
+  double dd4s = gamma_matrix_sd*dd4;
   (*d4) = dd4;
   (*d4s) = dd4s;
 

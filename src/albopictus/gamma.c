@@ -156,6 +156,10 @@ char gamma_dist_hash(double mean_d, double sd_d, double n_d, double *value) {
   return 1;
 }
 
+/*
+  ---------------------------------------------------------------------------------
+*/
+
 // This is to be implemented with a hash table!
 double nbinom_prob(unsigned int k, double p, double n) {
   double val;
@@ -170,3 +174,56 @@ double nbinom_prob(unsigned int k, double p, double n) {
   return isnan(val) ? 1.0 : val;
 }
 
+/*
+  ---------------------------------------------------------------------------------
+*/
+
+double gamma_matrix[gamma_SIZE];
+double gamma_matrix_done = 0;
+
+void prepare_gamma_matrix(void) {
+  int i;
+  int n_i;
+  int mean_i;
+  double n;
+  double mean;
+  double sd;
+  
+  for (mean_i=0; mean_i<mean_i_MAX; mean_i++) {
+    for (n_i=0; n_i<n_i_MAX; n_i++) {
+      i = mean_i * row_SIZE + n_i;
+      mean = mean_i*mean_STEP;
+      if (mean==0) {
+        gamma_matrix[i] = 1.0;
+        continue;
+      }
+      n = n_i*n_STEP;
+      sd = gamma_matrix_sd * mean;
+      gamma_matrix[i] = gamma_dist_prob(mean,sd,n);
+      // printf("mean=%g, n=%g, i=%d, gamma=%g\n",mean,n,i,gamma_matrix[i]);
+    }
+  }
+  
+  gamma_matrix_done = 1;
+  printf("Gamma matrix is ready to use!\n");
+}
+
+double gamma_dist_matrix(double mean, double n) {
+  if (!gamma_matrix_done)
+    prepare_gamma_matrix();
+  //
+  double m1 = floor(mean / mean_STEP);
+  double m2 = ceil(mean / mean_STEP);
+  int i1 = m1 * row_SIZE + floor(n / n_STEP);
+  int i2 = m2 * row_SIZE + floor(n / n_STEP);
+  if (i1>=gamma_SIZE || i2>=gamma_SIZE) {
+    double tmp;
+    if (gamma_dist_hash(mean,gamma_matrix_sd*mean,n,&tmp)) {
+      return tmp;
+    } else {
+      printf("ERROR: Gamma distribution failed!\n");
+      exit(1);
+    }
+  }
+  return (i1==i2) ? gamma_matrix[i1] : gamma_matrix[i1] + (mean/mean_STEP - m1)*(gamma_matrix[i2]-gamma_matrix[i1])/(m2-m1); // Linear interpolation
+}

@@ -75,8 +75,8 @@ void incubator_develop_survive(incubator *s,
     2. expected development time (p_mean) and
     3. current age ((*s)->data.popdev)
    */
-  double d_theta, d_k, d_p, d_r;
-  double p_theta, p_k, p_p, p_r;
+  double d_p, d_r;
+  double p_p, p_r;
   if (mode == MODE_BINOM_RAW) {
     d_p = p_p = 0.5;
     d_r = d_mean;
@@ -111,6 +111,9 @@ void incubator_develop_survive(incubator *s,
           printf("ERROR: Gamma distribution failed!\n");
           exit(1);
         }
+        break;
+      case MODE_GAMMA_MATRIX:
+        prob = 1.0 - gamma_dist_matrix(p_mean,(*s)->data.popdev);
         break;
       default:
         printf("ERROR: Wrong distribution option selected: %d\n",mode);
