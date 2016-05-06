@@ -38,7 +38,7 @@ typedef struct {
 gamma_mean_t *gamma_mean = NULL;
 size_t gamma_mean_sd_mem = 0;
 
-void gamma_mean_destroy(void) {
+void gamma_dist_destroy(void) {
   gamma_mean_t *p, *tmp;
   gamma_sd_t *p2, *tmp2;
   gamma_n_t *p3, *tmp3;
@@ -60,12 +60,12 @@ void gamma_mean_destroy(void) {
   printf("Gamma hash is successfully cleared\n");
 }
 
-void gamma_mean_check(void) {
+void gamma_dist_check(void) {
   if (gamma_mean_sd_mem > MAX_MEM)
-    gamma_mean_destroy();
+    gamma_dist_destroy();
 }
 
-double gamma_mean_prob(double mean, double sd, double n) {
+double gamma_dist_prob(double mean, double sd, double n) {
   gsl_set_error_handler_off();
   double tmp;
   //
@@ -113,7 +113,7 @@ double gamma_mean_prob(double mean, double sd, double n) {
   return val;
 }
 
-char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
+char gamma_dist_hash(double mean_d, double sd_d, double n_d, double *value) {
   (*value) = 0;
   double mean = MAKE_INT(mean_d);
   double sd = MAKE_INT(sd_d);
@@ -147,7 +147,7 @@ char gamma_mean_hash(double mean_d, double sd_d, double n_d, double *value) {
     g_n = (gamma_n_t*)malloc(sizeof(gamma_n_t));
     if (g_n == NULL) return 0;
     g_n->n = n;
-    g_n->value = gamma_mean_prob(MAKE_DOUBLE(mean),MAKE_DOUBLE(sd),MAKE_DOUBLE(n)); // precision is already lost with the keys
+    g_n->value = gamma_dist_prob(MAKE_DOUBLE(mean),MAKE_DOUBLE(sd),MAKE_DOUBLE(n)); // precision is already lost with the keys
     HASH_ADD(hh, g_sd->n_hash, n, sizeof(double), g_n);
     gamma_mean_sd_mem += sizeof(gamma_n_t);
   }

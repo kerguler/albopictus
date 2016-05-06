@@ -77,7 +77,7 @@ void incubator_develop_survive(incubator *s,
    */
   double d_theta, d_k, d_p, d_r;
   double p_theta, p_k, p_p, p_r;
-  if (mode == 1) {
+  if (mode == MODE_BINOM_RAW) {
     d_p = p_p = 0.5;
     d_r = d_mean;
     p_r = p_mean;
@@ -97,17 +97,24 @@ void incubator_develop_survive(incubator *s,
     //
     // survival
     if (p_mean >= 0) {
-      if (mode == 1)
+      switch (mode) {
+      case MODE_BINOM_RAW:
         prob = 1.0 - nbinom_prob((unsigned int)floor((*s)->data.popdev),p_p,p_r);
-      else if (mode == 0)
-        prob = 1.0 - gamma_mean_prob(p_mean,p_sd,(*s)->data.popdev);
-      else if (mode == 2) {
-        if (gamma_mean_hash(p_mean,p_sd,(*s)->data.popdev,&tmp))
+        break;
+      case MODE_GAMMA_RAW:
+        prob = 1.0 - gamma_dist_prob(p_mean,p_sd,(*s)->data.popdev);
+        break;
+      case MODE_GAMMA_HASH:
+        if (gamma_dist_hash(p_mean,p_sd,(*s)->data.popdev,&tmp))
           prob = 1.0 - tmp;
         else {
           printf("ERROR: Gamma distribution failed!\n");
           exit(1);
         }
+        break;
+      default:
+        printf("ERROR: Wrong distribution option selected: %d\n",mode);
+        break;
       }
       (*s)->data.popsize *= prob;
       //
@@ -123,9 +130,9 @@ void incubator_develop_survive(incubator *s,
       if (mode == 1)
         prob = nbinom_prob((unsigned int)floor((*s)->data.popdev),d_p,d_r);
       else if (mode == 0)
-        prob = gamma_mean_prob(d_mean,d_sd,(*s)->data.popdev);
+        prob = gamma_dist_prob(d_mean,d_sd,(*s)->data.popdev);
       else if (mode == 2) {
-        if (gamma_mean_hash(d_mean,d_sd,(*s)->data.popdev,&tmp))
+        if (gamma_dist_hash(d_mean,d_sd,(*s)->data.popdev,&tmp))
           prob = tmp;
         else {
           printf("ERROR: Gamma distribution failed!\n");

@@ -19,7 +19,7 @@ void set_prdev(spop s) {
   int n;
   for (n=0; n<MAX_DAYS; n++) {
     // Probability of developing from day tmpn->development until tmpn->development+1
-    s->prdev[n] = gamma_mean_prob(s->development_time,s->development_time_sd,n);
+    s->prdev[n] = gamma_dist_prob(s->development_time,s->development_time_sd,n);
     // printf("%d %g\n",n,s->prdev[n]);
   }
 }

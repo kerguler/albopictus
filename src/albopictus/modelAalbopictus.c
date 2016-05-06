@@ -21,7 +21,7 @@ double time2here(void) {
 // Gamma distribution
 // --------------------------------------------
 
-char gamma_mode = 2;
+char gamma_mode = MODE_GAMMA_ALBO;
 void set_gamma_mode(char mode) {
   gamma_mode = mode;
 }
@@ -478,7 +478,7 @@ void sim_model(double               *envar,
  endall:
   //
   empty_incubators();
-  gamma_mean_check();
+  gamma_dist_check();
   //
   //printf("Times: %g %g %g\n",timebefore,timeof,timeafter);
 }
