@@ -21,7 +21,7 @@ double time2here(void) {
 // Gamma distribution
 // --------------------------------------------
 
-char gamma_mode = MODE_GAMMA_MATRIX;
+char gamma_mode = MODE_GAMMA_HASH;
 void set_gamma_mode(char mode) {
   gamma_mode = mode;
 }

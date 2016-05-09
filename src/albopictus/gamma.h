@@ -14,6 +14,8 @@
 #define mean_i_MAX 20100
 #define gamma_SIZE 8040000
 
+#define MAX_DAYS 1000
+
 #define gamma_matrix_sd 0.375
 
 void gamma_dist_destroy(void);

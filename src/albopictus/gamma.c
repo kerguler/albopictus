@@ -219,6 +219,7 @@ double gamma_dist_matrix(double mean, double n) {
   if (i1>=gamma_SIZE || i2>=gamma_SIZE) {
     double tmp;
     if (gamma_dist_hash(mean,gamma_matrix_sd*mean,n,&tmp)) {
+      printf("WARNING: Gamma hash is used instead of the matrix!\n");
       return tmp;
     } else {
       printf("ERROR: Gamma distribution failed!\n");
@@ -227,3 +228,4 @@ double gamma_dist_matrix(double mean, double n) {
   }
   return (i1==i2) ? gamma_matrix[i1] : gamma_matrix[i1] + (mean/mean_STEP - m1)*(gamma_matrix[i2]-gamma_matrix[i1])/(m2-m1); // Linear interpolation
 }
+

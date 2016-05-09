@@ -10,44 +10,17 @@
 #include "spop.h"
 #include "ran_gen.h"
 
-#define MAX_DAYS 1000
-
 extern gsl_rng *RAND_GSL;
 
-// This is for optimisation
-void set_prdev(spop s) {
-  int n;
-  for (n=0; n<MAX_DAYS; n++) {
-    // Probability of developing from day tmpn->development until tmpn->development+1
-    s->prdev[n] = gamma_dist_prob(s->development_time,s->development_time_sd,n);
-    // printf("%d %g\n",n,s->prdev[n]);
-  }
-}
-  
-spop spop_init(double surv, double dev_time_mean, double dev_time_sd) {
+spop spop_init(void) {
   spop pop = (spop)malloc(sizeof(struct population_st));
   people_data tmp = (people_data)malloc(sizeof(struct people_st));
   tmp->development = 0;
   tmp->batchsize = 0;
   tmp->next = 0;
   pop->people = tmp;
-  pop->development_time = dev_time_mean;
-  pop->development_time_sd = dev_time_sd;
-  pop->survival = surv;
   pop->popsize = 0;
-  pop->prdev = (double *)malloc(MAX_DAYS*sizeof(double));
-  set_prdev(pop);
   return pop;
-}
-
-void spop_setdevtime(spop s, double dev_time_mean, double dev_time_sd) {
-  s->development_time = dev_time_mean;
-  s->development_time_sd = dev_time_sd;
-  set_prdev(s);
-}
-
-void spop_setsurv(spop s, double surv) {
-  s->survival = surv;
 }
 
 void spop_add(spop s, int dev, int size){
@@ -87,7 +60,6 @@ void spop_empty(spop s) {
 void spop_destroy(spop *s) {
   spop_empty(*s);
   free((*s)->people);
-  free((*s)->prdev);
   free((*s));
 }
 
@@ -96,9 +68,6 @@ void spop_print(spop s) {
   int count;
   printf("/------------------>\n");
   printf("Population size: %d\n",s->popsize);
-  printf("Development time: %g\n",s->development_time);
-  printf("Development time (std): %g\n",s->development_time_sd);
-  printf("Daily survival: %g\n",s->survival);
   for (count=1; p; count++) {
     printf("%d\t%d\t%d\n",count,p->development,p->batchsize);
     p = p->next;
@@ -106,17 +75,43 @@ void spop_print(spop s) {
   printf("\\------------------>\n");
 }
 
-int spop_survive(spop s) {
+int spop_survive(spop   s,
+                 double d_mean, // development time
+                 double d_sd, // (if <= 0, fixed development, -d_mean)
+                 double p_mean, // survival time
+                 double p_sd, // (if <=0, fixed survival, -p_mean)
+                 char   mode) {
   int ret = 0;
   char remove = 0;
   int k;
+  double prob;
   people_data tmp, tmpn;
   for (tmp = s->people;
        tmp && tmp->next;
        ) {
     tmpn = tmp->next;
     // Survive
-    k = tmpn->batchsize - gsl_ran_binomial(RAND_GSL,s->survival,tmpn->batchsize);
+    if (p_sd > 0) { // survival time provided
+      switch (mode) { // probability of "death" happenning
+      case MODE_GAMMA_RAW:
+        prob = gamma_dist_prob(p_mean,p_sd,tmpn->development);
+        break;
+      case MODE_GAMMA_HASH:
+        if (!gamma_dist_hash(p_mean,p_sd,tmpn->development,&prob)) {
+          printf("ERROR: Gamma distribution failed!\n");
+          exit(1);
+        }
+        break;
+      default:
+        printf("ERROR: Wrong distribution option selected: %d\n",mode);
+        break;
+      }
+    } else { // fixed daily survival probability
+      prob = -p_mean;
+    }
+    k = tmpn->batchsize - gsl_ran_binomial(RAND_GSL,
+                                           prob,
+                                           tmpn->batchsize);
     // printf("%d will die from %g,%d,%d\n",k,s->survival,tmpn->development,tmpn->batchsize);
     tmpn->batchsize -= k;
     s->popsize -= k;
@@ -128,10 +123,28 @@ int spop_survive(spop s) {
       exit(1);
     } else {
       // Develop
+      if (d_sd > 0) { // development time provided
+        switch (mode) { // probability of "development" happenning
+        case MODE_GAMMA_RAW:
+          prob = gamma_dist_prob(d_mean,d_sd,tmpn->development);
+          break;
+        case MODE_GAMMA_HASH:
+          if (!gamma_dist_hash(d_mean,d_sd,tmpn->development,&prob)) {
+            printf("ERROR: Gamma distribution failed!\n");
+            exit(1);
+          }
+          break;
+        default:
+          printf("ERROR: Wrong distribution option selected: %d\n",mode);
+          break;
+        }
+      } else { // fixed daily development probability
+        prob = -d_mean;
+      }
       k = gsl_ran_binomial(RAND_GSL,
-                           s->prdev[tmpn->development],
+                           prob,
                            tmpn->batchsize);
-      // printf("%d will develop with %g probability in %d,%d\n",k,s->prdev[tmpn->development],tmpn->development,tmpn->batchsize);
+      // printf("%d will develop with %g probability in %d,%d\n",k,prob,tmpn->development,tmpn->batchsize);
       tmpn->development += 1;
       tmpn->batchsize -= k;
       s->popsize -= k;
