@@ -109,10 +109,10 @@ int spop_survive(spop   s,
     } else { // fixed daily survival probability
       prob = -p_mean;
     }
-    k = tmpn->batchsize - gsl_ran_binomial(RAND_GSL,
-                                           prob,
-                                           tmpn->batchsize);
-    // printf("%d will die from %g,%d,%d\n",k,s->survival,tmpn->development,tmpn->batchsize);
+    k = gsl_ran_binomial(RAND_GSL,
+                         prob,
+                         tmpn->batchsize);
+    // printf("%d will die from %g,%d,%d\n",k,prob,tmpn->development,tmpn->batchsize);
     tmpn->batchsize -= k;
     s->popsize -= k;
     if (tmpn->batchsize==0) {
