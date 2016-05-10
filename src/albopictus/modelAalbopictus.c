@@ -464,8 +464,13 @@ void sim_model(double               *envar,
     colegg[TIME] = egg;
     if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg) || isnan(percent_strong)) {
       //
-      // printf("ERROR: %g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong,d4,d4s);
-      incubator_print(conn4);
+      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",TIME,n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong);
+      printf("ERROR_PAR: ");
+      int i;
+      for (i=0; i<NumParAea; i++)
+        printf("%s%g",i==0?"":",",param[i]);
+      printf("\n");
+      // incubator_print(conn4);
       //
       (*success) = 0;
       goto endall;
