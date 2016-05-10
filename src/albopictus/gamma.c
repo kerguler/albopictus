@@ -15,7 +15,7 @@
 #define MAKE_INT(x) (round(1e3*(x)))
 #define MAKE_DOUBLE(x) (1e-3*(x))
 
-#define MAX_MEM   100000000
+#define MAX_MEM   1000000000
 
 typedef struct {
   double n;
