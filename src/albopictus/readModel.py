@@ -147,18 +147,19 @@ class prepareModel:
             ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
         return ret
     # for Chikungunya
+    def calcTProbs(self,probs,numreg):
+        tprobs = numpy.array(probs,dtype=numpy.float64).copy()
+        mask = numpy.diag(numpy.repeat(True,numreg))
+        for i in range(numreg):
+            tprobs[i][~mask[i]] = (1.0-tprobs[i][mask[i]]) * tprobs[i][~mask[i]] / numpy.sum(tprobs[i][~mask[i]])
+        for i in range(numreg):
+            tprobs[:,i] /= numpy.sum(tprobs[:,i:],axis=1)
+        return numpy.concatenate(tprobs)
+    #
     def simSpread(self,clim,probs,pr):
         numreg = numpy.array(len(clim),dtype=numpy.int32,ndmin=1)
-        mask = ~numpy.diag(numpy.repeat(True,numreg))
-        tprobs = []
-        envar = []
-        for i in numpy.arange(numreg):
-            a = probs[i].copy()
-            a[mask[i]] = numpy.cumsum(a[mask[i]])/numpy.sum(a[mask[i]])
-            tprobs.append(a)
-            envar.append(clim[i]['envar'])
-        tprobs = numpy.concatenate(tprobs)
-        envar = numpy.concatenate(envar)
+        tprobs = self.calcTProbs(probs,numreg)
+        envar = numpy.concatenate([clm['envar'] for clm in clim])
         fT = numpy.array(len(clim[0]['dates']),dtype=numpy.int32,ndmin=1)
         param = numpy.array(pr,dtype=numpy.float64)
         result = numpy.ndarray((self.nummet+1)*fT[0]*numreg[0],dtype=numpy.float64)
