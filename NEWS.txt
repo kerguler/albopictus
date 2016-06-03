@@ -1,12 +1,19 @@
 News
 ====
 
+0.7
+---
+
+* Release date: UNRELEASED*
+
+* The 'chikv' model is updated to model spread with stable population sizes in patches
+
 0.6
 ---
 
 * Release date: UNRELEASED*
 
-* The 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
+* The spatiotemporal 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
 
 0.5
 ---
