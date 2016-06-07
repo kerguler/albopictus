@@ -148,12 +148,15 @@ class prepareModel:
         return ret
     # for Chikungunya
     def calcTProbs(self,probs,numreg):
+        """
+        Prepares the propensity matrix for transmissions between regions
+        """
         tprobs = numpy.array(probs,dtype=numpy.float64).copy()
         mask = numpy.diag(numpy.repeat(True,numreg))
         for i in range(numreg):
             tprobs[i][~mask[i]] = (1.0-tprobs[i][mask[i]]) * tprobs[i][~mask[i]] / numpy.sum(tprobs[i][~mask[i]])
-        for i in range(numreg):
-            tprobs[:,i] /= numpy.sum(tprobs[:,i:],axis=1)
+        # for i in range(numreg):
+        #     tprobs[:,i] /= numpy.sum(tprobs[:,i:],axis=1)
         return numpy.concatenate(tprobs)
     #
     def simSpread(self,clim,probs,pr):
