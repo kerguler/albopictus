@@ -10,6 +10,23 @@
 #include "spop.h"
 #include "ran_gen.h"
 
+
+// Memory monitoring
+/*
+#define calloc(number,size) printmem(1,(void *)calloc((number),(size)),(number)*(size),__FILE__,__LINE__)
+#define malloc(size) printmem(1,(void *)malloc((size)),(size),__FILE__,__LINE__)
+#define free(pointer) {printmem(0,0,sizeof(*(pointer)),__FILE__,__LINE__); free((pointer));}
+void *printmem(int, void *, size_t, char *, int);
+
+void *printmem(int type, void *pointer, size_t size, char *filen, int linen) {
+  static size_t total = 0;
+  total += (type?1:-1)*size;
+  printf("%d: %s: %d: %d: %d\n",type,filen,linen,(int)(size),(int)(total));
+  return pointer;
+}
+*/
+// ---
+
 extern gsl_rng *RAND_GSL;
 
 spop spop_init(void) {
@@ -59,6 +76,8 @@ void spop_empty(spop s) {
 
 void spop_destroy(spop *s) {
   spop_empty(*s);
+  if ((*s)->people->next)
+    free((*s)->people->next);
   free((*s)->people);
   free((*s));
 }

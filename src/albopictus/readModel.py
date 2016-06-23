@@ -155,13 +155,11 @@ class prepareModel:
         mask = numpy.diag(numpy.repeat(True,numreg))
         for i in range(numreg):
             tprobs[i][~mask[i]] = (1.0-tprobs[i][mask[i]]) * tprobs[i][~mask[i]] / numpy.sum(tprobs[i][~mask[i]])
-        # for i in range(numreg):
-        #     tprobs[:,i] /= numpy.sum(tprobs[:,i:],axis=1)
         return numpy.concatenate(tprobs)
     #
     def simSpread(self,clim,probs,pr):
         numreg = numpy.array(len(clim),dtype=numpy.int32,ndmin=1)
-        tprobs = self.calcTProbs(probs,numreg)
+        tprobs = numpy.concatenate(probs)
         envar = numpy.concatenate([clm['envar'] for clm in clim])
         fT = numpy.array(len(clim[0]['dates']),dtype=numpy.int32,ndmin=1)
         param = numpy.array(pr,dtype=numpy.float64)

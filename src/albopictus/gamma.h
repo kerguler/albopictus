@@ -25,3 +25,5 @@ double gamma_dist_prob(double, double, double);
 double gamma_dist_matrix(double, double);
 void prepare_gamma_matrix(void);
 double nbinom_prob(unsigned int, double, double);
+
+
