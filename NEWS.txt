@@ -1,6 +1,15 @@
 News
 ====
 
+0.8
+---
+
+* Release date: UNRELEASED*
+
+* The 'chikv' model is updated to model spread with stable population sizes in patches
+* The Ae. albopictus population dynamics model v.0.3 is available as vector03
+* The prior distribution for vector03 is available as prior03
+
 0.7
 ---
 

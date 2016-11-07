@@ -8,7 +8,10 @@ src/albopictus/gamma.c
 src/albopictus/gamma.h
 src/albopictus/incubator.c
 src/albopictus/incubator.h
+src/albopictus/incubator03.c
+src/albopictus/incubator03.h
 src/albopictus/modelAalbopictus.c
+src/albopictus/modelAalbopictus03.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/ran_gen.c
 src/albopictus/ran_gen.h
@@ -24,3 +27,4 @@ src/albopictus.egg-info/top_level.txt
 src/albopictus/data/climate.json
 src/albopictus/data/posterior.json
 src/albopictus/data/prior.json
+src/albopictus/data/prior03.json

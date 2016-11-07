@@ -4,13 +4,17 @@ include src/albopictus/uthash.h
 include src/albopictus/ran_gen.h
 include src/albopictus/spop.h
 include src/albopictus/gamma.h
+include src/albopictus/incubator03.h
 include src/albopictus/incubator.h
 include src/albopictus/ran_gen.c
 include src/albopictus/spop.c
 include src/albopictus/gamma.c
+include src/albopictus/incubator03.c
 include src/albopictus/incubator.c
+include src/albopictus/modelAalbopictus03.c
 include src/albopictus/modelAalbopictus.c
 include src/albopictus/modelStochCHIKV.c
 include src/albopictus/data/climate.json
 include src/albopictus/data/posterior.json
+include src/albopictus/data/prior03.json
 include src/albopictus/data/prior.json

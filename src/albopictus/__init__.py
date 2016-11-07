@@ -57,6 +57,7 @@ import json
 from datetime import date
 
 param = json.load(open(pkg_resources.resource_filename(__name__, "data/posterior.json"),"r"))
+prior03 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior03.json"),"r"))
 prior = json.load(open(pkg_resources.resource_filename(__name__, "data/prior.json"),"r"))
 clim = json.load(open(pkg_resources.resource_filename(__name__, "data/climate.json"),"r"))
 for pr in clim:
@@ -70,6 +71,7 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 
 from readModel import prepareModel
 
+vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
 vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus.so"))
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"))
 
