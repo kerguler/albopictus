@@ -192,7 +192,7 @@ void calculate(double *photoperiod,
 
   double densd = expd(n23dens,param[alpha_n23_surv]);
   // Egg survival (diapausing eggs)
-  double p0_Ta  = flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);
+  double p0_Ta = flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);
   // Egg survival (non-diapausing eggs)
   double p1_Tw = dsig(Tw,param[alpha_p1_1],param[alpha_p1_2],param[alpha_p1_3]);
   // Larval survival
@@ -410,6 +410,10 @@ void sim_model(double               *envar,
 
   int TIME;
   for (TIME=-1; TIME<(*finalT)-1; ) {
+    //
+    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&d4,&d4s,&F4,&egg,&percent_strong,TIME);
+    TIME++;
+    //
     if ((*control)) { // Apply control measures
       // Breeding site reduction (date0 - date1 - daily fraction)
       if (TIME>=controlpar[0] && TIME<controlpar[1]) {
@@ -425,14 +429,14 @@ void sim_model(double               *envar,
         incubator_update(conn1,update,par);
         incubator_update(conn10,update,par);
       }
-      // Larvae reduction
+      // Larva reduction
       if (TIME>=controlpar[6] && TIME<controlpar[7]) {
         n2 *= controlpar[8];
         double par[2];
         par[0] = controlpar[8]; par[1] = 0;
         incubator_update(conn2,update,par);
       }
-      // Pupae reduction
+      // Pupa reduction
       if (TIME>=controlpar[9] && TIME<controlpar[10]) {
         n3 *= controlpar[11];
         double par[2];
@@ -448,8 +452,6 @@ void sim_model(double               *envar,
         incubator_update(conn4,update,par);
       }
     }
-    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&d4,&d4s,&F4,&egg,&percent_strong,TIME);
-    TIME++;
     colT[TIME] = TIME;
     coln0[TIME] = n0;
     coln1[TIME] = n1;

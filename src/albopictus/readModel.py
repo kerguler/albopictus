@@ -99,38 +99,38 @@ class prepareModel:
                                         array_1d_double,
                                         array_1d_int,
                                         array_1d_int,
+                                        array_1d_int,
                                         array_1d_double,
                                         array_1d_int]
         except:
             pass
+        #
+        try:
+            self.model.gamma_pdf
+            self.model.gamma_pdf.restype = ctypes.c_double
+            self.model.gamma_pdf.argtypes = [ctypes.c_double,
+                                             ctypes.c_double,
+                                             ctypes.c_double]
+        except:
+            pass
     #
-    def simPar(self,clim,pr):
-        fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
-        envar = numpy.array(clim['envar'],dtype=numpy.float64)
-        param = numpy.array(pr,dtype=numpy.float64)
-        control = numpy.array(0,dtype=numpy.int32,ndmin=1)
-        result = numpy.ndarray((self.nummet+1)*fT[0],dtype=numpy.float64)
-        success = numpy.array(0,dtype=numpy.int32,ndmin=1)
-        ret = self.sim_model(envar,
-                             param,
-                             fT,
-                             control,
-                             result,
-                             success)
-        ret = {
-            'colT':result[0:fT[0]],
-            'success':success
-            }
-        for n in range(self.nummet):
-            ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
-        return ret
-    # for albopictus
-    def simControl(self,clim,pr,cpr):
+    def gamma_pdf(self,n,mean,sd):
+        """
+        Probability density function of the gamma distribution with given mean and standard deviation
+        """
+        if not hasattr(n, "__iter__"):
+            return self.model.gamma_pdf(n,mean,sd)
+        return [self.model.gamma_pdf(nn,mean,sd) for nn in n]
+    #
+    def simPar(self,clim,pr,cpr=[]):
+        """
+        Main simulation routine
+        """
         fT = numpy.array(len(clim['dates']),dtype=numpy.int32,ndmin=1)
         envar = numpy.array(clim['envar'],dtype=numpy.float64)
         param = numpy.array(pr,dtype=numpy.float64)
         param = numpy.hstack([param,cpr])
-        control = numpy.array(1,dtype=numpy.int32,ndmin=1)
+        control = numpy.array(len(cpr)!=0,dtype=numpy.int32,ndmin=1)
         result = numpy.ndarray((self.nummet+1)*fT[0],dtype=numpy.float64)
         success = numpy.array(0,dtype=numpy.int32,ndmin=1)
         ret = self.sim_model(envar,
@@ -157,18 +157,24 @@ class prepareModel:
             tprobs[i][~mask[i]] = (1.0-tprobs[i][mask[i]]) * tprobs[i][~mask[i]] / numpy.sum(tprobs[i][~mask[i]])
         return numpy.concatenate(tprobs)
     #
-    def simSpread(self,clim,probs,pr):
+    def simSpread(self,clim,probs,pr,cpr=[]):
+        """
+        Main spatiotemporal simulation routine
+        """
         numreg = numpy.array(len(clim),dtype=numpy.int32,ndmin=1)
         tprobs = numpy.concatenate(probs)
         envar = numpy.concatenate([clm['envar'] for clm in clim])
         fT = numpy.array(len(clim[0]['dates']),dtype=numpy.int32,ndmin=1)
         param = numpy.array(pr,dtype=numpy.float64)
+        param = numpy.hstack([param,cpr])
+        control = numpy.array(len(cpr)!=0,dtype=numpy.int32,ndmin=1)
         result = numpy.ndarray((self.nummet+1)*fT[0]*numreg[0],dtype=numpy.float64)
         success = numpy.ndarray(numreg[0],dtype=numpy.int32)
         ret = self.sim_spread(envar,
                               tprobs,
                               param,
                               fT,
+                              control,
                               numreg,
                               result,
                               success)

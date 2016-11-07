@@ -6,6 +6,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_sf_gamma.h>
 #include <gsl/gsl_cdf.h>
+#include <gsl/gsl_randist.h>
 #include "uthash.h"
 #include "gamma.h"
 
@@ -63,6 +64,12 @@ void gamma_dist_destroy(void) {
 void gamma_dist_check(void) {
   if (gamma_mean_sd_mem > MAX_MEM)
     gamma_dist_destroy();
+}
+
+double gamma_pdf(double n, double mean, double sd) {
+  double theta = sd * sd / mean;
+  double k = mean / theta;
+  return gsl_ran_gamma_pdf(n,k,theta);
 }
 
 double gamma_dist_prob(double mean, double sd, double n) {

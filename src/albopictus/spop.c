@@ -125,13 +125,15 @@ int spop_survive(spop   s,
         printf("ERROR: Wrong distribution option selected: %d\n",mode);
         break;
       }
-    } else { // fixed daily survival probability
+    } else { // fixed daily probability of death
       prob = -p_mean;
     }
     k = gsl_ran_binomial(RAND_GSL,
                          prob,
                          tmpn->batchsize);
+    //
     // printf("%d will die from %g,%d,%d\n",k,prob,tmpn->development,tmpn->batchsize);
+    //    
     tmpn->batchsize -= k;
     s->popsize -= k;
     if (tmpn->batchsize==0) {

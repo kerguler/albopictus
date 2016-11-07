@@ -20,6 +20,7 @@
 
 void gamma_dist_destroy(void);
 void gamma_dist_check(void);
+double gamma_pdf(double, double, double);
 char gamma_dist_hash(double, double, double, double *);
 double gamma_dist_prob(double, double, double);
 double gamma_dist_matrix(double, double);

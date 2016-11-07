@@ -38,8 +38,8 @@ Examples
      import albopictus as aa
 
      # The following line simulates the model at the first environmental grid point
-     # of Bologna using the first parameter vector of the posterior mode Q1.
-     sim = aa.vector.simPar(aa.clim['BO'][0],aa.param['Q1'][0])
+     # of Bologna using the first parameter vector of the posterior mode Q4.
+     sim = aa.vector.simPar(aa.clim['BO'][0],aa.param['Q4'][0])
 
      import pylab
 
