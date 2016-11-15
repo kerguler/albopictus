@@ -33,6 +33,14 @@ vector.simPar
          pr:
               an array of size vector.numpar holding the parameter vector
      
+         cpr: (optional)
+              an array of vector control parameters of the following order:
+              [day0, dayf, daily fraction of breeding site reduction,
+               day0, dayf, daily fraction of egg reduction,
+               day0, dayf, daily fraction of larva reduction,
+               day0, dayf, daily fraction of pupa reduction,
+               day0, dayf, daily fraction of adult vector reduction]
+     
 Examples
 
      import albopictus as aa
@@ -45,6 +53,69 @@ Examples
 
      pylab.ylim([0,50])
      pylab.plot(aa.clim['BO'][0]['dates'],sim['colegg'])
+     pylab.show()
+
+chikv.simSpread
+
+    Simulate the chikungunya transmission model for a given/simulated vector abundance dataset
+
+    Parameters
+    ----------
+
+         clim:
+              vector abundance dataset to be used
+              it must be a dictionary with keys 'dates' and 'envar'
+              clim['dates'] holds and array of dates corresponding to each data point with a length of final_time
+              clim['envar'] should hold an array with the following data in the given order and size
+                   adult abundance (coln4f) [final_time]
+                   expected adult lifespan (cold4) [final_time]
+                   standard deviation of adult lifespan (cold4s)  [final_time]
+                   expected daily fecundity (colF4)  [final_time]
+                   number of people [1]
+
+         probs:
+              n x n matrix of transmission probabilities between patches 
+              (n: the number of patches)
+              diagonal elements represent the daily probability of staying in a patch
+              non diagonal entries will be normalised per row to yield a row sum of 1
+
+         pr:
+              an array of size vector.numpar holding the parameter vector
+
+         cpr: (optional)
+              an array of vector control parameters of the following order:
+              [day0, dayf, daily fraction of breeding site reduction,
+               day0, dayf, daily fraction of egg reduction,
+               day0, dayf, daily fraction of larva reduction,
+               day0, dayf, daily fraction of pupa reduction,
+               day0, dayf, daily fraction of adult vector reduction]
+     
+Examples
+
+     import numpy as np
+     import albopictus as aa
+
+     # The following line simulates the model at the first environmental grid point
+     # of Bologna using the first parameter vector of the posterior mode Q4.
+     sim = aa.vector.simPar(aa.clim['BO'][0],aa.param['Q4'][0])
+
+     # This will generate the vector abundance dataset required for transmission simulation
+     clim = [{
+          'dates': aa.clim['BO'][0]['dates'],
+          'envar': sim['coln4f'].tolist()+sim['cold4'].tolist()+sim['cold4s'].tolist()+sim['colF4'].tolist()+[100]
+     }]
+
+     # The following lines simulate chikv transmission for the simulated abundance data
+     # using the first parameter vector of the posterior mode QI.
+     pr = np.array(aa.param['QI'][0]).copy()
+     pr[aa.chikv.parids['introduce_time']] = 200
+     simc = aa.chikv.simSpread(clim,[[1.0]],pr)
+
+     import pylab
+
+     pylab.xlim([aa.clim['BO'][0]['dates'][0],aa.clim['BO'][0]['dates'][500]])
+     pylab.plot(aa.clim['BO'][0]['dates'],sim['coln4f'])
+     pylab.plot(aa.clim['BO'][0]['dates'],simc[0]['colnInew'])
      pylab.show()
 
 """
