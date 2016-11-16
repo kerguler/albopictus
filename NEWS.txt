@@ -4,11 +4,13 @@ News
 0.8
 ---
 
-* Release date: UNRELEASED*
+* Release date: 16 November 2016
 
 * The 'chikv' model is updated to model spread with stable population sizes in patches
 * The Ae. albopictus population dynamics model v.0.3 is available as vector03
 * The prior distribution for vector03 is available as prior03
+* This is the model as presented in
+  Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2016 (submitted)
 
 0.7
 ---

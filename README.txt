@@ -16,6 +16,7 @@ Contents
 The model requires the following packages, which are not included in this package:
 
 	numpy
+    
 	pkg_resources
 
 2) Linux installation
@@ -33,7 +34,9 @@ Alternatively, you can download the source code from PyPI and run pip on the lat
 
 If pip is not available, you can unpack the package contents and perform a manual install.
 	tar -xvzf albopictus-xxx.tar.gz
+    
 	cd albopictus-xxx
+    
 	python setup.py install
 
 This will install the package in the site-packages directory of your python distribution. If you do not have root privileges or you wish to install to a different directory, you can use the --prefix argument.
@@ -53,6 +56,7 @@ Usage
 Information for usage and contents are documented in the package, and can be accessed with the help utility.
 
 	import albopictus
+    
 	help(albopictus)
 
 Credits
