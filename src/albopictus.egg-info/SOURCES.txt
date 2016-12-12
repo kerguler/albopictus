@@ -13,6 +13,7 @@ src/albopictus/incubator03.h
 src/albopictus/modelAalbopictus.c
 src/albopictus/modelAalbopictus03.c
 src/albopictus/modelStochCHIKV.c
+src/albopictus/modelStochSand.c
 src/albopictus/ran_gen.c
 src/albopictus/ran_gen.h
 src/albopictus/readModel.py

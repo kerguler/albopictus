@@ -14,6 +14,7 @@ include src/albopictus/incubator.c
 include src/albopictus/modelAalbopictus03.c
 include src/albopictus/modelAalbopictus.c
 include src/albopictus/modelStochCHIKV.c
+include src/albopictus/modelStochSand.c
 include src/albopictus/data/climate.json
 include src/albopictus/data/posterior.json
 include src/albopictus/data/prior03.json

@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: albopictus
-Version: 0.8
+Version: 0.9
 Summary: Environmentally-driven population dynamics model of Aedes albopictus
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/0.8
+Download-URL: https://github.com/kerguler/albopictus/tarball/0.9
 Description: Environmentally-driven population dynamics model of Aedes albopictus
         ====================================================================
         
@@ -76,6 +76,13 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         
         News
         ====
+        
+        0.9
+        ---
+        
+        * Release date: UNRELEASED*
+        
+        * Preliminary study for a sand fly model
         
         0.8
         ---

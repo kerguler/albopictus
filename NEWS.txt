@@ -1,6 +1,13 @@
 News
 ====
 
+0.9
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a sand fly model
+
 0.8
 ---
 
