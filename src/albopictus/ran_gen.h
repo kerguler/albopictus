@@ -1,4 +1,4 @@
-void rng_setup();
-void rng_setup_seed(unsigned int seed);
+void rng_setup(char*);
+void rng_setup_seed(unsigned int, char*);
 void rng_destroy();
-double rng_exponential(const double mu);
+double rng_exponential(const double);

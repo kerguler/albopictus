@@ -1,6 +1,7 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <math.h>
 #include "ran_gen.h"
@@ -9,11 +10,14 @@
 const gsl_rng_type *R_TYPE;
 gsl_rng *RAND_GSL;
 
-void rng_setup()
+char *label;
+
+void rng_setup(char *lab)
 //Can also run like:
 //GSL_RNG_TYPE="taus" GSL_RNG_SEED=123 ./GDirect
 {
-  fprintf(stderr,"Setting up RNG\n");
+  label = strdup(lab);
+  fprintf(stderr,"Setting up RNG %s\n",label);
   FILE *dev;
 
   unsigned int i;
@@ -31,11 +35,12 @@ void rng_setup()
   gsl_rng_set(RAND_GSL,i);
 }
 
-void rng_setup_seed(unsigned int seed)
+void rng_setup_seed(unsigned int seed, char *lab)
 //Can also run like:
 //GSL_RNG_TYPE="taus" GSL_RNG_SEED=123 ./GDirect
 {
-  fprintf(stderr,"Setting up RNG with seed = %u\n",seed);
+  label = strdup(lab);
+  fprintf(stderr,"Setting up RNG %s with seed = %u\n",label,seed);
 
   gsl_rng_env_setup();
 
@@ -48,7 +53,7 @@ void rng_destroy()
 {
   gsl_rng_free(RAND_GSL);
 
-  fprintf(stderr,"RNG destroyed\n");
+  fprintf(stderr,"RNG %s destroyed\n",label);
 }
 
 double rng_exponential(const double mu)

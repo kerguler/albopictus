@@ -142,8 +142,8 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 
 from readModel import prepareModel
 
-vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
-vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus.so"))
-chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"))
-sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"))
+vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"), "vector03")
+vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus.so"), "vector")
+chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
+sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
 
