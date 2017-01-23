@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: albopictus
-Version: 0.9
+Version: 1.0
 Summary: Environmentally-driven population dynamics model of Aedes albopictus
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/0.9
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.0
 Description: Environmentally-driven population dynamics model of Aedes albopictus
         ====================================================================
         
@@ -76,6 +76,14 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         
         News
         ====
+        
+        1.0
+        ---
+        
+        * Release date: UNRELEASED*
+        
+        * Revised version of the chikungunya model as presented in
+          Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2017 (under review)
         
         0.9
         ---
