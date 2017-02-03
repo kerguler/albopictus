@@ -17,6 +17,13 @@ class prepareModel:
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
         #
         try:
+            self.set_sim_mode = self.model.set_sim_mode
+            self.set_sim_mode.restype = None
+            self.set_sim_mode.argtypes = [npct.c_char]
+        except:
+            pass
+        #
+        try:
             self.set_gamma_mode = self.model.set_gamma_mode
             self.set_gamma_mode.restype = None
             self.set_gamma_mode.argtypes = [npct.c_char]
