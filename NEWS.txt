@@ -4,7 +4,7 @@ News
 1.0
 ---
 
-* Release date: UNRELEASED*
+* Release date: 14 February 2017
 
 * Revised version of the chikungunya model as presented in
   Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2017 (under review)
