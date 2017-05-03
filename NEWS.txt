@@ -1,6 +1,13 @@
 News
 ====
 
+1.1
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a global albopictus-chikungunya model
+
 1.0
 ---
 
