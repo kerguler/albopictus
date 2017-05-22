@@ -1,0 +1,7 @@
+ref	dens	surv
+"Gavotte et al., 2009"	50	0.988458624
+"Gavotte et al., 2009"	125	0.98576749
+"Gavotte et al., 2009"	250	0.990271721
+"Gavotte et al., 2009"	500	0.975004
+"Gavotte et al., 2009"	1000	0.938130153
+"Gavotte et al., 2009"	2000	0.9402638

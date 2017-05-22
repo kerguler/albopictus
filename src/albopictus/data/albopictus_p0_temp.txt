@@ -1,0 +1,1 @@
+ref	temp	surv"Thomas et al., 2012"	0	0.831409"Thomas et al., 2012"	-2	0.632206"Thomas et al., 2012"	-5	0.432395"Thomas et al., 2012"	-7	0.233515"Thomas et al., 2012"	-10	0.082084"Thomas et al., 2012"	-12	0"Thomas et al., 2012"	-15	0

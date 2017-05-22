@@ -1,0 +1,25 @@
+ref	temp	dev
+"Briegel & Timmermann, 2001"	17	64
+"Briegel & Timmermann, 2001"	27	15.2
+"Briegel & Timmermann, 2001"	32	22.8
+"Delatte et al., 2009"	15	38.59
+"Delatte et al., 2009"	25	30
+"Delatte et al., 2009"	35	19.86
+"Braks et al., 2006"	25	51.11
+"L嗹enberg Neto & Navarro-Silva, 2004"	23.5	35.9
+"Muturi et al., 2011 (Effect ofﾉ)"	20	23.82
+"Muturi et al., 2011 (Effect ofﾉ)"	25	26.21
+"Muturi et al., 2011 (Effect ofﾉ)"	30	31.11
+"O'Donnell & Armbruster, 2010"	21	24.5
+"Tsuda et al., 1994"	27	30
+"Tsuda et al., 1994"	27	31.7
+"Udaka, 1959"	14	59
+"Udaka, 1959"	20	49
+"Udaka, 1959"	23	41
+"Udaka, 1959"	27	61
+"Udaka, 1959"	25	58
+"Calado & Silva, 2002 (Influ刃ciaﾉ)"	15	19.45
+"Calado & Silva, 2002 (Influ刃ciaﾉ)"	20	59.35
+"Calado & Silva, 2002 (Influ刃ciaﾉ)"	25	61.55
+"Calado & Silva, 2002 (Influ刃ciaﾉ)"	30	42.72
+"Hein, 1975 II (From Hawley, 1987)"	25	45

@@ -1,0 +1,7 @@
+ref	dens	xdev
+"Gavotte et al., 2009"	50	1.4576053
+"Gavotte et al., 2009"	125	1.530485565
+"Gavotte et al., 2009"	250	2.113527685
+"Gavotte et al., 2009"	500	2.769450069
+"Gavotte et al., 2009"	1000	2.623689539
+"Gavotte et al., 2009"	2000	3.206731659

@@ -1,0 +1,5 @@
+ref	temp	xdev
+"Briegel & Timmermann, 2001"	12	1.178571429
+"Briegel & Timmermann, 2001"	17	1.764705882
+"Briegel & Timmermann, 2001"	27	2.125
+"Briegel & Timmermann, 2001"	32	1.857142857

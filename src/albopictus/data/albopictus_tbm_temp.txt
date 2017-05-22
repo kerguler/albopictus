@@ -1,0 +1,1 @@
+ref	temp	days"Delatte et al., 2009"	15	15.0"Delatte et al., 2009"	20	5.39"Delatte et al., 2009"	25	5.54"Delatte et al., 2009"	30	4.17"Delatte et al., 2009"	35	10.83"Calado and Silva 2002b"	15	8.8"Calado and Silva 2002b"	20	5.9"Calado and Silva 2002b"	25	3.4"Calado and Silva 2002b"	30	3.0

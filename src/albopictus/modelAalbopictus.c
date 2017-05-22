@@ -15,7 +15,7 @@ double time2here(void) {
 #define min(a,b) ((a)<(b)?(a):(b))
 
 #define NumParAea      48
-#define NumMetAea      11
+#define NumMetAea      12
 
 // --------------------------------------------
 // Gamma distribution
@@ -122,25 +122,26 @@ void empty_incubators(void) {
 //double timeafter = 0;
 
 void calculate(double *photoperiod,
-	       double *mean_air_temp,
-	       double *daily_precipitation,
-	       double *popdens,
-	       double *param,
-	       double *n0,
-	       double *n10,
-	       double *n1,
-	       double *n2,
-	       double *n3,
-	       double *n4fj,
-	       double *n4f,
-	       double *nBS,
-	       double *K,
-	       double *d4,
-	       double *d4s,
-	       double *F4,
-	       double *egg,
-	       double *percent_strong,
-	       int    TIME) {
+               double *mean_air_temp,
+               double *daily_precipitation,
+               double *popdens,
+               double *param,
+               double *n0,
+               double *n10,
+               double *n1,
+               double *n2,
+               double *n3,
+               double *n4fj,
+               double *n4f,
+               double *nBS,
+               double *K,
+               double *d4,
+               double *d4s,
+               double *F4,
+               double *egg,
+               double *percent_strong,
+               double *diap,
+               int    TIME) {
   double par[2];
 
   if (TIME==-1) {
@@ -157,6 +158,7 @@ void calculate(double *photoperiod,
     (*d4s) = 0.0;
     (*F4) = 0.0;
     (*egg) = (*n0) + (*n10) + (*n1);
+    (*diap) = 0;
     (*percent_strong) = 0.0;
 
     if ((*n10) > 0) incubator_add(&conn10,(*n10),0.0);
@@ -246,6 +248,7 @@ void calculate(double *photoperiod,
   double hatch = 0;
   //
   if (short_days && cold_days) { // DIAPAUSE
+    (*diap) = 1.0;
     // The fraction of tagged eggs increases linearly
     (*percent_strong) = min(1.0,(*percent_strong)+param[alpha_rate_strong]);
     //
@@ -253,7 +256,9 @@ void calculate(double *photoperiod,
     incubator_add(&conn1,bigF4*(*n4f)*(1.0-(*percent_strong)),0.0); // Normal eggs
     //
   } else { // NO DIAPAUSE
+    (*diap) = 0.0;
     if (!short_days && !cold_days) { // EXIT FROM DIAPAUSE
+      (*diap) = 0.5;
       // Prepare diapausing eggs for hatching
       double vn0_n10 = (*n0)*param[alpha_rate_normal];
       (*n0) -= vn0_n10; // Diapausing eggs
@@ -301,7 +306,7 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg",
+    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg","coldiap",
     "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.strong","PP.normal","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
   };
   int i;
@@ -391,6 +396,7 @@ void sim_model(double               *envar,
   double *cold4s  = result + 9*(*finalT);
   double *colF4   = result + 10*(*finalT);
   double *colegg  = result + 11*(*finalT);
+  double *coldiap = result + 12*(*finalT);
 
   double n0 = 0;
   double n1 = 0;
@@ -404,6 +410,7 @@ void sim_model(double               *envar,
   double d4s = 0;
   double F4 = 0;
   double egg = 0;
+  double diap = 0;
 
   double percent_strong = 0;
   double n10 = 0;
@@ -411,7 +418,7 @@ void sim_model(double               *envar,
   int TIME;
   for (TIME=-1; TIME<(*finalT)-1; ) {
     //
-    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&d4,&d4s,&F4,&egg,&percent_strong,TIME);
+    calculate(photoperiod,mean_air_temp,daily_precipitation,popdens,param,&n0,&n10,&n1,&n2,&n3,&n4fj,&n4f,&nBS,&K,&d4,&d4s,&F4,&egg,&percent_strong,&diap,TIME);
     TIME++;
     //
     if ((*control)) { // Apply control measures
@@ -464,9 +471,10 @@ void sim_model(double               *envar,
     cold4s[TIME] = d4s;
     colF4[TIME] = F4;
     colegg[TIME] = egg;
-    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg) || isnan(percent_strong)) {
+    coldiap[TIME] = diap;
+    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg) || isnan(percent_strong) || isnan(diap)) {
       //
-      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",TIME,n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong);
+      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",TIME,n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong,diap);
       printf("ERROR_PAR: ");
       int i;
       for (i=0; i<NumParAea; i++)

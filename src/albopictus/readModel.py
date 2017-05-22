@@ -5,6 +5,7 @@ array_1d_double = npct.ndpointer(dtype=numpy.float64, ndim=1, flags='CONTIGUOUS'
 array_1d_int = npct.ndpointer(dtype=numpy.int32, ndim=1, flags='CONTIGUOUS')
 
 from scipy.stats import gamma
+from accessory import calcEnsemble
 
 class prepareModel:
     def __init__(self,modelname,label):
@@ -144,6 +145,49 @@ class prepareModel:
             }
         for n in range(self.nummet):
             ret[self.metnames[n]] = result[((n+1)*fT[0]):((n+2)*fT[0])]
+        return ret
+    # 
+    def simParMat(self,clim,parmat,boil=None,control=[],ensemble=False):
+        """
+        Wrapper routine for simPar with a list of parameters sampled from the posterior
+        """
+        if boil is None:
+            boil = {}
+            for elm in self.metnames:
+                boil[elm] = []
+        for pr in parmat:
+            s = self.simPar(clim,pr,control)
+            if (s.__class__.__name__!='dict' or not s['success']):
+                return {'success':False}
+            for elm in boil.keys():
+                boil[elm].append(s[elm].copy())
+        if ensemble:
+            for elm in boil.keys():
+                boil[elm] = calcEnsemble(boil[elm])
+        else:
+            for elm in boil.keys():
+                boil[elm] = numpy.mean(boil[elm],axis=0)
+        boil['colT'] = s['colT'].copy()
+        boil['success'] = True
+        return boil
+    # for the calculation of HSI
+    def simParPosterior(self,clim,parmat,weeksBefore=52):
+        """
+        Wrapper routine to calculate RSI and HSI
+        """
+        sims = [sim['coln4f'][(7*weeksBefore):] for sim in [self.simPar(clim,prm) for prm in parmat] if sim['success'][0]==1]
+        if len(sims) == 0:
+            return {'sim':numpy.nan,
+                    'mean':numpy.nan,
+                    'sindex':numpy.nan}
+        elif len(sims) == 1:
+            return {'sim':numpy.array(sims),
+                    'mean':numpy.array(sims),
+                    'sindex':numpy.mean(sims)}
+        ret = {}
+        ret['sim'] = numpy.array(sims)
+        ret['mean'] = numpy.mean(ret['sim'],axis=0)
+        ret['sindex'] = numpy.mean(ret['mean'])
         return ret
     # for Chikungunya
     def calcTProbs(self,probs,numreg):

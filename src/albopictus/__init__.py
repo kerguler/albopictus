@@ -147,3 +147,9 @@ vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictu
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
 sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
 
+# Accessories -------------------------------------------- //
+
+from accessory import *
+
+from plotPos import plotPosterior
+

@@ -1,6 +1,13 @@
 News
 ====
 
+1.2
+---
+
+* Release date: UNRELEASED*
+
+* Includes plotting routines for prior and posterior distributions
+
 1.1
 ---
 

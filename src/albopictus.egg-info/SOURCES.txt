@@ -4,6 +4,7 @@ README.txt
 setup.cfg
 setup.py
 src/albopictus/__init__.py
+src/albopictus/accessory.py
 src/albopictus/gamma.c
 src/albopictus/gamma.h
 src/albopictus/incubator.c
@@ -14,9 +15,11 @@ src/albopictus/modelAalbopictus.c
 src/albopictus/modelAalbopictus03.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
+src/albopictus/plotPos.py
 src/albopictus/ran_gen.c
 src/albopictus/ran_gen.h
 src/albopictus/readModel.py
+src/albopictus/setPrior.py
 src/albopictus/spop.c
 src/albopictus/spop.h
 src/albopictus/uthash.h
