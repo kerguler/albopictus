@@ -1,3 +1,5 @@
+from distutils.sysconfig import get_python_lib
+import pkg_resources
 import numpy
 
 def ssig(x,a1,a2,a3):
@@ -30,19 +32,19 @@ def fpow(x,a1,a2):
     tmp[tmp<1.0] = 1.0
     return tmp
 
-data = {'n23.comb.dens': numpy.loadtxt("data/albopictus_n23_dev.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'n23.comb.temp': numpy.loadtxt("data/albopictus_n23_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'n23.surv': numpy.loadtxt("data/albopictus_n23_surv.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'tbm.temp': numpy.loadtxt("data/albopictus_tbm_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'F4.temp': numpy.loadtxt("data/albopictus_F4_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd1.temp': numpy.loadtxt("data/albopictus_d1_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd2.temp': numpy.loadtxt("data/albopictus_d2_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd3.temp': numpy.loadtxt("data/albopictus_d3_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p0.temp': numpy.loadtxt("data/albopictus_p0_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p1.temp': numpy.loadtxt("data/albopictus_p1_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p2.temp': numpy.loadtxt("data/albopictus_p2_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p3.temp': numpy.loadtxt("data/albopictus_p3_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd4.temp': numpy.loadtxt("data/albopictus_d4_temp.txt",delimiter="\t",skiprows=1,usecols=[1,2])}
+data = {'n23.comb.dens': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_dev.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'n23.comb.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'n23.surv': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_surv.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'tbm.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_tbm_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'F4.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_F4_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'd1.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d1_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'd2.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d2_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'd3.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d3_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'p0.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p0_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'p1.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p1_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'p2.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p2_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'p3.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p3_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
+        'd4.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d4_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2])}
 
 def readDataType(filename,begin=0):
     dat = numpy.loadtxt(filename,delimiter="\t",skiprows=1,usecols=[0],dtype='S')
@@ -85,19 +87,19 @@ def getFits(model):
     'd4.temp': {'best':[],'stats':[],'pop':[],'pri':numpy.array([model.parids[x] for x in ['d4.1', 'd4.2', 'd4.3']])}
     }
 
-datatype = {'n23.comb.dens': readDataType("data/albopictus_n23_dev.txt"),
-            'n23.comb.temp': readDataType("data/albopictus_n23_temp.txt",1+max(readDataType("data/albopictus_n23_dev.txt"))),
-            'n23.surv': readDataType("data/albopictus_n23_surv.txt"),
-            'tbm.temp': readDataType("data/albopictus_tbm_temp.txt"),
-            'F4.temp': readDataType("data/albopictus_F4_temp.txt"),
-            'd1.temp': readDataType("data/albopictus_d1_temp.txt"),
-            'd2.temp': readDataType("data/albopictus_d2_temp.txt"),
-            'd3.temp': readDataType("data/albopictus_d3_temp.txt"),
-            'p0.temp': readDataType("data/albopictus_p0_temp.txt"),
-            'p1.temp': readDataType("data/albopictus_p1_temp.txt"),
-            'p2.temp': readDataType("data/albopictus_p2_temp.txt"),
-            'p3.temp': readDataType("data/albopictus_p3_temp.txt"),
-            'd4.temp': readDataType("data/albopictus_d4_temp.txt")}
+datatype = {'n23.comb.dens': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_n23_dev.txt")),
+            'n23.comb.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_n23_temp.txt"),1+max(readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_n23_dev.txt")))),
+            'n23.surv': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_n23_surv.txt")),
+            'tbm.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_tbm_temp.txt")),
+            'F4.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_F4_temp.txt")),
+            'd1.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_d1_temp.txt")),
+            'd2.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_d2_temp.txt")),
+            'd3.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_d3_temp.txt")),
+            'p0.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_p0_temp.txt")),
+            'p1.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_p1_temp.txt")),
+            'p2.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_p2_temp.txt")),
+            'p3.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_p3_temp.txt")),
+            'd4.temp': readDataType(pkg_resources.resource_filename(__name__,"data/albopictus_d4_temp.txt"))}
     
 fun = { 'n23.comb.dens': fpow,
         'n23.comb.temp': poly,
