@@ -1,11 +1,6 @@
 import setPrior
-
 import numpy
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.path import Path
-import matplotlib.patches as patches
-from scipy.stats import norm
+
 markers = numpy.array(["o","v","^","<",">","1","2","3","4","8","s","p","*","h","H","+","x","D","d","|","_"])
 rnorm = numpy.random.multivariate_normal
 extension = 'png'
@@ -15,6 +10,12 @@ extension = 'png'
 ############################################################
 
 def pplot(model,prior,parmat,options):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from matplotlib.path import Path
+    import matplotlib.patches as patches
+    from scipy.stats import norm
+    # ---
     parmat = numpy.array(parmat)
     print "Plotting %s..." %(options['name'])
     if not options['xlim']:
@@ -53,6 +54,12 @@ def pplot(model,prior,parmat,options):
 ############################################################
 
 def plot_fit(parmat,plts,fts,tsk):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from matplotlib.path import Path
+    import matplotlib.patches as patches
+    from scipy.stats import norm
+    # ---
     parmat = numpy.array(parmat)
     f = plts['fun'] if 'fun' in plts.keys() else setPrior.fun[tsk]
     x = plts['domain']['x']
@@ -72,6 +79,12 @@ def plot_fit(parmat,plts,fts,tsk):
     fts['pop'] = ret
 
 def plot_pos(prior,plts,dat,typ,directory,name,fts,tsk):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from matplotlib.path import Path
+    import matplotlib.patches as patches
+    from scipy.stats import norm
+    # ---
     f = plts['fun'] if 'fun' in plts.keys() else setPrior.fun[tsk]
     x = plts['domain']['x']
     ret = []
@@ -124,6 +137,12 @@ def plotPosterior(directory,model,prior,parmat=[]):
     """
     Plots prior and posterior distributions as a series a PNG files in the given directory
     """
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from matplotlib.path import Path
+    import matplotlib.patches as patches
+    from scipy.stats import norm
+    # ---
     pplot(model, prior, parmat, {'directory': directory, 'name': 'deltaT', 'xlab': "Temperature difference ($^\circ$C)", 'ylab': "Probability", 'ylim': [0, 0.75], 'xlim': [-15, 15], 'scale': 1.0, 'prior_name': 'deltaT', 'par_name': 'new.deltaT'})
     pplot(model, prior, parmat, {'directory': directory, 'name': 'PP.ta.thr', 'xlab': "Temperature ($^\circ$C)", 'ylab': "Probability", 'ylim': [0, 0.75], 'xlim': [10, 30], 'scale': 1.0, 'prior_name': 'alpha.ta.thr', 'par_name': 'PP.ta.thr'})
     pplot(model, prior, parmat, {'directory': directory, 'name': 'PP.thr', 'xlab': "Photoperiod (hours)", 'ylab': "Probability", 'ylim': [], 'xlim': [0, 24], 'scale': 24.0, 'prior_name': '', 'par_name': 'PP.thr'})
