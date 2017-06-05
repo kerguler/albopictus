@@ -1,5 +1,14 @@
 import numpy
 
+def calc_ss(pr,mn,ss,ss_inv=None):
+    if (ss_inv is None):
+        ss_inv = linalg.inv(ss)
+    pr_mn = pr-mn
+    if len(pr_mn)>1:
+        return pr_mn.dot(ss_inv).dot(pr_mn.T)
+    else:
+        return (pr_mn*ss_inv*pr_mn)[0][0]
+
 def calcEnsemble(sim):
     if len(sim)==0:
         return None

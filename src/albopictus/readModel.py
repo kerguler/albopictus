@@ -5,7 +5,7 @@ array_1d_double = npct.ndpointer(dtype=numpy.float64, ndim=1, flags='CONTIGUOUS'
 array_1d_int = npct.ndpointer(dtype=numpy.int32, ndim=1, flags='CONTIGUOUS')
 
 from scipy.stats import gamma
-from accessory import calcEnsemble
+from accessory import calcEnsemble, calc_ss
 
 class prepareModel:
     def __init__(self,modelname,label):
@@ -230,3 +230,37 @@ class prepareModel:
             for n in range(self.nummet):
                 ret[m][self.metnames[n]] = result[(m*l+(n+1)*fT[0]):(m*l+(n+2)*fT[0])]
         return ret
+    # Prior distribution score function for all
+    def scorePar(self,pr,prior):
+        """
+        Calculates prior probability for a list of parameter values and a given prior definition
+
+        Parameters
+        ----------
+
+              pr:
+                    List of parameter values for the model (must have NumPar elements)
+              prior:
+                    Dictionary of prior probability definitions. An example is given below.
+                    {'Critical temperature': {
+                         'parids': ['PP.ta.thr'], 
+                         'mean': [21.0], 
+                         'var': [[9.0]], 
+                         'var.inv': [[1.0/9.0]]
+                    } }
+        """
+        scr = 0
+        for key in prior:
+            if 'min' in prior[key] and any([pr[self.parids[pid]] < prior[key]['min'] for pid in prior[key]['parids']]):
+                return numpy.Inf
+            if 'max' in prior[key] and any([pr[self.parids[pid]] > prior[key]['max'] for pid in prior[key]['parids']]):
+                return numpy.Inf
+            if 'mean' in prior[key] and 'var' in prior[key] and 'var.inv' in prior[key]:
+                scr += 0.5*calc_ss(numpy.array([pr[self.parids[x]] for x in prior[key]['parids']]),
+                                       prior[key]['mean'],
+                                       prior[key]['var'],
+                                       prior[key]['var.inv'])
+            elif 'mean' in prior[key] or 'var' in prior[key] or 'var.inv' in prior[key]:
+                print "ERROR: Wrong prior for %s" %(key)
+                return numpy.Inf
+        return scr
