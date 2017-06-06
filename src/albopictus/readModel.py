@@ -239,7 +239,7 @@ class prepareModel:
         ----------
 
               pr:
-                    List of parameter values for the model (must have NumPar elements)
+                    List of parameter values for the model (must have numpar elements)
               prior:
                     Dictionary of prior probability definitions. An example is given below.
                     {'Critical temperature': {
@@ -260,7 +260,38 @@ class prepareModel:
                                        prior[key]['mean'],
                                        prior[key]['var'],
                                        prior[key]['var.inv'])
-            elif 'mean' in prior[key] or 'var' in prior[key] or 'var.inv' in prior[key]:
-                print "ERROR: Wrong prior for %s" %(key)
-                return numpy.Inf
         return scr
+    # Simulate a parameter vector form the prior distribution
+    def simPrior(self,pr,prior):
+        """
+        Simulates a parameter vector from a given prior definition
+
+        Parameters
+        ----------
+
+              pr:
+                    The initial list of parameter values (must have numpar elements)
+              prior:
+                    Dictionary of prior probability definitions. An example is given below.
+                    {'Critical temperature': {
+                         'parids': ['PP.ta.thr'], 
+                         'mean': [21.0], 
+                         'var': [[9.0]], 
+                         'var.inv': [[1.0/9.0]]
+                    } }
+        """
+        scr = numpy.Inf
+        while scr<0 or scr==numpy.Inf:
+            for key in prior:
+                # simulate
+                ids = [self.parids[x] for x in prior[key]['parids']]
+                r = []
+                if 'mean' in prior[key] and 'var' in prior[key] and 'var.inv' in prior[key]:
+                    r = numpy.random.multivariate_normal(prior[key]['mean'],prior[key]['var'],1)[0]
+                elif 'min' in prior[key] and 'max' in prior[key]:
+                    r = numpy.random.uniform(prior[key]['min'],prior[key]['max'],len(prior[key]['parids']))
+                if len(r)>0:
+                    for i in numpy.arange(len(ids)):
+                        pr[ids[i]] = r[i]
+            # check
+            scr = self.scorePar(pr,prior)
