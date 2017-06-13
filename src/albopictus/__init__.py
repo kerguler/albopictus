@@ -129,7 +129,8 @@ from datetime import date
 
 param = json.load(open(pkg_resources.resource_filename(__name__, "data/posterior.json"),"r"))
 prior03 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior03.json"),"r"))
-prior = json.load(open(pkg_resources.resource_filename(__name__, "data/prior.json"),"r"))
+prior08 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior08.json"),"r"))
+prior13 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior13.json"),"r"))
 clim = json.load(open(pkg_resources.resource_filename(__name__, "data/climate.json"),"r"))
 for pr in clim:
     for clm in clim[pr]:
@@ -143,9 +144,15 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 from readModel import prepareModel
 
 vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"), "vector03")
-vector = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus.so"), "vector")
+vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"), "vector08")
+vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"), "vector13")
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
 sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
+
+# Set defaults ------------------------------------------- //
+
+vector = vector13
+prior = prior13
 
 # Accessories -------------------------------------------- //
 

@@ -11,8 +11,9 @@ src/albopictus/incubator.c
 src/albopictus/incubator.h
 src/albopictus/incubator03.c
 src/albopictus/incubator03.h
-src/albopictus/modelAalbopictus.c
 src/albopictus/modelAalbopictus03.c
+src/albopictus/modelAalbopictus08.c
+src/albopictus/modelAalbopictus13.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
 src/albopictus/plotPos.py
@@ -43,5 +44,6 @@ src/albopictus/data/albopictus_p3_temp.txt
 src/albopictus/data/albopictus_tbm_temp.txt
 src/albopictus/data/climate.json
 src/albopictus/data/posterior.json
-src/albopictus/data/prior.json
 src/albopictus/data/prior03.json
+src/albopictus/data/prior08.json
+src/albopictus/data/prior13.json

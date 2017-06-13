@@ -1,6 +1,14 @@
 News
 ====
 
+1.3
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a global albopictus-chikungunya model
+* Testing a new hypothesis for diapause
+
 1.2
 ---
 
