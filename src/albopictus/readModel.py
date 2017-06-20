@@ -231,7 +231,7 @@ class prepareModel:
                 ret[m][self.metnames[n]] = result[(m*l+(n+1)*fT[0]):(m*l+(n+2)*fT[0])]
         return ret
     # Prior distribution score function for all
-    def scorePar(self,pr,prior):
+    def scorePar(self,pr,prior,verbose=False):
         """
         Calculates prior probability for a list of parameter values and a given prior definition
 
@@ -246,14 +246,22 @@ class prepareModel:
                          'parids': ['PP.ta.thr'], 
                          'mean': [21.0], 
                          'var': [[9.0]], 
-                         'var.inv': [[1.0/9.0]]
+                         'var.inv': [[1.0/9.0]],
+                         'min': 0.0,
+                         'max': 100.0
                     } }
+              verbose:
+                    Warn about unacceptable values (Default: False)
         """
         scr = 0
         for key in prior:
             if 'min' in prior[key] and any([pr[self.parids[pid]] < prior[key]['min'] for pid in prior[key]['parids']]):
+                if verbose:
+                    print "Warning: Parameter %s breached minimum allowance!" %(key)
                 return numpy.Inf
             if 'max' in prior[key] and any([pr[self.parids[pid]] > prior[key]['max'] for pid in prior[key]['parids']]):
+                if verbose:
+                    print "Warning: Parameter %s breached maximum allowance!" %(key)
                 return numpy.Inf
             if 'mean' in prior[key] and 'var' in prior[key] and 'var.inv' in prior[key]:
                 scr += 0.5*calc_ss(numpy.array([pr[self.parids[x]] for x in prior[key]['parids']]),
