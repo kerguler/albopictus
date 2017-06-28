@@ -1,6 +1,13 @@
 News
 ====
 
+1.4
+---
+
+* Release date: UNRELEASED*
+
+* Sand fly model update
+
 1.3
 ---
 
