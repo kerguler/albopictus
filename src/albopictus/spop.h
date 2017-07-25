@@ -17,5 +17,6 @@ void spop_remove_next(spop, people_data);
 void spop_empty(spop);
 void spop_destroy(spop *);
 void spop_print(spop);
+int spop_kill(spop, double);
 int spop_survive(spop, double, double, double, double, char);
 void spop_swap(spop, spop);

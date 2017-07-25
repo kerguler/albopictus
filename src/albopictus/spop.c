@@ -94,6 +94,45 @@ void spop_print(spop s) {
   printf("\\------------------>\n");
 }
 
+int spop_kill(spop   s,
+              double prob) {  // probability of death
+  int ret = 0;
+  char remove = 0;
+  int k;
+  people_data tmp, tmpn;
+  for (tmp = s->people;
+       tmp && tmp->next;
+       ) {
+    tmpn = tmp->next;
+    // Survive
+    k = gsl_ran_binomial(RAND_GSL,
+                         prob,
+                         tmpn->batchsize);
+    //
+    // printf("%d will die from %g,%d,%d\n",k,prob,tmpn->development,tmpn->batchsize);
+    //    
+    tmpn->batchsize -= k;
+    s->popsize -= k;
+    ret += k;
+    if (tmpn->batchsize==0) {
+      remove = 1;
+    } else if (tmpn->batchsize<0) {
+      printf("ERROR: Error in population!\n");
+      spop_print(s);
+      return nan;
+    }
+    if (remove) {
+      tmp->next = tmpn->next;
+      free(tmpn);
+      if (s->popsize == 0) break;
+      remove = 0;
+    } else {
+      tmp = tmp->next;
+    }
+  }
+  return ret;
+}
+
 int spop_survive(spop   s,
                  double d_mean, // development time
                  double d_sd, // (if <= 0, fixed development, -d_mean)
