@@ -1,12 +1,19 @@
 News
 ====
 
+1.6
+---
+
+* Release date: UNRELEASED*
+
+* Sand fly model update (environmental dependence: temperature, humidity, precipitation)
+
 1.5
 ---
 
 * Release date: UNRELEASED*
 
-* Sand fly model update
+* Sand fly model update (environmental dependence: functional dependence)
 
 1.4
 ---
