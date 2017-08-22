@@ -147,6 +147,10 @@ vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopic
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"), "vector08")
 vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"), "vector13")
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
+
+# modelStochSand - climateData ------------------------- //
+
+priorSand = json.load(open(pkg_resources.resource_filename(__name__, "data/priorSand.json"),"r"))
 sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
 
 # Set defaults ------------------------------------------- //

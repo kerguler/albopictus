@@ -47,3 +47,4 @@ src/albopictus/data/posterior.json
 src/albopictus/data/prior03.json
 src/albopictus/data/prior08.json
 src/albopictus/data/prior13.json
+src/albopictus/data/priorSand.json
