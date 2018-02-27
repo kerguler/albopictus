@@ -4,9 +4,10 @@ News
 1.6
 ---
 
-* Release date: UNRELEASED*
+* Release date: 27 February 2017
 
-* Sand fly model update (environmental dependence: temperature, humidity, precipitation)
+* This is the model as presented in
+  Erguler K, Pontiki I, Zittis G, Proestos Y, Christodoulou V, Tsirigotakis N, Antoniou M, Kasap OE, Alten B, Lelieveld J. Using longitudinal surveillance data to analyse the environmental dependence of vector populations: the case of sand flies. Scientific Reports. 2018 (submitted)
 
 1.5
 ---
