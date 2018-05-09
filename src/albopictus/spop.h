@@ -1,3 +1,6 @@
+#ifndef SPOP_H
+#define SPOP_H
+
 typedef struct people_st
 {
   int development;
@@ -20,3 +23,5 @@ void spop_print(spop);
 int spop_kill(spop, double);
 int spop_survive(spop, double, double, double, double, char);
 void spop_swap(spop, spop);
+
+#endif

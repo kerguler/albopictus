@@ -1,6 +1,20 @@
 News
 ====
 
+1.8
+---
+
+* Release date: UNRELEASED*
+
+* Ae. albopictus population dynamics model update initiated
+
+1.7
+---
+
+* Release date: UNRELEASED*
+
+* Age-structured deterministic and stochastic population dynamics model
+
 1.6
 ---
 

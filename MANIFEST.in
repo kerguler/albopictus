@@ -2,11 +2,13 @@ include README.txt
 include NEWS.txt
 include src/albopictus/uthash.h
 include src/albopictus/ran_gen.h
+include src/albopictus/population.h
 include src/albopictus/spop.h
 include src/albopictus/gamma.h
 include src/albopictus/incubator03.h
 include src/albopictus/incubator.h
 include src/albopictus/ran_gen.c
+include src/albopictus/population.c
 include src/albopictus/spop.c
 include src/albopictus/gamma.c
 include src/albopictus/incubator03.c

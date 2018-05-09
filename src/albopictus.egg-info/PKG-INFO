@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: albopictus
-Version: 1.6
+Version: 1.7
 Summary: Environmentally-driven population dynamics model of Aedes albopictus
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.6
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.7
 Description-Content-Type: UNKNOWN
 Description: Environmentally-driven population dynamics model of Aedes albopictus
         ====================================================================
@@ -78,12 +78,20 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         News
         ====
         
-        1.6
+        1.7
         ---
         
         * Release date: UNRELEASED*
         
-        * Sand fly model update (environmental dependence: temperature, humidity, precipitation)
+        * Age-structured deterministic and stochastic population dynamics model
+        
+        1.6
+        ---
+        
+        * Release date: 27 February 2017
+        
+        * This is the model as presented in
+          Erguler K, Pontiki I, Zittis G, Proestos Y, Christodoulou V, Tsirigotakis N, Antoniou M, Kasap OE, Alten B, Lelieveld J. Using longitudinal surveillance data to analyse the environmental dependence of vector populations: the case of sand flies. Scientific Reports. 2018 (submitted)
         
         1.5
         ---

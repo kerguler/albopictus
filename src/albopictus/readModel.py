@@ -113,6 +113,15 @@ class prepareModel:
                                              ctypes.c_double]
         except:
             pass
+        #
+        try:
+            self.model.gamma_dist_prob
+            self.model.gamma_dist_prob.restype = ctypes.c_double
+            self.model.gamma_dist_prob.argtypes = [ctypes.c_double,
+                                                   ctypes.c_double,
+                                                   ctypes.c_double]
+        except:
+            pass
     #
     def gamma_pdf(self,n,mean,sd):
         """
@@ -121,6 +130,14 @@ class prepareModel:
         if not hasattr(n, "__iter__"):
             return self.model.gamma_pdf(n,mean,sd)
         return [self.model.gamma_pdf(nn,mean,sd) for nn in n]
+    #
+    def gamma_prob(self,n,mean,sd):
+        """
+        Probability of daily development/survival with given mean and standard deviation
+        """
+        if not hasattr(n, "__iter__"):
+            return self.model.gamma_dist_prob(mean,sd,n)
+        return [self.model.gamma_dist_prob(mean,sd,nn) for nn in n]
     #
     def simPar(self,clim,pr,cpr=[]):
         """

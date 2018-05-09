@@ -1,3 +1,6 @@
+#ifndef GAMMA_H
+#define GAMMA_H
+
 #define EPS 1e-14
 
 #define MODE_GAMMA_RAW    0
@@ -27,4 +30,4 @@ double gamma_dist_matrix(double, double);
 void prepare_gamma_matrix(void);
 double nbinom_prob(unsigned int, double, double);
 
-
+#endif

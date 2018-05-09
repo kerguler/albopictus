@@ -17,6 +17,8 @@ src/albopictus/modelAalbopictus13.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
 src/albopictus/plotPos.py
+src/albopictus/population.c
+src/albopictus/population.h
 src/albopictus/ran_gen.c
 src/albopictus/ran_gen.h
 src/albopictus/readModel.py
@@ -48,3 +50,4 @@ src/albopictus/data/prior03.json
 src/albopictus/data/prior08.json
 src/albopictus/data/prior13.json
 src/albopictus/data/priorSand.json
+src/albopictus/population/__init__.py
