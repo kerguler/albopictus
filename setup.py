@@ -46,7 +46,7 @@ setup(name='albopictus',
         Extension("albopictus.modelAalbopictus03", ["src/albopictus/incubator03.c", "src/albopictus/modelAalbopictus03.c"]),
         Extension("albopictus.modelAalbopictus08", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus08.c"]),
         Extension("albopictus.modelAalbopictus13", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus13.c"]),
-        Extension("albopictus.modelAalbopictus18", ["src/albopictus/gamma.c", "src/albopictus/dpop.c", "src/albopictus/modelAalbopictus18.c"]),
+        Extension("albopictus.modelAalbopictus18", ["src/albopictus/gamma.c", "src/albopictus/sdpop.c", "src/albopictus/modelAalbopictus18.c"]),
         Extension("albopictus.modelStochCHIKV", ["src/albopictus/ran_gen.c", "src/albopictus/spop.c", "src/albopictus/gamma.c", "src/albopictus/modelStochCHIKV.c"]),
         Extension("albopictus.modelStochSand", ["src/albopictus/ran_gen.c", "src/albopictus/spop.c", "src/albopictus/gamma.c", "src/albopictus/modelStochSand.c"])
         ]

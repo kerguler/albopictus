@@ -2,7 +2,7 @@
 #include <math.h>
 #include <time.h>
 #include "gamma.h"
-#include "dpop.h"
+#include "sdpop.h"
 
 volatile clock_t start = 0, diff;
 double time2here(void) {
@@ -200,7 +200,7 @@ void calculate(double *photoperiod,
   // Adult females
   incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
   double n4j_mature = dpop_survive((*conn4j),
-                                   -max(1.0, d3), 0, // development
+                                   dd4, dd4s, // development
                                    -p3_Tw, 0, // death
                                    gamma_mode);
   double n4_ovulate = dpop_survive((*conn4),
