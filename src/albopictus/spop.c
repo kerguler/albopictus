@@ -363,7 +363,7 @@ void spop_iterate(spop  s,
       else
         s->developed.d += k.d;
       //
-      if (tmpn->age >= MAX_DAYS || tmpn->development >= MAX_DAYS) {
+      if (tmpn->age >= DPOP_MAX_DAYS || tmpn->development >= DPOP_MAX_DAYS) {
         printf("ERROR: Development time is too high!\n");
         spop_print(s);
         s->developed.d = NAN;

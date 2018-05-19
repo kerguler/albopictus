@@ -3,7 +3,8 @@
 
 #include <float.h>
 
-#define DPOP_EPS DBL_MIN
+#define DPOP_EPS      DBL_MIN
+#define DPOP_MAX_DAYS 1000000
 
 typedef double (*prob_func)(unsigned int, double, double, double);
 
