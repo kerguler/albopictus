@@ -2,7 +2,7 @@
 #include <math.h>
 #include <time.h>
 #include "gamma.h"
-#include "sdpop.h"
+#include "spop.h"
 
 volatile clock_t start = 0, diff;
 double time2here(void) {
@@ -101,12 +101,12 @@ void calculate(double *photoperiod,
                double *daily_precipitation,
                double *popdens,
                double *param,
-               dpop   *conn10,
-               dpop   *conn1,
-               dpop   *conn2,
-               dpop   *conn3,
-               dpop   *conn4j,
-               dpop   *conn4,
+               spop   *conn10,
+               spop   *conn1,
+               spop   *conn2,
+               spop   *conn3,
+               spop   *conn4j,
+               spop   *conn4,
                double *n0,
                double *n10,
                double *n1,
@@ -176,34 +176,34 @@ void calculate(double *photoperiod,
   (*n0) = p0_Ta*(*n0);
   //
   // Normal and tagged eggs
-  double n1_developed = dpop_survive((*conn1),
+  double n1_developed = spop_survive((*conn1),
                                      -max(1.0, d1), 0, // development
                                      -p1_Tw, 0, // death
                                      gamma_mode);
-  double n10_developed = dpop_survive((*conn10),
+  double n10_developed = spop_survive((*conn10),
                                       -max(1.0, d1), 0, // development
                                       -p1_Tw, 0, // death
                                       gamma_mode);
   //
   // Larvae
-  double n2_developed = dpop_survive((*conn2),
+  double n2_developed = spop_survive((*conn2),
                                      -max(1.0, d2), 0, // development
                                      -p2_Tw, 0, // death
                                      gamma_mode);
   //
   // Pupae
-  double n3_developed = dpop_survive((*conn3),
+  double n3_developed = spop_survive((*conn3),
                                      -max(1.0, d3), 0, // development
                                      -p3_Tw, 0, // death
                                      gamma_mode);
   //
   // Adult females
   incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
-  double n4j_mature = dpop_survive((*conn4j),
+  double n4j_mature = spop_survive((*conn4j),
                                    dd4, dd4s, // development
                                    -p3_Tw, 0, // death
                                    gamma_mode);
-  double n4_ovulate = dpop_survive((*conn4),
+  double n4_ovulate = spop_survive((*conn4),
                                    -max(1.0, d3), 0, // development
                                    -p3_Tw, 0, // death
                                    gamma_mode);
@@ -391,18 +391,18 @@ void sim_model(double               *envar,
   double diap = 0;
   double percent_strong = 0.0;
   //
-  dpop conn10 = dpop_init();
-  dpop conn1 = dpop_init();
-  dpop conn2 = dpop_init();
-  dpop conn3 = dpop_init();
-  dpop conn4 = dpop_init();
-  dpop conn4j = dpop_init();
-  if (n10 > DPOP_EPS) dpop_add(&conn10,n10,0.0);
-  if (n1 > DPOP_EPS) dpop_add(&conn1,n1,0.0);
-  if (n2 > DPOP_EPS) dpop_add(&conn2,n2,0.0);
-  if (n3 > DPOP_EPS) dpop_add(&conn3,n3,0.0);
-  if (n4fj > DPOP_EPS) dpop_add(&conn4j,n4fj,0.0);
-  if (n4f > DPOP_EPS) dpop_add(&conn4,n4f,0.0);
+  spop conn10 = spop_init();
+  spop conn1 = spop_init();
+  spop conn2 = spop_init();
+  spop conn3 = spop_init();
+  spop conn4 = spop_init();
+  spop conn4j = spop_init();
+  if (n10 > DPOP_EPS) spop_add(&conn10,n10,0.0);
+  if (n1 > DPOP_EPS) spop_add(&conn1,n1,0.0);
+  if (n2 > DPOP_EPS) spop_add(&conn2,n2,0.0);
+  if (n3 > DPOP_EPS) spop_add(&conn3,n3,0.0);
+  if (n4fj > DPOP_EPS) spop_add(&conn4j,n4fj,0.0);
+  if (n4f > DPOP_EPS) spop_add(&conn4,n4f,0.0);
   // Record state
   colT[TIME] = TIME;
   coln0[TIME] = n0;
@@ -458,25 +458,25 @@ void sim_model(double               *envar,
         n0 *= controlpar[5];
         n10 *= controlpar[5];
         n1 *= controlpar[5];
-        dpop_kill(conn1,controlpar[5]);
-        dpop_kill(conn10,controlpar[5]);
+        spop_kill(conn1,controlpar[5]);
+        spop_kill(conn10,controlpar[5]);
       }
       // Larva reduction
       if (TIME>=controlpar[6] && TIME<controlpar[7]) {
         n2 *= controlpar[8];
-        dpop_kill(conn2,controlpar[8]);
+        spop_kill(conn2,controlpar[8]);
       }
       // Pupa reduction
       if (TIME>=controlpar[9] && TIME<controlpar[10]) {
         n3 *= controlpar[11];
-        dpop_kill(conn3,controlpar[11]);
+        spop_kill(conn3,controlpar[11]);
       }
       // Adult reduction
       if (TIME>=controlpar[12] && TIME<controlpar[13]) {
         n4fj *= controlpar[14];
         n4f *= controlpar[14];
-        dpop_kill(conn4j,controlpar[14]);
-        dpop_kill(conn4,controlpar[14]);
+        spop_kill(conn4j,controlpar[14]);
+        spop_kill(conn4,controlpar[14]);
       }
     }
     // Record state
@@ -510,12 +510,12 @@ void sim_model(double               *envar,
   //
  endall:
   //
-  dpop_destroy(conn10);
-  dpop_destroy(conn1);
-  dpop_destroy(conn2);
-  dpop_destroy(conn3);
-  dpop_destroy(conn4j);
-  dpop_destroy(conn4);
+  spop_destroy(conn10);
+  spop_destroy(conn1);
+  spop_destroy(conn2);
+  spop_destroy(conn3);
+  spop_destroy(conn4j);
+  spop_destroy(conn4);
   //
   gamma_dist_check();
   //

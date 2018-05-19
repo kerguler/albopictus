@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: albopictus
-Version: 1.7
-Summary: Environmentally-driven population dynamics model of Aedes albopictus
+Version: 1.8
+Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.7
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.8
 Description-Content-Type: UNKNOWN
 Description: Environmentally-driven population dynamics model of Aedes albopictus
         ====================================================================
@@ -77,6 +77,13 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         
         News
         ====
+        
+        1.8
+        ---
+        
+        * Release date: UNRELEASED*
+        
+        * Ae. albopictus population dynamics model update initiated
         
         1.7
         ---
@@ -208,7 +215,7 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         * Initial commit
         
         
-Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily
+Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily,albopictus,sandfly,chikv,chikungunya,phlebotomus,papatasi
 Platform: UNKNOWN
 Classifier: Intended Audience :: Science/Research
 Classifier: Topic :: Scientific/Engineering

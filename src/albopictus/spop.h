@@ -1,27 +1,66 @@
 #ifndef SPOP_H
 #define SPOP_H
 
-typedef struct people_st
+#include <float.h>
+
+#define DPOP_EPS DBL_MIN
+
+typedef double (*prob_func)(unsigned int, double, double, double);
+
+typedef union {
+  unsigned int i;
+  double d;
+} sdnum;
+
+typedef struct individual_st
 {
-  int development;
-  int batchsize;
-  struct people_st *next;
-} *people_data;
+  unsigned int age;
+  unsigned int devcycle;
+  unsigned int development;
+  sdnum number;
+} individual_data;
+
+#define is_greater(s,p) (((s).age > (p).age) || ((s).age == (p).age && (s).devcycle > (p).devcycle) || ((s).age == (p).age && (s).devcycle == (p).devcycle && (s).development > (p).development))
+#define is_smaller(s,p) (((s).age < (p).age) || ((s).age == (p).age && (s).devcycle < (p).devcycle) || ((s).age == (p).age && (s).devcycle == (p).devcycle && (s).development < (p).development))
+#define is_equal(s,p) ((s).age == (p).age && (s).devcycle == (p).devcycle && (s).development == (p).development)
+#define is_empty(sp,s) (((sp)->stochastic && (s).number.i==0) || (!((sp)->stochastic) && (s).number.d<=DPOP_EPS))
+
+#define get_lchild(num) (((num)<<1)+1)
+#define get_rchild(num) (((num)<<1)+2)
+#define get_parent(num) ((num) ? ((num)-1)>>1 : 0)
 
 typedef struct population_st
 {
-  people_data people;
-  int popsize;
+  individual_data *individuals;
+  unsigned int ncat;
+  unsigned int cat;
+  sdnum size;
+  sdnum dead;
+  sdnum developed;
+  void *devtable;
+  unsigned char gamma_mode;
+  unsigned char stochastic;
 } *spop;
 
-spop spop_init(void);
-void spop_add(spop, int, int);
-void spop_remove_next(spop, people_data);
+spop spop_init(unsigned char, unsigned char);
 void spop_empty(spop);
-void spop_destroy(spop *);
+void spop_destroy(spop*);
 void spop_print(spop);
-int spop_kill(spop, double);
-int spop_survive(spop, double, double, double, double, char);
-void spop_swap(spop, spop);
+
+void swap(spop, individual_data *, individual_data *);
+
+#define spop_add(s,age,devcycle,development,number) {   \
+    sdnum tmp;                                          \
+    if ((s)->stochastic)                                \
+      tmp.i = (int)(number);                            \
+    else                                                \
+      tmp.d = (double)(number);                            \
+    spop_sdadd((s),(age),(devcycle),(development),tmp);    \
+  }
+void spop_sdadd(spop, unsigned int, unsigned int, unsigned int, sdnum);
+
+void spop_popadd(spop, spop);
+void spop_iterate(spop, double, double, double, double, double, double);
+void spop_kill(spop, double);
 
 #endif
