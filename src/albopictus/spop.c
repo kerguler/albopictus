@@ -293,33 +293,27 @@ void spop_removeitem(spop s, unsigned int *i, char *remove) {
     s->cat -= 1;
     (*i)--;
     //
-    if (s->cat < (s->ncat >> 1)) { // Shrink buffer
+    if (s->ncat > 1 && s->cat < (s->ncat >> 1)) { // Shrink buffer
       s->ncat = (s->ncat >> 1) - 1;
       s->individuals = (individual_data *)realloc(s->individuals, s->ncat * sizeof(individual_data));
     }
     //
     if ((s->stochastic && s->size.i == 0) || (!(s->stochastic) && s->size.d <= DPOP_EPS))
       break;
-    else if (s->cat == 0) {
-      printf("ERROR: Error in population storage!\n");
-      spop_print(s);
-      s->dead.d = NAN;
-      s->developed.d = NAN;
-      (*i) = NAN;
-      return;
-    }
     (*remove) = 0;
     break;
   }
 }
 
 void spop_iterate(spop  s,
-                  double dev_prob,   // fixed development probability
-                  double dev_mean,   // mean development time
-                  double dev_sd,     // sd development time
-                  double death_prob, // fixed death probability
-                  double death_mean, // mean time of death
-                  double death_sd) { // sd time of death
+                  double dev_prob,       // fixed development probability
+                  double dev_mean,       // mean development time
+                  double dev_sd,         // sd development time
+                  iter_func dev_fun,     //
+                  double death_prob,     // fixed death probability
+                  double death_mean,     // mean time of death
+                  double death_sd,       // sd time of death
+                  iter_func death_fun) { //
   if (s->stochastic) {
     s->dead.i = 0;
     s->developed.i = 0;
@@ -333,8 +327,8 @@ void spop_iterate(spop  s,
     s->devtable = (void *)spop_init(s->stochastic,s->gamma_mode);
   }
   //
-  prob_func calc_prob_death = assign_prob_func(s, death_prob, death_mean, death_sd);
-  prob_func calc_prob_dev = assign_prob_func(s, dev_prob, dev_mean, dev_sd);
+  prob_func calc_prob_death;
+  prob_func calc_prob_dev;
   //
   char remove = -1;
   sdnum k;
@@ -343,7 +337,14 @@ void spop_iterate(spop  s,
   unsigned int i;
   for (i=0; i<s->cat; i++) {
     tmpn = &(s->individuals[i]);
-    // Death
+    //
+    if (dev_fun)
+      dev_fun(tmpn,&dev_prob,&dev_mean,&dev_sd);
+    if (death_fun)
+      death_fun(tmpn,&death_prob,&death_mean,&death_sd);
+    calc_prob_death = assign_prob_func(s, death_prob, death_mean, death_sd);
+    calc_prob_dev = assign_prob_func(s, dev_prob, dev_mean, dev_sd);
+   // Death
     prob = calc_prob_death(tmpn->age, death_prob, death_mean, death_sd);
     remove = calc_spop(s, tmpn, prob, &k);
     if (s->stochastic)

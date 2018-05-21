@@ -30,26 +30,24 @@ class spop:
             else:
                 self.pop = numpy.append(self.pop,[row],axis=0)
         self.size = numpy.sum(self.pop[:,3])
-    # 
+    #
     def iterate(self,dev=None,death=None,dev_mean=None,dev_sd=None,death_mean=None,death_sd=None):
-        if dev==None:
-            if dev_mean!=None and dev_sd!=None: # variable development probability
-                if dev_sd == 0:
-                    dev = numpy.float64(self.pop[:,2] >= dev_mean - 1.0)
-                else:
-                    dev = gamma_dist_prob(self.pop[:,2],dev_mean,dev_sd)
+        if dev is None:
+            if (not (dev_mean is None)) and (dev_sd is None):
+                dev = numpy.float64(self.pop[:,2] >= dev_mean - 1.0)
+            elif (not (dev_mean is None)) and (not (dev_sd is None)):
+                dev = gamma_dist_prob(self.pop[:,2],dev_mean,dev_sd)
             else:
-                print "Wrong development probability:",dev
-                return
-        if death==None:
-            if death_mean!=None and death_sd!=None: # variable probability of death
-                if death_sd == 0:
-                    death = numpy.float64(self.pop[:,0] >= death_mean - 1.0)
-                else:
-                    death = gamma_dist_prob(self.pop[:,0],death_mean,death_sd)
+                print "Wrong probability:",dev
+                return numpy.nan
+        if death is None:
+            if (not (death_mean is None)) and (death_sd is None):
+                death = numpy.float64(self.pop[:,0] >= death_mean - 1.0)
+            elif (not (death_mean is None)) and (not (death_sd is None)):
+                death = gamma_dist_prob(self.pop[:,0],death_mean,death_sd)
             else:
-                print "Wrong probability of death:",death
-                return
+                print "Wrong probability:",death
+                return numpy.nan
         #
         if self.stochastic:
             k = binomial(self.pop[:,3],death)

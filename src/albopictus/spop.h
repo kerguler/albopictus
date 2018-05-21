@@ -6,8 +6,6 @@
 #define DPOP_EPS      DBL_MIN
 #define DPOP_MAX_DAYS 1000000
 
-typedef double (*prob_func)(unsigned int, double, double, double);
-
 typedef union {
   unsigned int i;
   double d;
@@ -61,7 +59,11 @@ void swap(spop, individual_data *, individual_data *);
 void spop_sdadd(spop, unsigned int, unsigned int, unsigned int, sdnum);
 
 void spop_popadd(spop, spop);
-void spop_iterate(spop, double, double, double, double, double, double);
+
+typedef double (*prob_func)(unsigned int, double, double, double);
+typedef void (*iter_func)(const individual_data*, double*, double*, double*);
+void spop_iterate(spop, double, double, double, iter_func, double, double, double, iter_func);
+
 void spop_kill(spop, double);
 
 #endif
