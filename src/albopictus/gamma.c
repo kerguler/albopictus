@@ -168,10 +168,34 @@ char gamma_dist_hash(double mean_d, double sd_d, double n_d, double *value) {
 */
 
 // This is to be implemented with a hash table!
+double nbinom_dist_prob(double mean, double sd, unsigned int age) {
+  gsl_set_error_handler_off();
+  double val;
+  double p = mean / (sd * sd);
+  double r = mean * p / (1.0 - p);
+  //
+  if (r < 0.0 || p < 0.0 || p > 1.0) {
+    fprintf(stderr,"WARNING: Incompatible mean or sd for negative binomial distribution (mean=%g, sd=%g, age=%d, r=%g, p=%g)\n",mean,sd,age,r,p);
+    gsl_set_error_handler(NULL);
+    return 1.0;
+  }
+  //
+  val = gsl_sf_beta_inc(r, 1 + age, p);
+  val = (val - gsl_sf_beta_inc(r, 2 + age, p)) / (val - 1.0);
+  //
+  if (isnan(val)) {
+    fprintf(stderr,"WARNING: Domain error for negative binomial distribution (mean=%g, sd=%g, age=%d, r=%g, p=%g)\n",mean,sd,age,r,p);
+    gsl_set_error_handler(NULL);
+    return 1.0;
+  }
+  //
+  gsl_set_error_handler(NULL);
+  return val;
+}
+
+// For historical reasons...
 double nbinom_prob(unsigned int k, double p, double n) {
   double val;
-  // p(k) = {\Gamma(n + k) \over \Gamma(k+1) \Gamma(n) } p^n (1-p)^k
-  //
   // double Q = gsl_cdf_negative_binomial_Q(k,p,n);
   // val = ( ( gsl_cdf_negative_binomial_P(k+1,p,n) + Q - 1.0 ) / Q );
   //
@@ -180,6 +204,7 @@ double nbinom_prob(unsigned int k, double p, double n) {
   //
   return isnan(val) ? 1.0 : val;
 }
+
 
 /*
   ---------------------------------------------------------------------------------

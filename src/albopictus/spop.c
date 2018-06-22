@@ -221,6 +221,10 @@ char calc_spop(spop s, individual_data *tmpn, double prob, sdnum *k) {
   return 0;
 }
 
+double calc_prob_nbinom_raw(unsigned int age, double prob, double mean, double sd) {
+  return nbinom_dist_prob(mean,sd,age);
+}
+
 double calc_prob_gamma_raw(unsigned int age, double prob, double mean, double sd) {
   return gamma_dist_prob(mean,sd,age);
 }
@@ -257,6 +261,10 @@ prob_func assign_prob_func(spop s, double prob, double mean, double sd) {
       // printf("Assigning calc_prob_gamma_hash\n");
       return calc_prob_gamma_hash;
       break;
+    case MODE_NBINOM_RAW:
+      // printf("Assigning calc_prob_gamma_hash\n");
+      return calc_prob_nbinom_raw;
+      break;
     default:
       printf("ERROR: Wrong distribution option selected: %d\n",s->gamma_mode);
       return 0;
@@ -269,7 +277,7 @@ prob_func assign_prob_func(spop s, double prob, double mean, double sd) {
     return calc_prob_fixed;
   }
   //
-  printf("ERROR: Wrong options for probability function!\n");
+  printf("ERROR: Wrong options for probability function: prob = %g, mean = %g,  sd = %g\n",prob,mean,sd);
   return 0;
 }
 
@@ -313,7 +321,8 @@ void spop_iterate(spop  s,
                   double death_prob,     // fixed death probability
                   double death_mean,     // mean time of death
                   double death_sd,       // sd time of death
-                  iter_func death_fun) { //
+                  iter_func death_fun,   //
+                  unsigned char pause) { // pause aging and development for the iteration
   if (s->stochastic) {
     s->dead.i = 0;
     s->developed.i = 0;
@@ -357,8 +366,10 @@ void spop_iterate(spop  s,
       prob = calc_prob_dev(tmpn->development, dev_prob, dev_mean, dev_sd);
       remove = calc_spop(s, tmpn, prob, &k);
       //
-      tmpn->age += 1;
-      tmpn->development += 1;
+      if (!pause) {
+        tmpn->age += 1;
+        tmpn->development += 1;
+      }
       if (s->stochastic)
         s->developed.i += k.i;
       else
@@ -384,26 +395,3 @@ void spop_iterate(spop  s,
   }
 }
 
-void spop_kill(spop  s,
-               double prob) { // fixed death probability
-  if (s->stochastic) {
-    s->dead.i = 0;
-  } else {
-    s->dead.d = 0.0;
-  }
-  char remove = -1;
-  sdnum k;
-  individual_data *tmpn;
-  unsigned int i;
-  for (i=0; i<s->cat; i++) {
-    tmpn = &(s->individuals[i]);
-    // Death
-    remove = calc_spop(s, tmpn, prob, &k);
-    if (s->stochastic)
-      s->dead.i += k.i;
-    else
-      s->dead.d += k.d;
-    //
-    spop_removeitem(s,&i,&remove);
-  }
-}

@@ -11,8 +11,7 @@ typedef union {
   double d;
 } sdnum;
 
-typedef struct individual_st
-{
+typedef struct individual_st {
   unsigned int age;
   unsigned int devcycle;
   unsigned int development;
@@ -28,8 +27,7 @@ typedef struct individual_st
 #define get_rchild(num) (((num)<<1)+2)
 #define get_parent(num) ((num) ? ((num)-1)>>1 : 0)
 
-typedef struct population_st
-{
+typedef struct population_st {
   individual_data *individuals;
   unsigned int ncat;
   unsigned int cat;
@@ -62,8 +60,6 @@ void spop_popadd(spop, spop);
 
 typedef double (*prob_func)(unsigned int, double, double, double);
 typedef void (*iter_func)(const individual_data*, double*, double*, double*);
-void spop_iterate(spop, double, double, double, iter_func, double, double, double, iter_func);
-
-void spop_kill(spop, double);
+void spop_iterate(spop, double, double, double, iter_func, double, double, double, iter_func, unsigned char);
 
 #endif
