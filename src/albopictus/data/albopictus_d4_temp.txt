@@ -6,10 +6,10 @@ ref	temp	dev
 "Delatte et al., 2009"	25	30
 "Delatte et al., 2009"	35	19.86
 "Braks et al., 2006"	25	51.11
-"L嗹enberg Neto & Navarro-Silva, 2004"	23.5	35.9
-"Muturi et al., 2011 (Effect ofﾉ)"	20	23.82
-"Muturi et al., 2011 (Effect ofﾉ)"	25	26.21
-"Muturi et al., 2011 (Effect ofﾉ)"	30	31.11
+"Lenberg Neto & Navarro-Silva, 2004"	23.5	35.9
+"Muturi et al., 2011 (Effect of)"	20	23.82
+"Muturi et al., 2011 (Effect of)"	25	26.21
+"Muturi et al., 2011 (Effect of)"	30	31.11
 "O'Donnell & Armbruster, 2010"	21	24.5
 "Tsuda et al., 1994"	27	30
 "Tsuda et al., 1994"	27	31.7
@@ -18,8 +18,8 @@ ref	temp	dev
 "Udaka, 1959"	23	41
 "Udaka, 1959"	27	61
 "Udaka, 1959"	25	58
-"Calado & Silva, 2002 (Influ刃ciaﾉ)"	15	19.45
-"Calado & Silva, 2002 (Influ刃ciaﾉ)"	20	59.35
-"Calado & Silva, 2002 (Influ刃ciaﾉ)"	25	61.55
-"Calado & Silva, 2002 (Influ刃ciaﾉ)"	30	42.72
+"Calado & Silva, 2002 (Influcia)"	15	19.45
+"Calado & Silva, 2002 (Influcia)"	20	59.35
+"Calado & Silva, 2002 (Influcia)"	25	61.55
+"Calado & Silva, 2002 (Influcia)"	30	42.72
 "Hein, 1975 II (From Hawley, 1987)"	25	45
