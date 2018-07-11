@@ -75,8 +75,8 @@ void incubator_develop_survive(incubator *s,
     2. expected development time (p_mean) and
     3. current age ((*s)->data.popdev)
    */
-  double d_p, d_r;
-  double p_p, p_r;
+  double d_p = 0.0, d_r = 0.0;
+  double p_p = 0.0, p_r = 0.0;
   if (mode == MODE_BINOM_RAW) {
     d_p = p_p = 0.5;
     d_r = d_mean;

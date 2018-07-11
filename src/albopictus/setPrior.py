@@ -32,22 +32,22 @@ def fpow(x,a1,a2):
     tmp[tmp<1.0] = 1.0
     return tmp
 
-data = {'n23.comb.dens': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_dev.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'n23.comb.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'n23.surv': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_surv.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'tbm.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_tbm_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'F4.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_F4_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd1.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d1_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd2.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d2_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd3.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d3_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p0.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p0_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p1.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p1_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p2.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p2_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'p3.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p3_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2]),
-        'd4.temp': numpy.loadtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d4_temp.txt"),delimiter="\t",skiprows=1,usecols=[1,2])}
+data = {'n23.comb.dens': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_dev.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'n23.comb.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'n23.surv': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_n23_surv.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'tbm.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_tbm_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'F4.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_F4_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'd1.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d1_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'd2.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d2_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'd3.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d3_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'p0.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p0_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'p1.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p1_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'p2.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p2_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'p3.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_p3_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2]),
+        'd4.temp': numpy.genfromtxt(pkg_resources.resource_filename(__name__,"data/albopictus_d4_temp.txt"),delimiter="\t",skip_header=1,usecols=[1,2])}
 
 def readDataType(filename,begin=0):
-    dat = numpy.loadtxt(filename,delimiter="\t",skiprows=1,usecols=[0],dtype='S')
+    dat = numpy.genfromtxt(filename,delimiter="\t",skip_header=1,usecols=[0],dtype='S')
     count = begin
     for r in range(len(dat)):
         if dat[r] not in dat[:r]:

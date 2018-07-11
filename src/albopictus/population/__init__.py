@@ -9,7 +9,7 @@ spop
 
      stochastic: a logical value indicating a deterministic or a stochastic population dynamics
 
-     prob: a character string indicating the basis of age-dependent survival or development (gamma: gamma-distributed, nbinom: negative binomial-distributed)
+     prob: a character string indicating the basis of age-dependent survival or development (gamma: gamma-distributed (default), nbinom: negative binomial-distributed)
 
 Examples
 
@@ -106,9 +106,9 @@ class spop:
     #
     def iterate(self,dev=None,death=None,dev_mean=None,dev_sd=None,death_mean=None,death_sd=None,pause=False):
         if dev is None:
-            if (not (dev_mean is None)) and ((dev_sd is None) or (dev_sd == 0)):
+            if (not (dev_mean is None)) and ((dev_sd is None) or dev_sd is 0):
                 dev = numpy.float64(self.pop[:,2] >= numpy.array(dev_mean) - 1.0)
-            elif (not (dev_mean is None)) and (not ((dev_sd is None) or (dev_sd == 0))):
+            elif (not (dev_mean is None)) and (not ((dev_sd is None) or dev_sd is 0)):
                 dev = self.prob_fun(self.pop[:,2],dev_mean,dev_sd)
             else:
                 print "Wrong probability:",dev
@@ -116,9 +116,9 @@ class spop:
         dev = self.checkNaN(dev)
         #
         if death is None:
-            if (not (death_mean is None)) and ((death_sd is None) or (death_sd == 0)):
+            if (not (death_mean is None)) and ((death_sd is None) or death_sd is 0):
                 death = numpy.float64(self.pop[:,0] >= numpy.array(death_mean) - 1.0)
-            elif (not (death_mean is None)) and (not ((death_sd is None) or (death_sd == 0))):
+            elif (not (death_mean is None)) and (not ((death_sd is None) or death_sd is 0)):
                 death = self.prob_fun(self.pop[:,0],death_mean,death_sd)
             else:
                 print "Wrong probability:",death

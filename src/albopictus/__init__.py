@@ -153,10 +153,6 @@ chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.
 priorSand = json.load(open(pkg_resources.resource_filename(__name__, "data/priorSand.json"),"r"))
 sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
 
-# Age-structured population dynamics model (Python) ------ //
-
-
-
 # Set defaults ------------------------------------------- //
 
 vector = vector13
