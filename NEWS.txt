@@ -1,12 +1,12 @@
 News
 ====
 
-1.8.2
+1.8.3
 -----
 
 * Release date: UNRELEASED*
 
-* Bug fix
+* Bug fixes for cross-platform compatibility
 
 1.8
 ---
