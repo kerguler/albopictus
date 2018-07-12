@@ -13,11 +13,17 @@ Contents
 1) Prerequisites
 ----------------
 
-The model requires the following packages, which are not included in this package:
+The model requires the Python packages
 
 	numpy
     
 	pkg_resources
+
+and the
+
+    GNU Scientific Library (development)
+
+for C, which are not included in this package.
 
 2) Linux installation
 ---------------------
