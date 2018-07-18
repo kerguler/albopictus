@@ -119,7 +119,7 @@ int spop_kill(spop   s,
     } else if (tmpn->batchsize<0) {
       printf("ERROR: Error in population!\n");
       spop_print(s);
-      return nan;
+      return -1;
     }
     if (remove) {
       tmp->next = tmpn->next;
@@ -157,7 +157,7 @@ int spop_survive(spop   s,
       case MODE_GAMMA_HASH:
         if (!gamma_dist_hash(p_mean,p_sd,tmpn->development,&prob)) {
           printf("ERROR: Gamma distribution failed!\n");
-          return nan;
+          return -1;
         }
         break;
       default:
@@ -180,7 +180,7 @@ int spop_survive(spop   s,
     } else if (tmpn->batchsize<0) {
       printf("ERROR: Error in population!\n");
       spop_print(s);
-      return nan;
+      return -1;
     } else {
       // Develop
       if (d_sd > 0) { // development time provided
@@ -191,7 +191,7 @@ int spop_survive(spop   s,
         case MODE_GAMMA_HASH:
           if (!gamma_dist_hash(d_mean,d_sd,tmpn->development,&prob)) {
             printf("ERROR: Gamma distribution failed!\n");
-            return nan;
+            return -1;
           }
           break;
         default:
@@ -214,12 +214,12 @@ int spop_survive(spop   s,
       } else if (tmpn->batchsize<0) {
         printf("ERROR: Error in population!\n");
         spop_print(s);
-        return nan;
+        return -1;
       }
       if (tmpn->development >= MAX_DAYS) {
         printf("ERROR: Development time is too high!\n");
         spop_print(s);
-        return nan;
+        return -1;
       }
     }
     if (remove) {

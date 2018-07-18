@@ -21,7 +21,7 @@ The model requires the Python packages
 
 and the
 
-    GNU Scientific Library (development)
+	GNU Scientific Library (development)
 
 for C, which are not included in this package.
 
