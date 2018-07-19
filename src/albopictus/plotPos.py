@@ -17,7 +17,7 @@ def pplot(model,prior,parmat,options):
     from scipy.stats import norm
     # ---
     parmat = numpy.array(parmat)
-    print "Plotting %s..." %(options['name'])
+    print("Plotting %s..." %(options['name']))
     if not options['xlim']:
         if len(parmat)>0:
             options['xlim'] = [numpy.min(parmat[:,model.parids[options['par_name']]]*options['scale']),numpy.max(parmat[:,model.parids[options['par_name']]]*options['scale'])]
@@ -154,5 +154,5 @@ def plotPosterior(directory,model,prior,parmat=[]):
         if len(parmat)>0:
             print "Fitting %s..." %(tsk)
             plot_fit(parmat,setPrior.tasks[tsk],fits[tsk],tsk)
-        print "Plotting %s..." %(tsk)
+        print("Plotting %s..." %(tsk))
         plot_pos(prior,setPrior.tasks[tsk],setPrior.data[tsk],setPrior.datatype[tsk],directory,tsk,fits[tsk],tsk)
