@@ -40,7 +40,7 @@ def getClimate(lon,lat,times='global'):
     import requests
     #
     if not (times in ['local','global','future','farfuture']):
-        print "Error: 'times' argument should be one of ['local','global','future','farfuture']"
+        print("Error: 'times' argument should be one of ['local','global','future','farfuture']")
         return None
     res = {
         'local':True,

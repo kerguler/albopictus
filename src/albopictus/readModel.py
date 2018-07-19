@@ -67,7 +67,7 @@ class prepareModel:
             self.metnames = numpy.copy(temp[:self.nummet])
             self.parnames = numpy.copy(temp[-self.numpar:])
         except:
-            print "Skipping default parameters"
+            print("Skipping default parameters")
             self.metnames = numpy.array(["coln%d" %(n) for n in range(self.nummet)])
             self.parnames = numpy.array(["par%d" %(n) for n in range(self.numpar)])
         #
