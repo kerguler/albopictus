@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: albopictus
-Version: 1.8.3
+Version: 1.8.4
 Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.8.3
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.8.4
 Description-Content-Type: UNKNOWN
 Description: Environmentally-driven population dynamics model of Aedes albopictus
         ====================================================================
@@ -83,6 +83,13 @@ Description: Environmentally-driven population dynamics model of Aedes albopictu
         
         News
         ====
+        
+        1.8.4
+        -----
+        
+        * Release date: UNRELEASED*
+        
+        * Added functionality to interface with the http://vbd.cyi.ac.cy database
         
         1.8.3
         -----

@@ -1,6 +1,13 @@
 News
 ====
 
+1.8.4
+-----
+
+* Release date: UNRELEASED*
+
+* Added functionality to interface with the http://vbd.cyi.ac.cy database
+
 1.8.3
 -----
 
