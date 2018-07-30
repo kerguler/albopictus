@@ -1,7 +1,7 @@
 Environmentally-driven population dynamics model of Aedes albopictus
 ====================================================================
 
-This is a python (v2.7) package implementing the environmentally-driven population dynamics model of Aedes albopictus. 
+This is a python (v3.7) package implementing the environmentally-driven population dynamics model of Aedes albopictus. 
 
 Contents
 --------

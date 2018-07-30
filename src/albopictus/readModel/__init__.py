@@ -5,7 +5,7 @@ array_1d_double = npct.ndpointer(dtype=numpy.float64, ndim=1, flags='CONTIGUOUS'
 array_1d_int = npct.ndpointer(dtype=numpy.int32, ndim=1, flags='CONTIGUOUS')
 
 from scipy.stats import gamma
-from accessory import calcEnsemble, calc_ss
+from albopictus.accessory import calcEnsemble, calc_ss
 
 class prepareModel:
     def __init__(self,modelname,label):
@@ -63,7 +63,7 @@ class prepareModel:
             temp = (ctypes.c_char_p * (self.nummet+self.numpar))(256)
             self.param = numpy.array([0 for n in range(self.numpar)],dtype=numpy.float64)
             ret = self.param_model(temp,self.param)
-            temp = numpy.array([elm for elm in temp])
+            temp = numpy.array([str(elm,'utf-8') for elm in temp])
             self.metnames = numpy.copy(temp[:self.nummet])
             self.parnames = numpy.copy(temp[-self.numpar:])
         except:
@@ -274,11 +274,11 @@ class prepareModel:
         for key in prior:
             if 'min' in prior[key] and any([pr[self.parids[pid]] < prior[key]['min'] for pid in prior[key]['parids']]):
                 if verbose:
-                    print "Warning: Parameter %s breached minimum allowance!" %(key)
+                    print("Warning: Parameter %s breached minimum allowance!" %(key))
                 return numpy.Inf
             if 'max' in prior[key] and any([pr[self.parids[pid]] > prior[key]['max'] for pid in prior[key]['parids']]):
                 if verbose:
-                    print "Warning: Parameter %s breached maximum allowance!" %(key)
+                    print("Warning: Parameter %s breached maximum allowance!" %(key))
                 return numpy.Inf
             if 'mean' in prior[key] and 'var' in prior[key] and 'var.inv' in prior[key]:
                 scr += 0.5*calc_ss(numpy.array([pr[self.parids[x]] for x in prior[key]['parids']]),

@@ -1,4 +1,4 @@
-import setPrior
+import albopictus.setPrior
 import numpy
 
 markers = numpy.array(["o","v","^","<",">","1","2","3","4","8","s","p","*","h","H","+","x","D","d","|","_"])
@@ -152,7 +152,7 @@ def plotPosterior(directory,model,prior,parmat=[]):
     fits = setPrior.getFits(model)
     for tsk in setPrior.tasks:
         if len(parmat)>0:
-            print "Fitting %s..." %(tsk)
+            print("Fitting %s..." %(tsk))
             plot_fit(parmat,setPrior.tasks[tsk],fits[tsk],tsk)
         print("Plotting %s..." %(tsk))
         plot_pos(prior,setPrior.tasks[tsk],setPrior.data[tsk],setPrior.datatype[tsk],directory,tsk,fits[tsk],tsk)

@@ -141,7 +141,7 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 
 # modelAalbopictus --------------------------------------- //
 
-from readModel import prepareModel
+from albopictus.readModel import prepareModel
 
 vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"), "vector03")
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"), "vector08")
@@ -160,7 +160,7 @@ prior = prior13
 
 # Accessories -------------------------------------------- //
 
-from accessory import *
+from albopictus.accessory import *
 
-from plotPos import plotPosterior
+from albopictus.plotPos import plotPosterior
 
