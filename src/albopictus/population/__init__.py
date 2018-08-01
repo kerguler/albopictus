@@ -62,9 +62,9 @@ def gamma_dist_prob(array,mean,sd):
 class spop:
     def __init__(self,stochastic=True,prob='gamma'):
         if not (prob in prob_list):
-            print "ERROR: prob can be one of the following:"
+            print("ERROR: prob can be one of the following:")
             for p in prob_list:
-                print "-> %s" %(p)
+                print("-> %s" %(p))
             return None
         self.prob = prob
         self.prob_fun = None
@@ -85,7 +85,7 @@ class spop:
         else:
             pop = numpy.array(pop,dtype=numpy.float64)
         if (not isinstance(pop, numpy.ndarray) or pop.shape[1] != 4):
-            print "ERROR: Wrong array dimension (4 columns needed for age, devcycle, development, and age)"
+            print("ERROR: Wrong array dimension (4 columns needed for age, devcycle, development, and age)")
             return
         if (pop.shape[0] == 0):
             return
@@ -111,7 +111,7 @@ class spop:
             elif (not (dev_mean is None)) and (not ((dev_sd is None) or dev_sd is 0)):
                 dev = self.prob_fun(self.pop[:,2],dev_mean,dev_sd)
             else:
-                print "Wrong probability:",dev
+                print("Wrong probability: %s" %(dev))
                 return numpy.nan
         dev = self.checkNaN(dev)
         #
@@ -121,7 +121,7 @@ class spop:
             elif (not (death_mean is None)) and (not ((death_sd is None) or death_sd is 0)):
                 death = self.prob_fun(self.pop[:,0],death_mean,death_sd)
             else:
-                print "Wrong probability:",death
+                print("Wrong probability: %s" %(death))
                 return numpy.nan
         death = self.checkNaN(death)
         #

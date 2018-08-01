@@ -1,6 +1,20 @@
 News
 ====
 
+1.9.3
+-----
+
+* Release date: 1 August 2018*
+
+* getClimate and getLonLat updated for Python 3
+
+1.9.1
+-----
+
+* Release date: 31 July 2018
+
+* spop module is now compatible with Python 3
+
 1.9
 ---
 

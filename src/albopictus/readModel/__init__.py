@@ -13,6 +13,7 @@ class prepareModel:
         global exit_rng_setup
         global exit_rng_destroy
         #
+        label = label.encode('utf-8')
         import atexit
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)

@@ -133,20 +133,25 @@ void calculate(double *photoperiod,
   
   double Tw = Ta + deltaT;
 
-  // Number of breeding sites
+  /*
+   * Update the number of breeding sites
+   */
   (*nBS) = param[alpha_BS_pdens] * (*popdens) +
     param[alpha_BS_dprec] * daily_precipitation[TIME] +
     param[alpha_BS_nevap] * (*nBS);
   (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
 
+  /*
+   * Update survival and development rates/probabilities according to
+   * the new environmental conditions and breeding sites
+   */
   // Density of the immature stages
   // Assume uniform distribution across all breeding sites
-  double n23dens = ((*conn2)->popsize + (*conn3)->popsize) / (*K);
+  double n23dens = ((*n2) + (*n3)) / (*K);
   double densd = expd(n23dens,param[alpha_n23_surv]);
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
   // Fecundity
   double bigF4 = poly(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
-  (*F4) = bigF4;
   // Egg survival (diapausing eggs)
   double p0_Ta = flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);
   // Egg mortality (non-diapausing eggs)
@@ -166,70 +171,92 @@ void calculate(double *photoperiod,
   // Adult lifetime (from emergence)
   double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
   double dd4s = gamma_matrix_sd*dd4;
-  (*d4) = dd4;
-  (*d4s) = dd4s;
 
-  // Update development times and survival proportions
-  // of the immature stages and juvenile adults
-  //
-  // Diapausing eggs
-  (*n0) = p0_Ta*(*n0);
+  /*
+   * Survival first, and then, development.
+   * Update development times and survival proportions
+   * of the immature stages and juvenile adults
+   */
+  // Diapausing egg survival
+  double dp_eggs = p0_Ta*(*n0);
   //
   // Normal and tagged eggs
-  double n1_developed = spop_iterate((*conn1),
-                                     0,
-                                     d1, 0, // development (fixed-length)
-                                     0,
-                                     p1_Tw, // death (fixed daily rate)
-                                     0, 0,
-                                     0,
-                                     0);
-  double n10_developed = spop_iterate((*conn10),
-                                      0,
-                                      d1, 0, // development (fixed-length)
-                                      0,
-                                      p1_Tw, // death (fixed daily rate)
-                                      0, 0,
-                                      0,
-                                      0);
+  spop_iterate((*conn1),
+               0,
+               d1, 0, // development (fixed-length)
+               0,
+               p1_Tw, // death (fixed daily rate)
+               0, 0,
+               0,
+               0);
+  spop_iterate((*conn10),
+               0,
+               d1, 0, // development (fixed-length)
+               0,
+               p1_Tw, // death (fixed daily rate)
+               0, 0,
+               0,
+               0);
   //
   // Larvae
-  double n2_developed = spop_iterate((*conn2),
-                                     0,
-                                     d2, 0, // development (fixed-length)
-                                     0,
-                                     p2_Tw, // death (fixed daily rate)
-                                     0, 0,
-                                     0,
-                                     0);
+  spop_iterate((*conn2),
+               0,
+               d2, 0, // development (fixed-length)
+               0,
+               p2_Tw, // death (fixed daily rate)
+               0, 0,
+               0,
+               0);
   //
   // Pupae
-  double n3_developed = spop_iterate((*conn3),
-                                     0,
-                                     d3, 0, // development (fixed-length)
-                                     0,
-                                     p3_Tw, // death (fixed daily rate)
-                                     0, 0,
-                                     0,
-                                     0);
+  spop_iterate((*conn3),
+               0,
+               d3, 0, // development (fixed-length)
+               0,
+               p3_Tw, // death (fixed daily rate)
+               0, 0,
+               0,
+               0);
   //
   // Adult females
-  incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
-  double n4j_mature = spop_survive((*conn4j),
-                                   dd4, dd4s, // development
-                                   -p3_Tw, 0, // death
-                                   gamma_mode);
-  double n4_ovulate = spop_survive((*conn4),
-                                   -max(1.0, d3), 0, // development
-                                   -p3_Tw, 0, // death
-                                   gamma_mode);
-  //
+  // incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
+  spop_iterate((*conn4j),
+               0,
+               alpha_blood, 0, // development (fixed-length)
+               0,
+               0,
+               dd4, dd4s, // death (gamma-distributed)
+               0,
+               0);
+  spop_iterate((*conn4),
+               0,
+               0, 0, // development (no development)
+               0,
+               0,
+               dd4, dd4s, // death (gamma-distributed)
+               0,
+               0);
+  /*
+   * Perform state transformations
+   */
+  double n1_developed = (*conn1)->developed;
+  double n10_developed = (*conn10)->developed;
+  double n2_developed = (*conn2)->developed;
+  double n3_developed = (*conn3)->developed;
+  double n4_reproduce = (*conn4)->popsize;
+  individual_data n4j_mature = (*conn4j)->devtable; // WARNING: volatile!
+
+
+
+
+
+  
   // Check if it is winter or summer
   char short_days = photoperiod[TIME] < param[alpha_dp_thr];
   char cold_days = Ta < param[alpha_ta_thr];
   //
   // Lay eggs
-  (*egg) = bigF4*(*n4f); // Total number of eggs that will be laid that day
+  double neweggs = bigF4*n4_reproduce; // Total number of eggs that will be laid that day
   double hatch = 0;
   (*diap) = 1.0;
   //
@@ -238,15 +265,15 @@ void calculate(double *photoperiod,
     // The fraction of tagged eggs increases linearly
     (*percent_strong) = min(1.0,(*percent_strong)+param[alpha_rate_strong]);
     //
-    incubator_add(&conn10,bigF4*(*n4f)*(*percent_strong),0.0); // Tagged eggs
-    incubator_add(&conn1,bigF4*(*n4f)*(1.0-(*percent_strong)),0.0); // Normal eggs
+    incubator_add(&conn10,neweggs*(*percent_strong),0.0); // Tagged eggs
+    incubator_add(&conn1,neweggs*(1.0-(*percent_strong)),0.0); // Normal eggs
     //
   } else { // NO DIAPAUSE
     // Lay normal eggs
-    incubator_add(&conn1,bigF4*(*n4f),0.0); // Normal eggs
+    incubator_add(&conn1,neweggs,0.0); // Normal eggs
     // Prepare diapausing eggs for hatching
-    double vn0_n10 = (*n0)*param[alpha_rate_normal];
-    (*n0) -= vn0_n10; // Diapausing eggs
+    double vn0_n10 = dp_eggs*param[alpha_rate_normal];
+    dp_eggs -= vn0_n10; // Diapausing eggs
     hatch += vn0_n10; // Eggs to hatch
     //
     (*percent_strong) = 0.0;
@@ -263,7 +290,7 @@ void calculate(double *photoperiod,
   double vn10_hn0;
   incubator_remove(&conn10,&vn10_hn0);
   // Tagged eggs always become diapausing eggs
-  (*n0) = (*n0) + vn10_hn0;
+  dp_eggs += vn10_hn0;
   // Hatch eggs
   if (cold_days) { // Wait! Do not hatch at the moment
     (*diap) *= 2.0;
@@ -274,10 +301,16 @@ void calculate(double *photoperiod,
     incubator_add(&conn2,hatch,0.0);
   }
   //
+  // Update all stages and state variables
+  (*eggs) = neweggs;
+  (*n0) = dp_eggs;
+  (*F4) = bigF4;
+  (*d4) = dd4;
+  (*d4s) = dd4s;
   // Update immature stage counts
-  (*n3) = incubator_sum(conn3);
-  (*n2) = incubator_sum(conn2);
-  (*n1) = incubator_sum(conn1) + incubator_sum(conn10);
+  (*n3) = (*conn3)->popsize;
+  (*n2) = (*conn2)->popsize;
+  (*n1) = (*conn1)->popsize + (*conn10)->popsize;
   //
   // Add newly developed females to adults
   nn3 *= 0.5;
