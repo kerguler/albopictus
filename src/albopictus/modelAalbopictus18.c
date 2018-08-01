@@ -218,8 +218,7 @@ void calculate(double *photoperiod,
                0,
                0);
   //
-  // Adult females
-  // incubator_develop_survive(&conn4,-1,0,dd4,dd4s,alpha_blood,n4fj,n4f,0,gamma_mode);
+  // Adult naive females
   spop_iterate((*conn4j),
                0,
                alpha_blood, 0, // development (fixed-length)
@@ -228,6 +227,8 @@ void calculate(double *photoperiod,
                dd4, dd4s, // death (gamma-distributed)
                0,
                0);
+  //
+  // Adult mature females
   spop_iterate((*conn4),
                0,
                0, 0, // development (no development)
@@ -236,28 +237,28 @@ void calculate(double *photoperiod,
                dd4, dd4s, // death (gamma-distributed)
                0,
                0);
-  /*
-   * Perform state transformations
-   */
+  //
+  // Developed normal eggs
   double n1_developed = (*conn1)->developed;
+  // Developed tagged eggs
   double n10_developed = (*conn10)->developed;
-  double n2_developed = (*conn2)->developed;
-  double n3_developed = (*conn3)->developed;
+  // Tagged eggs always become diapausing eggs
+  dp_eggs += n10_developed;
+  // Adults survived to produce eggs
   double n4_reproduce = (*conn4)->popsize;
-  individual_data n4j_mature = (*conn4j)->devtable; // WARNING: volatile!
-
-
-
-
-
-  
+  //
+  // Perform state transformations
+  spop_popadd((*conn4), (*conn4j)->devtable);
+  spop_add((*conn4j), 0, 0, 0, 0.5 * (*conn3)->developed);
+  spop_add((*conn3), 0, 0, 0, (*conn2)->developed);
+  //  
   // Check if it is winter or summer
   char short_days = photoperiod[TIME] < param[alpha_dp_thr];
   char cold_days = Ta < param[alpha_ta_thr];
   //
   // Lay eggs
   double neweggs = bigF4*n4_reproduce; // Total number of eggs that will be laid that day
-  double hatch = 0;
+  double hatch = n1_developed; // Number of eggs to become larvae
   (*diap) = 1.0;
   //
   if (short_days) { // DIAPAUSE
@@ -265,57 +266,52 @@ void calculate(double *photoperiod,
     // The fraction of tagged eggs increases linearly
     (*percent_strong) = min(1.0,(*percent_strong)+param[alpha_rate_strong]);
     //
-    incubator_add(&conn10,neweggs*(*percent_strong),0.0); // Tagged eggs
-    incubator_add(&conn1,neweggs*(1.0-(*percent_strong)),0.0); // Normal eggs
+    spop_add((*conn10),0,0,0,neweggs*(*percent_strong)); // Tagged eggs
+    spop_add((*conn1),0,0,0,neweggs*(1.0-(*percent_strong))); // Normal eggs
     //
   } else { // NO DIAPAUSE
     // Lay normal eggs
-    incubator_add(&conn1,neweggs,0.0); // Normal eggs
+    spop_add((*conn1),0,0,0,neweggs); // Normal eggs
+    //
     // Prepare diapausing eggs for hatching
-    double vn0_n10 = dp_eggs*param[alpha_rate_normal];
-    dp_eggs -= vn0_n10; // Diapausing eggs
-    hatch += vn0_n10; // Eggs to hatch
+    double n10_hatch = dp_eggs*param[alpha_rate_normal];
+    dp_eggs -= n10_hatch; // Diapausing eggs
+    hatch += n10_hatch; // Eggs to hatch
     //
     (*percent_strong) = 0.0;
   }
   //
-  // Develop
-  double nn1;
-  double nn2;
-  double nn3;
-  incubator_remove(&conn3,&nn3);
-  incubator_remove(&conn2,&nn2); incubator_add(&conn3,nn2,0.0);
-  incubator_remove(&conn1,&nn1); hatch += nn1;
-  // Harvest developed tagged eggs
-  double vn10_hn0;
-  incubator_remove(&conn10,&vn10_hn0);
-  // Tagged eggs always become diapausing eggs
-  dp_eggs += vn10_hn0;
   // Hatch eggs
   if (cold_days) { // Wait! Do not hatch at the moment
     (*diap) *= 2.0;
+
+
+    
+    
     // Eggs should stay as eggs and wait for the right temperatures to hatch
     incubator_add(&conn1,hatch,1.0); // Normal eggs (fully developed, ready to hatch)
+
+
+    
+    
   } else { // Enable egg hatching
     // All eggs, which are ready to hatch, become larvae
-    incubator_add(&conn2,hatch,0.0);
+    spop_add((*conn2),0,0,0,hatch);
   }
   //
   // Update all stages and state variables
-  (*eggs) = neweggs;
   (*n0) = dp_eggs;
-  (*F4) = bigF4;
+  (*n10) = (*conn10)->popsize;
+  (*n1) = (*conn1)->popsize;
+  (*n2) = (*conn2)->popsize;
+  (*n3) = (*conn3)->popsize;
+  (*n4fj) = (*conn4j)->popsize;
+  (*n4f) = (*conn4)->popsize;
+  // Update indicators
   (*d4) = dd4;
   (*d4s) = dd4s;
-  // Update immature stage counts
-  (*n3) = (*conn3)->popsize;
-  (*n2) = (*conn2)->popsize;
-  (*n1) = (*conn1)->popsize + (*conn10)->popsize;
-  //
-  // Add newly developed females to adults
-  nn3 *= 0.5;
-  incubator_add(&conn4,nn3,0.0);
-  (*n4f) += nn3;
+  (*F4) = bigF4;
+  (*egg) = neweggs;
 }
 
 // --------------------------------------------
