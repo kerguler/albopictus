@@ -85,12 +85,17 @@ void set_gamma_mode(char mode) {
 #define alpha_n23_4       46
 #define alpha_n23_5       47
 
+double alpha_ta_thr_std = 0.5;
+double alpha_dp_thr_std = 10.0/24.0/60.0;
+
 #define flin(x, a1, a2) (max(0.0, min(1.0, (a1) + (a2)*(x))))
 #define dsig(x, a1, a2, a3) (max(0.0, min(1.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
 #define dsig2(x, a1, a2, a3) (max(0.0, min(100.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
 #define poly(x, a1, a2, a3) (max(0.0, (a1) + (a2)*(x) + (a3)*pow((x),2)))
 #define expd(x, k) (exp(-(k)*(x)))
 #define fpow(x, a1, a2) (min(1.0, (a1)*pow((x),(a2))))
+#define Tthr(T,Tmn,Tstd) (1.0/(1.0+exp(((Tmn)-(T))/(Tstd))))
+#define pdiap(P,Pmn,Pstd,tt) (1.0-(tt)-(1.0-(tt))/((1.0+exp(((Pmn)-(P))/(Pstd)))))
 
 //double timebefore = 0;
 //double timeof = 0;
@@ -152,6 +157,7 @@ void calculate(double *photoperiod,
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
   // Fecundity
   double bigF4 = poly(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
+  
   // Egg survival (diapausing eggs)
   double p0_Ta = flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);
   // Egg mortality (non-diapausing eggs)
@@ -160,6 +166,7 @@ void calculate(double *photoperiod,
   double p2_Tw = 1.0 - dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3])*densd;
   // Pupal mortality
   double p3_Tw = 1.0 - dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3])*densd;
+  
   // Egg development time
   double d1 = max(1.0, poly(Tw,param[alpha_d1_1],param[alpha_d1_2],param[alpha_d1_3]));
   // Larval development time
@@ -172,6 +179,10 @@ void calculate(double *photoperiod,
   double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
   double dd4s = gamma_matrix_sd*dd4;
 
+  // Diapause and quiescence
+  double fracHatch = Tthr(Ta,param[alpha_ta_thr],alpha_ta_thr_std); 
+  double fracDiap = pdiap(photoperiod[TIME],param[alpha_dp_thr],alpha_dp_thr_std,fracHatch);
+  
   /*
    * Survival first, and then, development.
    * Update development times and survival proportions
@@ -264,6 +275,9 @@ void calculate(double *photoperiod,
   if (short_days) { // DIAPAUSE
     (*diap) = 3.0;
     // The fraction of tagged eggs increases linearly
+    //
+    // CORRECTION: This should follow a sigmoidal curve!
+    //
     (*percent_strong) = min(1.0,(*percent_strong)+param[alpha_rate_strong]);
     //
     spop_add((*conn10),0,0,0,neweggs*(*percent_strong)); // Tagged eggs
