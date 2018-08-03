@@ -3,8 +3,7 @@
 
 #include <float.h>
 
-// #define DPOP_EPS      DBL_MIN
-#define DPOP_EPS      1e-38
+#define DPOP_EPS      DBL_MIN
 #define DPOP_MAX_DAYS 1000000
 
 typedef union {

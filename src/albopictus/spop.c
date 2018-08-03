@@ -212,9 +212,10 @@ char calc_spop(spop s, individual_data *tmpn, double prob, sdnum *k) {
     (*k).d = tmpn->number.d * prob;
     tmpn->number.d -= (*k).d;
     s->size.d -= (*k).d;
-    if (tmpn->number.d <= DPOP_EPS) {
-      if (tmpn->number.d < 0)
-        return -1;
+    if (tmpn->number.d <= DPOP_EPS || s->size.d <= DPOP_EPS) {
+      tmpn->number.d = 0;
+      if (s->size.d <= DPOP_EPS)
+        s->size.d = 0;
       return 1;
     }
   }
