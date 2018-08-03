@@ -37,7 +37,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
-version = '1.9.3'
+version = '1.10.0'
 
 # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
 
@@ -83,7 +83,7 @@ setup(name='albopictus',
         Extension("albopictus.modelAalbopictus03", ["src/albopictus/incubator03.c", "src/albopictus/modelAalbopictus03.c"]),
         Extension("albopictus.modelAalbopictus08", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus08.c"]),
         Extension("albopictus.modelAalbopictus13", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus13.c"]),
-        # Extension("albopictus.modelAalbopictus18", ["src/albopictus/gamma.c", "src/albopictus/spop.c", "src/albopictus/modelAalbopictus18.c"]),
+        Extension("albopictus.modelAalbopictus18", ["src/albopictus/ran_gen.c", "src/albopictus/gamma.c", "src/albopictus/spop.c", "src/albopictus/modelAalbopictus18.c"]),
         Extension("albopictus.modelStochCHIKV", ["src/albopictus/ran_gen.c", "src/albopictus/spop01.c", "src/albopictus/gamma.c", "src/albopictus/modelStochCHIKV.c"]),
         Extension("albopictus.modelStochSand", ["src/albopictus/ran_gen.c", "src/albopictus/spop01.c", "src/albopictus/gamma.c", "src/albopictus/modelStochSand.c"])
         ],

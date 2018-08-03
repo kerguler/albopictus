@@ -131,6 +131,7 @@ param = json.load(open(pkg_resources.resource_filename(__name__, "data/posterior
 prior03 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior03.json"),"r"))
 prior08 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior08.json"),"r"))
 prior13 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior13.json"),"r"))
+prior18 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior18.json"),"r"))
 clim = json.load(open(pkg_resources.resource_filename(__name__, "data/climate.json"),"r"))
 for pr in clim:
     for clm in clim[pr]:
@@ -143,9 +144,10 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 
 from albopictus.readModel import prepareModel
 
-vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"), "vector03")
-vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"), "vector08")
-vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"), "vector13")
+vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
+vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
+vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
+vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
 
 # modelStochSand - climateData ------------------------- //

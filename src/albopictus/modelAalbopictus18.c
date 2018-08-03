@@ -14,8 +14,8 @@ double time2here(void) {
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      48
-#define NumMetAea      12
+#define NumParAea      47
+#define NumMetAea      11
 
 // --------------------------------------------
 // Gamma distribution
@@ -69,24 +69,24 @@ void set_gamma_mode(char mode) {
 #define alpha_dp_egg      33
 #define alpha_dp_thr      34
 #define alpha_ta_thr      35
-#define alpha_rate_strong 36
-#define alpha_rate_normal 37
+#define alpha_tq_thr      36
 
-#define alpha_tbm_1       38
-#define alpha_tbm_2       39
-#define alpha_tbm_3       40
+#define alpha_tbm_1       37
+#define alpha_tbm_2       38
+#define alpha_tbm_3       39
 
-#define alpha_p0_1        41
-#define alpha_p0_2        42
+#define alpha_p0_1        40
+#define alpha_p0_2        41
 
-#define alpha_n23_1       43
-#define alpha_n23_2       44
-#define alpha_n23_3       45
-#define alpha_n23_4       46
-#define alpha_n23_5       47
+#define alpha_n23_1       42
+#define alpha_n23_2       43
+#define alpha_n23_3       44
+#define alpha_n23_4       45
+#define alpha_n23_5       46
 
-double alpha_ta_thr_std = 0.5;
-double alpha_dp_thr_std = 10.0/24.0/60.0;
+#define alpha_ta_thr_std  (0.5)
+#define alpha_dp_thr_std  (10.0/24.0/60.0)
+#define alpha_tq_thr_std  (0.5)
 
 #define flin(x, a1, a2) (max(0.0, min(1.0, (a1) + (a2)*(x))))
 #define dsig(x, a1, a2, a3) (max(0.0, min(1.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
@@ -115,6 +115,7 @@ void calculate(double *photoperiod,
                double *n0,
                double *n10,
                double *n1,
+               double *nh,
                double *n2,
                double *n3,
                double *n4fj,
@@ -125,8 +126,6 @@ void calculate(double *photoperiod,
                double *d4s,
                double *F4,
                double *egg,
-               double *percent_strong,
-               double *diap,
                int    TIME) {
   // ---------------------
   // modelDelayAalbopictus
@@ -180,16 +179,18 @@ void calculate(double *photoperiod,
   double dd4s = gamma_matrix_sd*dd4;
 
   // Diapause and quiescence
-  double fracHatch = Tthr(Ta,param[alpha_ta_thr],alpha_ta_thr_std); 
+  // quie -> larvae
+  double fracHatch = Tthr(Ta,param[alpha_ta_thr],alpha_ta_thr_std);
+  // neweggs -> n10
   double fracDiap = pdiap(photoperiod[TIME],param[alpha_dp_thr],alpha_dp_thr_std,fracHatch);
+  // n0 -> quie
+  double fracQuie = 1.0 - Tthr(Ta,param[alpha_tq_thr],alpha_tq_thr_std);
   
   /*
    * Survival first, and then, development.
    * Update development times and survival proportions
    * of the immature stages and juvenile adults
    */
-  // Diapausing egg survival
-  double dp_eggs = p0_Ta*(*n0);
   //
   // Normal and tagged eggs
   spop_iterate((*conn1),
@@ -208,6 +209,7 @@ void calculate(double *photoperiod,
                0, 0,
                0,
                0);
+  double quie = (1.0 - p1_Tw) * (*nh); // Number of surviving quiescent eggs
   //
   // Larvae
   spop_iterate((*conn2),
@@ -249,78 +251,37 @@ void calculate(double *photoperiod,
                0,
                0);
   //
-  // Developed normal eggs
-  double n1_developed = (*conn1)->developed;
-  // Developed tagged eggs
-  double n10_developed = (*conn10)->developed;
+  // Diapausing egg survival
   // Tagged eggs always become diapausing eggs
-  dp_eggs += n10_developed;
+  double dp_eggs = p0_Ta*(*n0) + (*conn10)->developed.d;
   // Adults survived to produce eggs
-  double n4_reproduce = (*conn4)->popsize;
+  double n4_reproduce = (*conn4)->size.d;
   //
   // Perform state transformations
   spop_popadd((*conn4), (*conn4j)->devtable);
-  spop_add((*conn4j), 0, 0, 0, 0.5 * (*conn3)->developed);
-  spop_add((*conn3), 0, 0, 0, (*conn2)->developed);
+  spop_add((*conn4j), 0, 0, 0, 0.5 * (*conn3)->developed.d);
+  spop_add((*conn3), 0, 0, 0, (*conn2)->developed.d);
+  spop_add((*conn2), 0, 0, 0, (*conn1)->developed.d + (fracHatch * quie));
+  quie = (1.0 - fracHatch) * quie;
   //  
-  // Check if it is winter or summer
-  char short_days = photoperiod[TIME] < param[alpha_dp_thr];
-  char cold_days = Ta < param[alpha_ta_thr];
-  //
   // Lay eggs
   double neweggs = bigF4*n4_reproduce; // Total number of eggs that will be laid that day
-  double hatch = n1_developed; // Number of eggs to become larvae
-  (*diap) = 1.0;
   //
-  if (short_days) { // DIAPAUSE
-    (*diap) = 3.0;
-    // The fraction of tagged eggs increases linearly
-    //
-    // CORRECTION: This should follow a sigmoidal curve!
-    //
-    (*percent_strong) = min(1.0,(*percent_strong)+param[alpha_rate_strong]);
-    //
-    spop_add((*conn10),0,0,0,neweggs*(*percent_strong)); // Tagged eggs
-    spop_add((*conn1),0,0,0,neweggs*(1.0-(*percent_strong))); // Normal eggs
-    //
-  } else { // NO DIAPAUSE
-    // Lay normal eggs
-    spop_add((*conn1),0,0,0,neweggs); // Normal eggs
-    //
-    // Prepare diapausing eggs for hatching
-    double n10_hatch = dp_eggs*param[alpha_rate_normal];
-    dp_eggs -= n10_hatch; // Diapausing eggs
-    hatch += n10_hatch; // Eggs to hatch
-    //
-    (*percent_strong) = 0.0;
-  }
+  spop_add((*conn10),0,0,0,fracDiap * neweggs); // Tagged eggs
+  spop_add((*conn1),0,0,0,(1.0-fracDiap) * neweggs); // Normal eggs
   //
-  // Hatch eggs
-  if (cold_days) { // Wait! Do not hatch at the moment
-    (*diap) *= 2.0;
-
-
-    
-    
-    // Eggs should stay as eggs and wait for the right temperatures to hatch
-    incubator_add(&conn1,hatch,1.0); // Normal eggs (fully developed, ready to hatch)
-
-
-    
-    
-  } else { // Enable egg hatching
-    // All eggs, which are ready to hatch, become larvae
-    spop_add((*conn2),0,0,0,hatch);
-  }
+  quie += fracQuie * dp_eggs;
+  dp_eggs = (1.0 - fracQuie) * dp_eggs;
   //
   // Update all stages and state variables
   (*n0) = dp_eggs;
-  (*n10) = (*conn10)->popsize;
-  (*n1) = (*conn1)->popsize;
-  (*n2) = (*conn2)->popsize;
-  (*n3) = (*conn3)->popsize;
-  (*n4fj) = (*conn4j)->popsize;
-  (*n4f) = (*conn4)->popsize;
+  (*n10) = (*conn10)->size.d;
+  (*n1) = (*conn1)->size.d;
+  (*nh) = quie;
+  (*n2) = (*conn2)->size.d;
+  (*n3) = (*conn3)->size.d;
+  (*n4fj) = (*conn4j)->size.d;
+  (*n4f) = (*conn4)->size.d;
   // Update indicators
   (*d4) = dd4;
   (*d4s) = dd4s;
@@ -339,8 +300,8 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg","coldiap",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.strong","PP.normal","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
+    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg",
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -385,8 +346,7 @@ void param_model(char **names, double *param) {
   param[alpha_dp_egg] = 1.0;
   param[alpha_dp_thr] = 0.5;
   param[alpha_ta_thr] = 21.0;
-  param[alpha_rate_strong] = 1.0;
-  param[alpha_rate_normal] = 1.0;
+  param[alpha_tq_thr] = 4.0;
 
   param[alpha_tbm_1] = 29.99806440902287;
   param[alpha_tbm_2] = -1.8712756925767178;
@@ -429,7 +389,6 @@ void sim_model(double               *envar,
   double *cold4s  = result + 9*(*finalT);
   double *colF4   = result + 10*(*finalT);
   double *colegg  = result + 11*(*finalT);
-  double *coldiap = result + 12*(*finalT);
 
   int TIME = 0;
   (*success) = 2;
@@ -437,6 +396,7 @@ void sim_model(double               *envar,
   double n0 = param[alpha_dp_egg];
   double n10 = 0.0;
   double n1 = param[alpha_0];
+  double nh = 0.0;
   double n2 = param[alpha_1];
   double n3 = param[alpha_2];
   double n4fj = 0.0;
@@ -447,8 +407,6 @@ void sim_model(double               *envar,
   double d4s = 0.0;
   double F4 = 0.0;
   double egg = n0 + n10 + n1;
-  double diap = 0;
-  double percent_strong = 0.0;
   //
   spop conn10 = spop_init(0,gamma_mode);
   spop conn1 = spop_init(0,gamma_mode);
@@ -475,7 +433,6 @@ void sim_model(double               *envar,
   cold4s[TIME] = d4s;
   colF4[TIME] = F4;
   colegg[TIME] = egg;
-  coldiap[TIME] = diap;
   //
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
@@ -493,6 +450,7 @@ void sim_model(double               *envar,
               &n0,
               &n10,
               &n1,
+              &nh,
               &n2,
               &n3,
               &n4fj,
@@ -503,8 +461,6 @@ void sim_model(double               *envar,
               &d4s,
               &F4,
               &egg,
-              &percent_strong,
-              &diap,
               TIME);
     //
     if ((*control)) { // Apply control measures
@@ -517,6 +473,7 @@ void sim_model(double               *envar,
         n0 *= controlpar[5];
         n10 *= controlpar[5];
         n1 *= controlpar[5];
+        nh *= controlpar[5];
         spop_iterate(conn1,
                      0,
                      0, 0,
@@ -593,10 +550,9 @@ void sim_model(double               *envar,
     cold4s[TIME] = d4s;
     colF4[TIME] = F4;
     colegg[TIME] = egg;
-    coldiap[TIME] = diap;
-    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg) || isnan(percent_strong) || isnan(diap)) {
+    if (isnan(n0) || isnan(n10) || isnan(n1) || isnan(nh) || isnan(n2) || isnan(n3) || isnan(n4fj) || isnan(n4f) || isnan(nBS) || isnan(K) || isnan(d4) || isnan(d4s) || isnan(F4) || isnan(egg)) {
       //
-      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",TIME,n0,n10,n1,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg,percent_strong,diap);
+      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n",TIME,n0,n10,n1,nh,n2,n3,n4fj,n4f,nBS,K,d4,d4s,F4,egg);
       printf("ERROR_PAR: ");
       int i;
       for (i=0; i<NumParAea; i++)

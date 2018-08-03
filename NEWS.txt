@@ -1,6 +1,13 @@
 News
 ====
 
+1.10.0
+-----
+
+* Release date: UNRELEASED*
+
+* Ae. albopictus population dynamics model update
+
 1.9.3
 -----
 

@@ -8,12 +8,11 @@ from scipy.stats import gamma
 from albopictus.accessory import calcEnsemble, calc_ss
 
 class prepareModel:
-    def __init__(self,modelname,label):
+    def __init__(self,modelname,label=None):
         global exit_gamma
         global exit_rng_setup
         global exit_rng_destroy
         #
-        label = label.encode('utf-8')
         import atexit
         self.modelname = modelname
         self.model = ctypes.cdll.LoadLibrary(self.modelname)
@@ -37,16 +36,18 @@ class prepareModel:
         except:
             pass
         #
-        try:
-            self.model.rng_setup.restype = None
-            self.model.rng_setup.argtypes = [ctypes.c_char_p]
-            self.model.rng_setup(label)
-        except:
-            pass
-        try:
-            atexit.register(self.model.rng_destroy)
-        except:
-            pass
+        if not (label is None):
+            label = label.encode('utf-8')
+            try:
+                self.model.rng_setup.restype = None
+                self.model.rng_setup.argtypes = [ctypes.c_char_p]
+                self.model.rng_setup(label)
+            except:
+                pass
+            try:
+                atexit.register(self.model.rng_destroy)
+            except:
+                pass
         #
         self.numparModel = self.model.numparModel
         self.numparModel.restype = None
