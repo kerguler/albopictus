@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 from distutils.core import setup, Extension
 import numpy.distutils.misc_util
-import sys, os
+import sys, os, re
 
 # --------------------------------------------------------------------------
 # https://stackoverflow.com/questions/38523941/change-cythons-naming-rules-for-so-files
@@ -21,7 +21,6 @@ class _CommandInstallCythonized(_install_lib):
         _install_lib.__init__(self, *args, **kwargs)
 
     def install(self):
-        import re
         # let the distutils' install_lib do the hard work
         outfiles = _install_lib.install(self)
         # batch rename the outfiles:
@@ -37,7 +36,12 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
-version = '1.10.0'
+verstrline = open('src/albopictus/__init__.py', "rt").read()
+mo = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", verstrline, re.M)
+if mo:
+    version = mo.group(1)
+else:
+    raise RuntimeError("Unable to find version string!")
 
 # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
 
@@ -85,7 +89,8 @@ setup(name='albopictus',
         Extension("albopictus.modelAalbopictus13", ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus13.c"]),
         Extension("albopictus.modelAalbopictus18", ["src/albopictus/ran_gen.c", "src/albopictus/gamma.c", "src/albopictus/spop.c", "src/albopictus/modelAalbopictus18.c"]),
         Extension("albopictus.modelStochCHIKV", ["src/albopictus/ran_gen.c", "src/albopictus/spop01.c", "src/albopictus/gamma.c", "src/albopictus/modelStochCHIKV.c"]),
-        Extension("albopictus.modelStochSand", ["src/albopictus/ran_gen.c", "src/albopictus/spop01.c", "src/albopictus/gamma.c", "src/albopictus/modelStochSand.c"])
+        Extension("albopictus.modelStochSand", ["src/albopictus/ran_gen.c", "src/albopictus/spop01.c", "src/albopictus/gamma.c", "src/albopictus/modelStochSand.c"]),
+        Extension("albopictus.modelStochAlbopictus", ["src/albopictus/ran_gen.c", "src/albopictus/spop.c", "src/albopictus/gamma.c", "src/albopictus/modelStochAlbopictus.c"])
         ],
     include_dirs=include_dirs
 )

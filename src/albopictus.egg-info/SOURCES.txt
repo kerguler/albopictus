@@ -14,6 +14,7 @@ src/albopictus/modelAalbopictus03.c
 src/albopictus/modelAalbopictus08.c
 src/albopictus/modelAalbopictus13.c
 src/albopictus/modelAalbopictus18.c
+src/albopictus/modelStochAlbopictus.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
 src/albopictus/ran_gen.c
