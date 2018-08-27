@@ -150,6 +150,7 @@ vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopic
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
 vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
 vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
+vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAlbopictus.so"), "vectorst")
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
 
 # modelStochSand - climateData ------------------------- //
