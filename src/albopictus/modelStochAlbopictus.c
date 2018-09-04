@@ -29,7 +29,7 @@ extern gsl_rng *RAND_GSL;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      47
+#define NumParAea      44
 #define NumMetAea      11
 
 // --------------------------------------------
@@ -70,34 +70,31 @@ void set_gamma_mode(char mode) {
 #define alpha_d3_2        22
 #define alpha_d3_3        23
 #define alpha_n23_surv    24
+#define alpha_deltaT      25
 
-#define alpha_0           25
-#define alpha_1           26
-#define alpha_2           27
-#define alpha_3           28
-#define alpha_deltaT      29
+#define alpha_BS_pdens    26
+#define alpha_BS_dprec    27
+#define alpha_BS_nevap    28
 
-#define alpha_BS_pdens    30
-#define alpha_BS_dprec    31
-#define alpha_BS_nevap    32
+#define alpha_dp_egg      29
+#define alpha_dp_thr      30
+#define alpha_ta_thr      31
+#define alpha_tq_thr      32
 
-#define alpha_dp_egg      33
-#define alpha_dp_thr      34
-#define alpha_ta_thr      35
-#define alpha_tq_thr      36
+#define alpha_tbm_1       33
+#define alpha_tbm_2       34
+#define alpha_tbm_3       35
 
-#define alpha_tbm_1       37
-#define alpha_tbm_2       38
-#define alpha_tbm_3       39
+#define alpha_p0_1        36
+#define alpha_p0_2        37
 
-#define alpha_p0_1        40
-#define alpha_p0_2        41
+#define alpha_n23_1       38
+#define alpha_n23_2       39
+#define alpha_n23_3       40
+#define alpha_n23_4       41
+#define alpha_n23_5       42
 
-#define alpha_n23_1       42
-#define alpha_n23_2       43
-#define alpha_n23_3       44
-#define alpha_n23_4       45
-#define alpha_n23_5       46
+#define alpha_capture     43
 
 #define alpha_ta_thr_std  (0.5)
 #define alpha_dp_thr_std  (10.0/24.0/60.0)
@@ -116,10 +113,17 @@ void set_gamma_mode(char mode) {
 //double timeof = 0;
 //double timeafter = 0;
 
+double prob_capture = 0;
+
+void set_param(double *param) {
+  prob_capture = pow(10,param[alpha_capture]);
+}
+
 void calculate(double *photoperiod,
                double *mean_air_temp,
                double *daily_precipitation,
                double *popdens,
+               double *daily_capture,
                double *param,
                spop   *conn10,
                spop   *conn1,
@@ -285,6 +289,11 @@ void calculate(double *photoperiod,
   //
   // Lay eggs
   int neweggs = gsl_ran_binomial(RAND_GSL,bigF4,n4_reproduce); // Total number of eggs that will be laid that day
+  int captured = 0;
+  if (daily_capture[TIME] > 0.5) {
+    captured = gsl_ran_binomial(RAND_GSL,prob_capture,neweggs);
+    neweggs -= captured;
+  }
   //
   int tagged = gsl_ran_binomial(RAND_GSL,fracDiap,neweggs);
   spop_add((*conn10),0,0,0,tagged); // Tagged eggs
@@ -307,7 +316,7 @@ void calculate(double *photoperiod,
   (*d4) = dd4;
   (*d4s) = dd4s;
   (*F4) = bigF4;
-  (*egg) = neweggs;
+  (*egg) = captured;
 }
 
 // --------------------------------------------
@@ -322,7 +331,7 @@ void numparModel(int *np, int *nm) {
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
     "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","new.init1","new.init2","new.init3","new.init4","new.deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5"
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5","alpha_capture"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -353,11 +362,6 @@ void param_model(char **names, double *param) {
   param[alpha_d3_2] = -0.36161169585829006;
   param[alpha_d3_3] = 0.0039784277144151396;
   param[alpha_n23_surv] = 3.873133206986801e-05;
-
-  param[alpha_0] = 0;
-  param[alpha_1] = 0;
-  param[alpha_2] = 0;
-  param[alpha_3] = 0;
   param[alpha_deltaT] = 0.0;
 
   param[alpha_BS_pdens] = 0.00001;
@@ -381,6 +385,8 @@ void param_model(char **names, double *param) {
   param[alpha_n23_3] = -1.0925997735665425;
   param[alpha_n23_4] = 0.25464919919205214;
   param[alpha_n23_5] = -0.00504358886713356;
+
+  param[alpha_capture] = -1.0;
 }
 
 void sim_model(double               *envar,
@@ -393,11 +399,14 @@ void sim_model(double               *envar,
   double *mean_air_temp        = envar + 1*(*finalT);
   double *daily_precipitation  = envar + 2*(*finalT);
   double *popdens              = envar + 3*(*finalT);
+  double *daily_capture        = envar + 3*(*finalT) + 1;
   double *controlpar = 0;
   if ((*control)) {
     controlpar = param + NumParAea;
   }
-	       
+  //
+  set_param(param);
+  //
   double *colT    = result + 0*(*finalT);
   double *coln0   = result + 1*(*finalT);
   double *coln1   = result + 2*(*finalT);
@@ -416,18 +425,18 @@ void sim_model(double               *envar,
   // Set initial conditions
   int n0 = max(0,round(param[alpha_dp_egg]));
   int n10 = 0;
-  int n1 = max(0,round(param[alpha_0]));
+  int n1 = 0;
   int nh = 0;
-  int n2 = max(0,round(param[alpha_1]));
-  int n3 = max(0,round(param[alpha_2]));
+  int n2 = 0;
+  int n3 = 0;
   int n4fj = 0;
-  int n4f = max(0,round(param[alpha_3]));
+  int n4f = 0;
   double nBS = 0.0;
   double K = 0.0;
   int d4 = 0;
   int d4s = 0;
   int F4 = 0;
-  int egg = n0 + n10 + n1;
+  int egg = 0;
   //
   spop conn10 = spop_init(1,gamma_mode);
   spop conn1 = spop_init(1,gamma_mode);
@@ -461,6 +470,7 @@ void sim_model(double               *envar,
               mean_air_temp,
               daily_precipitation,
               popdens,
+              daily_capture,
               param,
               &conn10,
               &conn1,
