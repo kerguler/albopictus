@@ -145,6 +145,7 @@ void calculate(double *photoperiod,
                int    *d4s,
                int    *F4,
                int    *egg,
+               int    *cap,
                int    TIME) {
   // ---------------------
   // modelDelayAalbopictus
@@ -289,15 +290,16 @@ void calculate(double *photoperiod,
   //
   // Lay eggs
   int neweggs = gsl_ran_binomial(RAND_GSL,bigF4,n4_reproduce); // Total number of eggs that will be laid that day
-  int captured = 0;
+  int captured = 0; // Eggs captured with ovitraps
+  int freeeggs = neweggs; // Eggs included in the life cycle
   if (daily_capture[TIME] > 0.5) {
     captured = gsl_ran_binomial(RAND_GSL,prob_capture,neweggs);
-    neweggs -= captured;
+    freeeggs = neweggs - captured;
   }
   //
-  int tagged = gsl_ran_binomial(RAND_GSL,fracDiap,neweggs);
+  int tagged = gsl_ran_binomial(RAND_GSL,fracDiap,freeeggs);
   spop_add((*conn10),0,0,0,tagged); // Tagged eggs
-  spop_add((*conn1),0,0,0,(neweggs-tagged)); // Normal eggs
+  spop_add((*conn1),0,0,0,(freeeggs-tagged)); // Normal eggs
   //
   int nquie = gsl_ran_binomial(RAND_GSL,fracQuie,dp_eggs);
   quie += nquie;
@@ -316,7 +318,8 @@ void calculate(double *photoperiod,
   (*d4) = dd4;
   (*d4s) = dd4s;
   (*F4) = bigF4;
-  (*egg) = captured;
+  (*cap) = captured;
+  (*egg) = neweggs;
 }
 
 // --------------------------------------------
@@ -419,6 +422,7 @@ void sim_model(double               *envar,
   double *cold4s  = result + 9*(*finalT);
   double *colF4   = result + 10*(*finalT);
   double *colegg  = result + 11*(*finalT);
+  double *colcap  = result + 12*(*finalT);
 
   int TIME = 0;
   (*success) = 2;
@@ -437,6 +441,7 @@ void sim_model(double               *envar,
   int d4s = 0;
   int F4 = 0;
   int egg = 0;
+  int cap = 0;
   //
   spop conn10 = spop_init(1,gamma_mode);
   spop conn1 = spop_init(1,gamma_mode);
@@ -463,6 +468,7 @@ void sim_model(double               *envar,
   cold4s[TIME] = (double)d4s;
   colF4[TIME] = (double)F4;
   colegg[TIME] = (double)egg;
+  colcap[TIME] = (double)cap;
   //
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
@@ -492,6 +498,7 @@ void sim_model(double               *envar,
               &d4s,
               &F4,
               &egg,
+              &cap,
               TIME);
     //
     if ((*control)) { // Apply control measures
@@ -587,7 +594,8 @@ void sim_model(double               *envar,
     cold4s[TIME] = (double)d4s;
     colF4[TIME] = (double)F4;
     colegg[TIME] = (double)egg;
-    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || isnan(K) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg)) {
+    colcap[TIME] = (double)cap;
+    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || isnan(K) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg) || CHECK(cap)) {
       (*success) = 0;
       goto endall;
     }
