@@ -30,7 +30,7 @@ extern gsl_rng *RAND_GSL;
 #define min(a,b) ((a)<(b)?(a):(b))
 
 #define NumParAea      44
-#define NumMetAea      12
+#define NumMetAea      18
 
 // --------------------------------------------
 // Gamma distribution
@@ -146,6 +146,9 @@ void calculate(double *photoperiod,
                int    *F4,
                int    *egg,
                int    *cap,
+               double *fhatch,
+               double *fdiap,
+               double *fquie,
                int    TIME) {
   // ---------------------
   // modelDelayAalbopictus
@@ -207,6 +210,7 @@ void calculate(double *photoperiod,
   double fracDiap = pdiap(photoperiod[TIME],param[alpha_dp_thr],alpha_dp_thr_std,fracHatch);
   // n0 -> quie
   double fracQuie = 1.0 - Tthr(Ta,param[alpha_tq_thr],alpha_tq_thr_std);
+  fracQuie *= 1.0 - fracDiap; // Do not allow quiescence during diapause conditions
   
   /*
    * Survival first, and then, development.
@@ -231,7 +235,7 @@ void calculate(double *photoperiod,
                0, 0,
                0,
                0);
-  int quie = gsl_ran_binomial(RAND_GSL,(1.0 - p1_Tw),(*nh)); // Number of surviving quiescent eggs
+  int quie = gsl_ran_binomial(RAND_GSL,p0_Ta,(*nh)); // Number of surviving quiescent eggs (survival is similar to diapausing eggs)
   int quieh = gsl_ran_binomial(RAND_GSL,fracHatch,quie); // Number of surviving quiescent eggs to hatch
   quie -= quieh;
   //
@@ -320,6 +324,9 @@ void calculate(double *photoperiod,
   (*F4) = bigF4;
   (*cap) = captured;
   (*egg) = neweggs;
+  (*fhatch) = fracHatch;
+  (*fdiap) = fracDiap;
+  (*fquie) = fracQuie;
 }
 
 // --------------------------------------------
@@ -333,7 +340,7 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln1","coln2","coln3","coln4fj","coln4f","colK","cold4","cold4s","colF4","colegg","colcap",
+    "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","colK","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie",
     "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5","alpha_capture"
   };
   int i;
@@ -372,9 +379,9 @@ void param_model(char **names, double *param) {
   param[alpha_BS_nevap] = 0.9;
 
   param[alpha_dp_egg] = 1.0;
-  param[alpha_dp_thr] = 0.5;
-  param[alpha_ta_thr] = 21.0;
-  param[alpha_tq_thr] = 4.0;
+  param[alpha_dp_thr] = 0.4;
+  param[alpha_ta_thr] = 20.0;
+  param[alpha_tq_thr] = 10.0;
 
   param[alpha_tbm_1] = 29.99806440902287;
   param[alpha_tbm_2] = -1.8712756925767178;
@@ -410,19 +417,25 @@ void sim_model(double               *envar,
   //
   set_param(param);
   //
-  double *colT    = result + 0*(*finalT);
-  double *coln0   = result + 1*(*finalT);
-  double *coln1   = result + 2*(*finalT);
-  double *coln2   = result + 3*(*finalT);
-  double *coln3   = result + 4*(*finalT);
-  double *coln4fj = result + 5*(*finalT);
-  double *coln4f  = result + 6*(*finalT);
-  double *colK    = result + 7*(*finalT);
-  double *cold4   = result + 8*(*finalT);
-  double *cold4s  = result + 9*(*finalT);
-  double *colF4   = result + 10*(*finalT);
-  double *colegg  = result + 11*(*finalT);
-  double *colcap  = result + 12*(*finalT);
+  double *colT      = result + 0*(*finalT);
+  double *coln0     = result + 1*(*finalT);
+  double *coln10    = result + 2*(*finalT);
+  double *coln1     = result + 3*(*finalT);
+  double *colnh     = result + 4*(*finalT);
+  double *coln2     = result + 5*(*finalT);
+  double *coln3     = result + 6*(*finalT);
+  double *coln4fj   = result + 7*(*finalT);
+  double *coln4f    = result + 8*(*finalT);
+  double *colnBS    = result + 9*(*finalT);
+  double *colK      = result + 10*(*finalT);
+  double *cold4     = result + 11*(*finalT);
+  double *cold4s    = result + 12*(*finalT);
+  double *colF4     = result + 13*(*finalT);
+  double *colegg    = result + 14*(*finalT);
+  double *colcap    = result + 15*(*finalT);
+  double *colhatch  = result + 16*(*finalT);
+  double *coldiap   = result + 17*(*finalT);
+  double *colquie   = result + 18*(*finalT);
 
   int TIME = 0;
   (*success) = 2;
@@ -442,6 +455,9 @@ void sim_model(double               *envar,
   int F4 = 0;
   int egg = 0;
   int cap = 0;
+  double fhatch = 0.0;
+  double fdiap = 0.0;
+  double fquie = 0.0;
   //
   spop conn10 = spop_init(1,gamma_mode);
   spop conn1 = spop_init(1,gamma_mode);
@@ -458,17 +474,23 @@ void sim_model(double               *envar,
   // Record state
   colT[TIME] = (double)TIME;
   coln0[TIME] = (double)n0;
+  coln10[TIME] = (double)n10;
   coln1[TIME] = (double)n1;
+  colnh[TIME] = (double)nh;
   coln2[TIME] = (double)n2;
   coln3[TIME] = (double)n3;
   coln4fj[TIME] = (double)n4fj;
   coln4f[TIME] = (double)n4f;
+  colnBS[TIME] = (double)nBS;
   colK[TIME] = (double)K;
   cold4[TIME] = (double)d4;
   cold4s[TIME] = (double)d4s;
   colF4[TIME] = (double)F4;
   colegg[TIME] = (double)egg;
   colcap[TIME] = (double)cap;
+  colhatch[TIME] = (double)fhatch;
+  coldiap[TIME] = (double)fdiap;
+  colquie[TIME] = (double)fquie;
   //
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
@@ -499,6 +521,9 @@ void sim_model(double               *envar,
               &F4,
               &egg,
               &cap,
+              &fhatch,
+              &fdiap,
+              &fquie,
               TIME);
     //
     if ((*control)) { // Apply control measures
@@ -584,18 +609,24 @@ void sim_model(double               *envar,
     // Record state
     colT[TIME] = (double)TIME;
     coln0[TIME] = (double)n0;
+    coln10[TIME] = (double)n10;
     coln1[TIME] = (double)n1;
+    colnh[TIME] = (double)nh;
     coln2[TIME] = (double)n2;
     coln3[TIME] = (double)n3;
     coln4fj[TIME] = (double)n4fj;
     coln4f[TIME] = (double)n4f;
+    colnBS[TIME] = (double)nBS;
     colK[TIME] = (double)K;
     cold4[TIME] = (double)d4;
     cold4s[TIME] = (double)d4s;
     colF4[TIME] = (double)F4;
     colegg[TIME] = (double)egg;
     colcap[TIME] = (double)cap;
-    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || isnan(K) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg) || CHECK(cap)) {
+    colhatch[TIME] = (double)fhatch;
+    coldiap[TIME] = (double)fdiap;
+    colquie[TIME] = (double)fquie;
+    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || isnan(K) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg) || CHECK(cap) || isnan(fhatch) || isnan(fdiap) || isnan(fquie)) {
       (*success) = 0;
       goto endall;
     }

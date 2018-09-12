@@ -1,6 +1,6 @@
 {
-    "alpha.ta.thr": {"min": 10.0, "parids": ["PP.ta.thr"], "max": 40.0},
-    "alpha.tq.thr": {"min": -4.0, "parids": ["PP.tq.thr"], "max": 10.0},
+    "alpha.ta.thr": {"min": -10.0, "parids": ["PP.ta.thr"], "max": 40.0},
+    "alpha.tq.thr": {"min": -10.0, "parids": ["PP.tq.thr"], "max": 40.0},
     "PP.thr": {"min": 0.0, "parids": ["PP.thr"], "max": 1.0},
     "PP.init": {"min": 0.0, "parids": ["PP.init"], "max": 1000000.0},
     "p0.temp": {"min": -10.0, "parids": ["p0.1", "p0.2"], "max": 10.0},
@@ -14,8 +14,8 @@
     "d3.temp": {"min": -100.0, "parids": ["d3.1", "d3.2", "d3.3"], "max": 100.0},
     "d2.temp": {"min": -100.0, "parids": ["d2.1", "d2.2", "d2.3"], "max": 100.0},
     "d1.temp": {"min": -100.0, "parids": ["d1.1", "d1.2", "d1.3"], "max": 100.0},
-    "p3.temp": {"min": -100.0, "parids": ["p2.1", "p2.2", "p2.3"], "max": 100.0},
+    "p3.temp": {"min": -100.0, "parids": ["p3.1", "p3.2", "p3.3"], "max": 100.0},
     "p2.temp": {"min": -100.0, "parids": ["p2.1", "p2.2", "p2.3"], "max": 100.0},
-    "p1.temp": {"min": -100.0, "parids": ["p2.1", "p2.2", "p2.3"], "max": 100.0},
+    "p1.temp": {"min": -100.0, "parids": ["p1.1", "p1.2", "p1.3"], "max": 100.0},
     "capture": {"min": -4.0, "parids": ["alpha_capture"], "max": -1.0}
 }
