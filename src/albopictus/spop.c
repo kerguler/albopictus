@@ -314,7 +314,7 @@ void spop_removeitem(spop s, unsigned int *i, char *remove) {
   }
 }
 
-void spop_iterate(spop  s,
+char spop_iterate(spop  s,
                   double dev_prob,       // fixed development probability
                   double dev_mean,       // mean development time
                   double dev_sd,         // sd development time
@@ -354,7 +354,10 @@ void spop_iterate(spop  s,
       death_fun(tmpn,&death_prob,&death_mean,&death_sd);
     calc_prob_death = assign_prob_func(s, death_prob, death_mean, death_sd);
     calc_prob_dev = assign_prob_func(s, dev_prob, dev_mean, dev_sd);
-   // Death
+    //
+    if (!calc_prob_death || !calc_prob_dev)
+      return 1;
+    // Death
     prob = calc_prob_death(tmpn->age, death_prob, death_mean, death_sd);
     remove = calc_spop(s, tmpn, prob, &k);
     if (s->stochastic)
@@ -380,7 +383,7 @@ void spop_iterate(spop  s,
         printf("ERROR: Development time is too high!\n");
         spop_print(s);
         s->developed.d = NAN;
-        return;
+        return 1;
       }
       //
       if ((s->stochastic && k.i > 0) || (!(s->stochastic) && k.d >= DPOP_EPS)) {
@@ -394,5 +397,6 @@ void spop_iterate(spop  s,
     //
     spop_removeitem(s,&i,&remove);
   }
+  return 0;
 }
 

@@ -60,6 +60,6 @@ void spop_popadd(spop, spop);
 
 typedef double (*prob_func)(unsigned int, double, double, double);
 typedef void (*iter_func)(const individual_data*, double*, double*, double*);
-void spop_iterate(spop, double, double, double, iter_func, double, double, double, iter_func, unsigned char);
+char spop_iterate(spop, double, double, double, iter_func, double, double, double, iter_func, unsigned char);
 
 #endif

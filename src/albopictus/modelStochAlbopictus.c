@@ -119,7 +119,7 @@ void set_param(double *param) {
   prob_capture = pow(10,param[alpha_capture]);
 }
 
-void calculate(double *photoperiod,
+char calculate(double *photoperiod,
                double *mean_air_temp,
                double *daily_precipitation,
                double *popdens,
@@ -218,66 +218,73 @@ void calculate(double *photoperiod,
    * of the immature stages and juvenile adults
    */
   //
+  char test = 0;
   // Normal and tagged eggs
-  spop_iterate((*conn1),
-               0,
-               d1, 0, // development (fixed-length)
-               0,
-               p1_Tw, // death (fixed daily rate)
-               0, 0,
-               0,
-               0);
-  spop_iterate((*conn10),
-               0,
-               d1, 0, // development (fixed-length)
-               0,
-               p1_Tw, // death (fixed daily rate)
-               0, 0,
-               0,
-               0);
+  test = spop_iterate((*conn1),
+                      0,
+                      d1, 0, // development (fixed-length)
+                      0,
+                      p1_Tw, // death (fixed daily rate)
+                      0, 0,
+                      0,
+                      0);
+  if (test) return 1;
+  test = spop_iterate((*conn10),
+                      0,
+                      d1, 0, // development (fixed-length)
+                      0,
+                      p1_Tw, // death (fixed daily rate)
+                      0, 0,
+                      0,
+                      0);
+  if (test) return 1;
   int quie = gsl_ran_binomial(RAND_GSL,p0_Ta,(*nh)); // Number of surviving quiescent eggs (survival is similar to diapausing eggs)
   int quieh = gsl_ran_binomial(RAND_GSL,fracHatch,quie); // Number of surviving quiescent eggs to hatch
   quie -= quieh;
   //
   // Larvae
-  spop_iterate((*conn2),
-               0,
-               d2, 0, // development (fixed-length)
-               0,
-               p2_Tw, // death (fixed daily rate)
-               0, 0,
-               0,
-               0);
+  test = spop_iterate((*conn2),
+                      0,
+                      d2, 0, // development (fixed-length)
+                      0,
+                      p2_Tw, // death (fixed daily rate)
+                      0, 0,
+                      0,
+                      0);
+  if (test) return 1;
   //
   // Pupae
-  spop_iterate((*conn3),
-               0,
-               d3, 0, // development (fixed-length)
-               0,
-               p3_Tw, // death (fixed daily rate)
-               0, 0,
-               0,
-               0);
+  test = spop_iterate((*conn3),
+                      0,
+                      d3, 0, // development (fixed-length)
+                      0,
+                      p3_Tw, // death (fixed daily rate)
+                      0, 0,
+                      0,
+                      0);
+  if (test) return 1;
   //
   // Adult naive females
-  spop_iterate((*conn4j),
-               0,
-               alpha_blood, 0, // development (fixed-length)
-               0,
-               0,
-               dd4, dd4s, // death (gamma-distributed)
-               0,
-               0);
+  test = spop_iterate((*conn4j),
+                      0,
+                      alpha_blood, 0, // development (fixed-length)
+                      0,
+                      0,
+                      dd4, dd4s, // death (gamma-distributed)
+                      0,
+                      0);
+  if (test) return 1;
   //
   // Adult mature females
-  spop_iterate((*conn4),
-               0,
-               0, 0, // development (no development)
-               0,
-               0,
-               dd4, dd4s, // death (gamma-distributed)
-               0,
-               0);
+  test = spop_iterate((*conn4),
+                      0,
+                      0, 0, // development (no development)
+                      0,
+                      0,
+                      dd4, dd4s, // death (gamma-distributed)
+                      0,
+                      0);
+  if (test) return 1;
   //
   // Diapausing egg survival
   // Tagged eggs always become diapausing eggs
@@ -327,6 +334,8 @@ void calculate(double *photoperiod,
   (*fhatch) = fracHatch;
   (*fdiap) = fracDiap;
   (*fquie) = fracQuie;
+  //
+  return 0;
 }
 
 // --------------------------------------------
@@ -492,39 +501,44 @@ void sim_model(double               *envar,
   coldiap[TIME] = (double)fdiap;
   colquie[TIME] = (double)fquie;
   //
+  char test = 0;
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
-    calculate(photoperiod,
-              mean_air_temp,
-              daily_precipitation,
-              popdens,
-              daily_capture,
-              param,
-              &conn10,
-              &conn1,
-              &conn2,
-              &conn3,
-              &conn4j,
-              &conn4,
-              &n0,
-              &n10,
-              &n1,
-              &nh,
-              &n2,
-              &n3,
-              &n4fj,
-              &n4f,
-              &nBS,
-              &K,
-              &d4,
-              &d4s,
-              &F4,
-              &egg,
-              &cap,
-              &fhatch,
-              &fdiap,
-              &fquie,
-              TIME);
+    test = calculate(photoperiod,
+                     mean_air_temp,
+                     daily_precipitation,
+                     popdens,
+                     daily_capture,
+                     param,
+                     &conn10,
+                     &conn1,
+                     &conn2,
+                     &conn3,
+                     &conn4j,
+                     &conn4,
+                     &n0,
+                     &n10,
+                     &n1,
+                     &nh,
+                     &n2,
+                     &n3,
+                     &n4fj,
+                     &n4f,
+                     &nBS,
+                     &K,
+                     &d4,
+                     &d4s,
+                     &F4,
+                     &egg,
+                     &cap,
+                     &fhatch,
+                     &fdiap,
+                     &fquie,
+                     TIME);
+    if (test) {
+      (*success) = 0;
+      goto endall;
+    }
     //
     if ((*control)) { // Apply control measures
       double tmp;
