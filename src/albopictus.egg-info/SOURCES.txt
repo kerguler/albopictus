@@ -37,6 +37,7 @@ src/albopictus/data/prior08.json
 src/albopictus/data/prior13.json
 src/albopictus/data/prior18.json
 src/albopictus/data/priorSand.json
+src/albopictus/dataSurv/__init__.py
 src/albopictus/plotPos/__init__.py
 src/albopictus/population/__init__.py
 src/albopictus/readModel/__init__.py

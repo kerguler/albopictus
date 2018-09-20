@@ -81,7 +81,8 @@ setup(name='albopictus',
         'albopictus/setPrior/__init__',
         'albopictus/plotPos/__init__',
         'albopictus/accessory/__init__',
-        'albopictus/population/__init__'
+        'albopictus/population/__init__',
+        'albopictus/dataSurv/__init__',
         ],
     ext_modules=[
         Extension("albopictus.modelAalbopictus03", ["src/albopictus/incubator03.c", "src/albopictus/modelAalbopictus03.c"]),
