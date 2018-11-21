@@ -126,7 +126,7 @@ class dataset:
     def iterMonth(self,d,dr=1):
         return d + relativedelta(months=dr)
     #
-    def iterDate(self,d,dr=1):
+    def iterDate(self,d,dr=1,custom=0):
         if self.drange == 'daily':
             d += dr*timedelta(days=1)
         elif self.drange == 'weekly':
@@ -138,28 +138,30 @@ class dataset:
         elif self.drange == 'annual':
             d += dr*timedelta(365+isleap(d.year+(dr if dr>0 else 0)))
         elif self.drange == 'custom':
-            raise(ValueError, "iterDate is not defined for 'custom' surveillance!")
-            return None
+            d += dr*timedelta(days=int(custom))
+#            raise(ValueError, "iterDate is not defined for 'custom' surveillance!")
+#            return None
         return d
     #
     def getPosMatAll(self,dates):
-        if self.drange == 'custom':
-            raise(ValueError, "getPosMatAll is not defined for 'custom' surveillance!")
-            return None
+#        if self.drange == 'custom':
+#            raise(ValueError, "getPosMatAll is not defined for 'custom' surveillance!")
+#            return None
         pos_mat = {}
         pos_dates = {}
         for pr in self.surv.keys():
             ret = []
             dts = []
             ref = self.surv[pr]['dates'][0]
+            custom = self.surv[pr]['duration'][0] if 'duration' in self.surv[pr] else 0
             if self.drange == 'monthly':
                 ref = ref.replace(day=1)
             else:
                 while ref>=dates[0]:
-                    ref = self.iterDate(ref,-1)
-                ref = d = self.iterDate(ref,1)
+                    ref = self.iterDate(ref,dr=-1,custom=custom)
+                ref = d = self.iterDate(ref,dr=1,custom=custom)
             while True:
-                d = self.iterDate(ref,1)
+                d = self.iterDate(ref,dr=1,custom=custom)
                 if d>(dates[-1]+timedelta(days=1)):
                     break
                 b=numpy.repeat(0.0,dates.shape[0])

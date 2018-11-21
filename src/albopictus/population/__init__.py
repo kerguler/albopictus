@@ -106,9 +106,9 @@ class spop:
     #
     def iterate(self,dev=None,death=None,dev_mean=None,dev_sd=None,death_mean=None,death_sd=None,pause=False):
         if dev is None:
-            if (not (dev_mean is None)) and ((dev_sd is None) or dev_sd is 0):
+            if (not (dev_mean is None)) and ((dev_sd is None) or dev_sd == 0):
                 dev = numpy.float64(self.pop[:,2] >= numpy.array(dev_mean) - 1.0)
-            elif (not (dev_mean is None)) and (not ((dev_sd is None) or dev_sd is 0)):
+            elif (not (dev_mean is None)) and (not ((dev_sd is None) or dev_sd == 0)):
                 dev = self.prob_fun(self.pop[:,2],dev_mean,dev_sd)
             else:
                 print("Wrong probability: %s" %(dev))
@@ -116,9 +116,9 @@ class spop:
         dev = self.checkNaN(dev)
         #
         if death is None:
-            if (not (death_mean is None)) and ((death_sd is None) or death_sd is 0):
+            if (not (death_mean is None)) and ((death_sd is None) or death_sd == 0):
                 death = numpy.float64(self.pop[:,0] >= numpy.array(death_mean) - 1.0)
-            elif (not (death_mean is None)) and (not ((death_sd is None) or death_sd is 0)):
+            elif (not (death_mean is None)) and (not ((death_sd is None) or death_sd == 0)):
                 death = self.prob_fun(self.pop[:,0],death_mean,death_sd)
             else:
                 print("Wrong probability: %s" %(death))
@@ -143,9 +143,10 @@ class spop:
             self.pop[:,2] += 1
         #
         self.devtable = self.pop.copy()
-        self.devtable[:,3] = d
-        self.devtable[:,1] += 1
+        if not pause:
+            self.devtable[:,1] += 1
         self.devtable[:,2] = 0
+        self.devtable[:,3] = d
         self.devtable = self.devtable[self.devtable[:,3]>0,:]
         # 
         self.pop = self.pop[self.pop[:,3]>0,:]

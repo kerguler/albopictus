@@ -29,7 +29,7 @@ extern gsl_rng *RAND_GSL;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      44
+#define NumParAea      47
 #define NumMetAea      18
 
 // --------------------------------------------
@@ -85,16 +85,20 @@ void set_gamma_mode(char mode) {
 #define alpha_tbm_2       34
 #define alpha_tbm_3       35
 
-#define alpha_p0_1        36
-#define alpha_p0_2        37
+#define alpha_gtc_1       36
+#define alpha_gtc_2       37
+#define alpha_gtc_3       38
 
-#define alpha_n23_1       38
-#define alpha_n23_2       39
-#define alpha_n23_3       40
-#define alpha_n23_4       41
-#define alpha_n23_5       42
+#define alpha_p0_1        39
+#define alpha_p0_2        40
 
-#define alpha_capture     43
+#define alpha_n23_1       41
+#define alpha_n23_2       42
+#define alpha_n23_3       43
+#define alpha_n23_4       44
+#define alpha_n23_5       45
+
+#define alpha_capture     46
 
 #define alpha_ta_thr_std  (0.5)
 #define alpha_dp_thr_std  (10.0/24.0/60.0)
@@ -179,7 +183,10 @@ char calculate(double *photoperiod,
   double n23dens = (double)((*n2) + (*n3)) / (double)(*K);
   double densd = expd(n23dens,param[alpha_n23_surv]);
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
-  // Fecundity
+  // Fecundity (per adult female)
+  // WARNINNG: Existing parameters are fixed for daily egg laying
+  //           The following is aimed at egg laying per gonotrophic cycle
+  //           Experimental data need to be updated
   double bigF4 = poly(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
   
   // Egg survival (diapausing eggs)
@@ -199,6 +206,8 @@ char calculate(double *photoperiod,
   double d3 = max(1.0, poly(Tw,param[alpha_d3_1],param[alpha_d3_2],param[alpha_d3_3])*densdev);
   // Time to first blood meal
   double alpha_blood = poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);
+  // Gonotrophic cycle length
+  double alpha_ovipos = poly(Ta,param[alpha_gtc_1],param[alpha_gtc_2],param[alpha_gtc_3]);
   // Adult lifetime (from emergence)
   double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
   double dd4s = gamma_matrix_sd*dd4;
@@ -278,7 +287,7 @@ char calculate(double *photoperiod,
   // Adult mature females
   test = spop_iterate((*conn4),
                       0,
-                      0, 0, // development (no development)
+                      alpha_ovipos, 0, // gonotrophic cycle (fixed length)
                       0,
                       0,
                       dd4, dd4s, // death (gamma-distributed)
@@ -286,12 +295,15 @@ char calculate(double *photoperiod,
                       0);
   if (test) return 1;
   //
+  // Adult females surviving and completing ovicyle
+  int n4_reproduce = (*conn4)->developed.i;
+  // Reintroduce ovipositioning adult females to the population
+  spop_popadd((*conn4), (*conn4)->devtable);
+  //
   // Diapausing egg survival
   // Tagged eggs always become diapausing eggs
   int dp_eggs = gsl_ran_binomial(RAND_GSL,p0_Ta,(*n0));
   dp_eggs += (*conn10)->developed.i;
-  // Adults survived to produce eggs
-  int n4_reproduce = (*conn4)->size.i;
   //
   // Perform state transformations
   spop_popadd((*conn4), (*conn4j)->devtable);
@@ -300,7 +312,7 @@ char calculate(double *photoperiod,
   spop_add((*conn2), 0, 0, 0, (*conn1)->developed.i + quieh);
   //
   // Lay eggs
-  int neweggs = gsl_ran_binomial(RAND_GSL,bigF4,n4_reproduce); // Total number of eggs that will be laid that day
+  int neweggs = gsl_ran_poisson(RAND_GSL,bigF4 * n4_reproduce); // Total number of eggs that will be laid that day
   int captured = 0; // Eggs captured with ovitraps
   int freeeggs = neweggs; // Eggs included in the life cycle
   if (daily_capture[TIME] > 0.5) {
@@ -350,7 +362,7 @@ void numparModel(int *np, int *nm) {
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
     "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","colK","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5","alpha_capture"
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","gtc.1","gtc.2","gtc.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5","alpha_capture"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -395,6 +407,10 @@ void param_model(char **names, double *param) {
   param[alpha_tbm_1] = 29.99806440902287;
   param[alpha_tbm_2] = -1.8712756925767178;
   param[alpha_tbm_3] = 0.03514278986605401;
+
+  param[alpha_gtc_1] = 29.99806440902287;
+  param[alpha_gtc_2] = -1.8712756925767178;
+  param[alpha_gtc_3] = 0.03514278986605401;
 
   param[alpha_p0_1] = 0.7975103960182536;
   param[alpha_p0_2] = 0.07409437745556843;

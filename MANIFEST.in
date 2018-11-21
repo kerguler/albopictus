@@ -39,3 +39,4 @@ include src/albopictus/setPrior/data/albopictus_p1_temp.txt
 include src/albopictus/setPrior/data/albopictus_p2_temp.txt
 include src/albopictus/setPrior/data/albopictus_p3_temp.txt
 include src/albopictus/setPrior/data/albopictus_tbm_temp.txt
+include src/albopictus/setPrior/data/albopictus_gtc_temp.txt

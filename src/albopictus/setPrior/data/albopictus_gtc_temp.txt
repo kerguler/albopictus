@@ -1,0 +1,1 @@
+ref	temp	days"Delatte et al., 2009"	20	8.1"Delatte et al., 2009"	25	4.5"Delatte et al., 2009"	27	3.0"Delatte et al., 2009"	30	3.5"Delatte et al., 2009"	35	4.4"Galliard and Golvan (1957)"	20	10.0"Galliard and Golvan (1957)"	25	5.0"Galliard and Golvan (1957)"	30	5.0"Mori and Wada (1977)"	25	5.0"Halcrow (1955)"	25	4.5"Rosario (1963)"	26	3.25

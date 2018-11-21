@@ -389,7 +389,7 @@ char spop_iterate(spop  s,
       if ((s->stochastic && k.i > 0) || (!(s->stochastic) && k.d >= DPOP_EPS)) {
         spop_sdadd((spop)(s->devtable),
                    tmpn->age,
-                   tmpn->devcycle + 1,
+                   pause ? tmpn->devcycle : tmpn->devcycle + 1,
                    0,
                    k);
       }
