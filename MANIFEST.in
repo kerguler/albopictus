@@ -19,12 +19,15 @@ include src/albopictus/modelAalbopictus13.c
 include src/albopictus/modelAalbopictus18.c
 include src/albopictus/modelStochCHIKV.c
 include src/albopictus/modelStochSand.c
+include src/albopictus/modelStochAalbopictus.c
+include src/albopictus/modelStochAaegypti.c
 include src/albopictus/data/climate.json
 include src/albopictus/data/posterior.json
 include src/albopictus/data/prior03.json
 include src/albopictus/data/prior08.json
 include src/albopictus/data/prior13.json
 include src/albopictus/data/prior18.json
+include src/albopictus/data/priorAeae.json
 include src/albopictus/data/priorSand.json
 include src/albopictus/setPrior/data/albopictus_F4_temp.txt
 include src/albopictus/setPrior/data/albopictus_d1_temp.txt

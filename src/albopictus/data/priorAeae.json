@@ -1,0 +1,20 @@
+{
+    "BS": {"min": 0.0, "parids": ["BS.dprec","BS.pdens","BS.nevap"], "max": 1.0},
+    "n23.surv": {"min": 0.0, "parids": ["n23.surv"], "max": 1.0},
+    "n23.comb": {"min": -10.0, "parids": ["n23.1", "n23.2", "n23.3", "n23.4", "n23.5"], "max": 10.0},
+    "deltaT": {"min": -10, "parids": ["deltaT"], "max": 10.0},
+    "tbm.temp": {"min": -100.0, "parids": ["tbm.1", "tbm.2", "tbm.3"], "max": 100.0},
+    "gtc.temp": {"min": -100.0, "parids": ["gtc.1", "gtc.2", "gtc.3"], "max": 100.0},
+    "F4.temp": {"min": -100.0, "parids": ["F4.1", "F4.2", "F4.3"], "max": 100.0},
+    "d4.temp": {"min": -100.0, "parids": ["d4.1", "d4.2", "d4.3"], "max": 100.0},
+    "d3.temp": {"min": -100.0, "parids": ["d3.1", "d3.2", "d3.3"], "max": 100.0},
+    "d2.temp": {"min": -100.0, "parids": ["d2.1", "d2.2", "d2.3"], "max": 100.0},
+    "d1.temp": {"min": -100.0, "parids": ["d1.1", "d1.2", "d1.3"], "max": 100.0},
+    "p3.temp": {"min": -100.0, "parids": ["p3.1", "p3.2", "p3.3"], "max": 100.0},
+    "p2.temp": {"min": -100.0, "parids": ["p2.1", "p2.2", "p2.3"], "max": 100.0},
+    "p1.temp": {"min": -100.0, "parids": ["p1.1", "p1.2", "p1.3"], "max": 100.0},
+    "capture": {"min": -4.0, "parids": ["alpha_capture"], "max": -1.0},
+    "init": {"min": 0.0, "parids": ["alpha_init_egg"], "max": 10000.0},
+    "flush": {"min": 0.0, "parids": ["alpha_flush_thr"], "max": 100.0},
+    "flush.surv": {"min": 0.0, "parids": ["alpha_flush_surv"], "max": 1.0}
+}

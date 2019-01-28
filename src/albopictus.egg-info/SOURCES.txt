@@ -14,7 +14,8 @@ src/albopictus/modelAalbopictus03.c
 src/albopictus/modelAalbopictus08.c
 src/albopictus/modelAalbopictus13.c
 src/albopictus/modelAalbopictus18.c
-src/albopictus/modelStochAlbopictus.c
+src/albopictus/modelStochAaegypti.c
+src/albopictus/modelStochAalbopictus.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
 src/albopictus/ran_gen.c
@@ -36,6 +37,7 @@ src/albopictus/data/prior03.json
 src/albopictus/data/prior08.json
 src/albopictus/data/prior13.json
 src/albopictus/data/prior18.json
+src/albopictus/data/priorAeae.json
 src/albopictus/data/priorSand.json
 src/albopictus/dataSurv/__init__.py
 src/albopictus/plotPos/__init__.py

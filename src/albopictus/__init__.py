@@ -120,7 +120,7 @@ Examples
 
 """
 
-__version__ = '1.11.0'
+__version__ = '1.12.0'
 
 # modelAalbopictus - climateData ------------------------- //
 from distutils.sysconfig import get_python_lib
@@ -134,6 +134,7 @@ prior03 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior03
 prior08 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior08.json"),"r"))
 prior13 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior13.json"),"r"))
 prior18 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior18.json"),"r"))
+priorae = json.load(open(pkg_resources.resource_filename(__name__, "data/priorAeae.json"),"r"))
 clim = json.load(open(pkg_resources.resource_filename(__name__, "data/climate.json"),"r"))
 for pr in clim:
     for clm in clim[pr]:
@@ -150,7 +151,8 @@ vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopic
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
 vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
 vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
-vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAlbopictus.so"), "vectorst")
+vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAalbopictus.so"), "vectorst")
+vectorae = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAaegypti.so"), "vectorae")
 chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
 
 # modelStochSand - climateData ------------------------- //
