@@ -121,6 +121,7 @@ void set_param(double *param) {
 char calculate(double *mean_air_temp,
                double *daily_precipitation,
                double *popdens,
+               double *lulc,
                double *daily_capture,
                double *param,
                spop   *conn1,
@@ -153,6 +154,7 @@ char calculate(double *mean_air_temp,
 
   /*
    * TO DO: Check how this can be implemented with a stochastic dynamics
+   * TO DO: Incorporate land use
    *
    * Update the number of breeding sites
    */
@@ -405,7 +407,8 @@ void sim_model(double               *envar,
   double *mean_air_temp        = envar + 0*(*finalT);
   double *daily_precipitation  = envar + 1*(*finalT);
   double *popdens              = envar + 2*(*finalT);
-  double *daily_capture        = envar + 2*(*finalT) + 1;
+  double *lulc                 = envar + 2*(*finalT) + 1;
+  double *daily_capture        = envar + 2*(*finalT) + 2;
   double *controlpar = 0;
   if ((*control)) {
     controlpar = param + NumParAea;
@@ -474,6 +477,7 @@ void sim_model(double               *envar,
     test = calculate(mean_air_temp,
                      daily_precipitation,
                      popdens,
+                     lulc,
                      daily_capture,
                      param,
                      &conn1,
