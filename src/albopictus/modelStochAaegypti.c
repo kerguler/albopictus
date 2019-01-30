@@ -154,11 +154,11 @@ char calculate(double *mean_air_temp,
 
   /*
    * TO DO: Check how this can be implemented with a stochastic dynamics
-   * TO DO: Incorporate land use
+   * Land use incorporated (the resolution is 0.01 - modis dataset)
    *
    * Update the number of breeding sites
    */
-  (*nBS) = param[alpha_BS_pdens] * (*popdens) +
+  (*nBS) = param[alpha_BS_pdens] * (*popdens) / (0.01 + (*lulc)) +
     param[alpha_BS_dprec] * daily_precipitation[TIME] +
     param[alpha_BS_nevap] * (*nBS);
   (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
