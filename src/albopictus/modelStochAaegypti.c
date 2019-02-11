@@ -29,7 +29,7 @@ extern gsl_rng *RAND_GSL;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      44
+#define NumParAea      45
 #define NumMetAea      12
 
 // --------------------------------------------
@@ -77,27 +77,28 @@ void set_gamma_mode(char mode) {
 #define alpha_BS_pdens    26
 #define alpha_BS_dprec    27
 #define alpha_BS_nevap    28
+#define alpha_BS_Klulc    29
 
-#define alpha_tbm_1       29
-#define alpha_tbm_2       30
-#define alpha_tbm_3       31
+#define alpha_tbm_1       30
+#define alpha_tbm_2       31
+#define alpha_tbm_3       32
 
-#define alpha_gtc_1       32
-#define alpha_gtc_2       33
-#define alpha_gtc_3       34
+#define alpha_gtc_1       33
+#define alpha_gtc_2       34
+#define alpha_gtc_3       35
 
-#define alpha_n23_1       35
-#define alpha_n23_2       36
-#define alpha_n23_3       37
-#define alpha_n23_4       38
-#define alpha_n23_5       39
+#define alpha_n23_1       36
+#define alpha_n23_2       37
+#define alpha_n23_3       38
+#define alpha_n23_4       39
+#define alpha_n23_5       40
 
-#define alpha_capture     40
+#define alpha_capture     41
 
-#define alpha_init_egg    41
+#define alpha_init_egg    42
 
-#define alpha_flush_thr   42
-#define alpha_flush_surv  43
+#define alpha_flush_thr   43
+#define alpha_flush_surv  44
 
 #define flin(x, a1, a2) (max(0.0, min(1.0, (a1) + (a2)*(x))))
 #define dsig(x, a1, a2, a3) (max(0.0, min(1.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
@@ -158,7 +159,7 @@ char calculate(double *mean_air_temp,
    *
    * Update the number of breeding sites
    */
-  (*nBS) = param[alpha_BS_pdens] * (*popdens) / (0.01 + (*lulc)) +
+  (*nBS) = param[alpha_BS_pdens] * (*popdens) / (param[alpha_BS_Klulc] + (*lulc)) +
     param[alpha_BS_dprec] * daily_precipitation[TIME] +
     param[alpha_BS_nevap] * (*nBS);
   (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
@@ -324,7 +325,7 @@ void param_model(char **names, double *param) {
     "d3.1","d3.2","d3.3",
     "n23.surv",
     "deltaT",
-    "BS.pdens","BS.dprec","BS.nevap",
+    "BS.pdens","BS.dprec","BS.nevap","BS.Klulc",
     "tbm.1","tbm.2","tbm.3",
     "gtc.1","gtc.2","gtc.3",
     "n23.1","n23.2","n23.3","n23.4","n23.5",
@@ -375,6 +376,7 @@ void param_model(char **names, double *param) {
   param[alpha_BS_pdens] = 0.00001;
   param[alpha_BS_dprec] = 0.001;
   param[alpha_BS_nevap] = 0.9;
+  param[alpha_BS_Klulc] = 0.5;
 
   param[alpha_tbm_1] = 29.99806440902287;
   param[alpha_tbm_2] = -1.8712756925767178;

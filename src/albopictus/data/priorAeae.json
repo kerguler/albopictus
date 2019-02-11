@@ -1,5 +1,5 @@
 {
-    "BS": {"min": 0.0, "parids": ["BS.dprec","BS.pdens","BS.nevap"], "max": 1.0},
+    "BS": {"min": 0.0, "parids": ["BS.dprec","BS.pdens","BS.nevap","BS.Klulc"], "max": 1.0},
     "n23.surv": {"min": 0.0, "parids": ["n23.surv"], "max": 1.0},
     "n23.comb": {"min": -10.0, "parids": ["n23.1", "n23.2", "n23.3", "n23.4", "n23.5"], "max": 10.0},
     "deltaT": {"min": -10, "parids": ["deltaT"], "max": 10.0},
