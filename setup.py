@@ -1,7 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages
 from distutils.core import setup, Extension
 import numpy.distutils.misc_util
-import sys
 import os
 import re
 
@@ -82,7 +81,9 @@ setup(name='albopictus',
       include_package_data=True,
       package_data={'albopictus': ['data/*.json']},
       zip_safe=False,
-      install_requires=[],
+      install_requires=[
+          'numpy'
+      ],
       py_modules=[
           'albopictus/__init__',
           'albopictus/readModel/__init__',
