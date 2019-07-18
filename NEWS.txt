@@ -1,6 +1,14 @@
 News
 ====
 
+1.12.1
+------
+
+* Release date: UNRELEASED*
+
+* Dynamic human population density for vector08 (from v.1.0 - 14 February 2017)
+* Ability to change MAX_MEM for the gamma distribution module
+
 1.11.0
 ------
 

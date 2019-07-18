@@ -32,6 +32,13 @@ class prepareModel:
             pass
         #
         try:
+            self.set_gamma_mem = self.model.set_gamma_mem
+            self.set_gamma_mem.restype = npct.c_uint64_t
+            self.set_gamma_mem.argtypes = [npct.c_uint64_t]
+        except:
+            pass
+        #
+        try:
             atexit.register(self.model.gamma_mean_destroy)
         except:
             pass

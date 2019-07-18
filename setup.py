@@ -82,7 +82,8 @@ setup(name='albopictus',
       package_data={'albopictus': ['data/*.json']},
       zip_safe=False,
       install_requires=[
-          'numpy'
+          'numpy',
+          'scipy'
       ],
       py_modules=[
           'albopictus/__init__',
@@ -98,6 +99,8 @@ setup(name='albopictus',
                     ["src/albopictus/incubator03.c", "src/albopictus/modelAalbopictus03.c"]),
           Extension("albopictus.modelAalbopictus08",
                     ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus08.c"]),
+          Extension("albopictus.modelAalbopictus08b",
+                    ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus08b.c"]),
           Extension("albopictus.modelAalbopictus13",
                     ["src/albopictus/gamma.c", "src/albopictus/incubator.c", "src/albopictus/modelAalbopictus13.c"]),
           Extension("albopictus.modelAalbopictus18",

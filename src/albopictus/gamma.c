@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <math.h>
 #include <limits.h>
@@ -16,7 +17,7 @@
 #define MAKE_INT(x) (round(1e3*(x)))
 #define MAKE_DOUBLE(x) (1e-3*(x))
 
-#define MAX_MEM   1000000000
+uint64_t MAX_MEM = 1000000000;
 
 typedef struct {
   double n;
@@ -38,6 +39,10 @@ typedef struct {
 
 gamma_mean_t *gamma_mean = NULL;
 size_t gamma_mean_sd_mem = 0;
+
+uint64_t set_gamma_mem(uint64_t new_mem) {
+    return MAX_MEM = new_mem;
+}
 
 void gamma_dist_destroy(void) {
   gamma_mean_t *p, *tmp;

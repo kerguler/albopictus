@@ -120,7 +120,7 @@ Examples
 
 """
 
-__version__ = '1.12.0'
+__version__ = '1.12.1'
 
 # modelAalbopictus - climateData ------------------------- //
 from distutils.sysconfig import get_python_lib
@@ -149,6 +149,7 @@ from albopictus.readModel import prepareModel
 
 vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
+vector08b = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08b.so"))
 vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
 vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
 vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAalbopictus.so"), "vectorst")
@@ -162,8 +163,8 @@ sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so
 
 # Set defaults ------------------------------------------- //
 
-vector = vector13
-prior = prior13
+vector = vector08b
+prior = prior08
 
 # Accessories -------------------------------------------- //
 
