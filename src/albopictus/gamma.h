@@ -24,7 +24,7 @@
 
 #define gamma_matrix_sd 0.375
 
-uint64_t set_gamma_mem(uint64_t new_mem);
+void set_gamma_mem(uint64_t);
 void gamma_dist_destroy(void);
 void gamma_dist_check(void);
 double gamma_pdf(double, double, double);

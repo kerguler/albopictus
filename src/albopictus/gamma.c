@@ -40,8 +40,9 @@ typedef struct {
 gamma_mean_t *gamma_mean = NULL;
 size_t gamma_mean_sd_mem = 0;
 
-uint64_t set_gamma_mem(uint64_t new_mem) {
-    return MAX_MEM = new_mem;
+void set_gamma_mem(uint64_t new_mem) {
+    MAX_MEM = new_mem;
+    printf("Gamma hash memory is adjusted to %llu\n",MAX_MEM);
 }
 
 void gamma_dist_destroy(void) {

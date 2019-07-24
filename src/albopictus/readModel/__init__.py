@@ -33,7 +33,7 @@ class prepareModel:
         #
         try:
             self.set_gamma_mem = self.model.set_gamma_mem
-            self.set_gamma_mem.restype = npct.c_uint64_t
+            self.set_gamma_mem.restype = None
             self.set_gamma_mem.argtypes = [npct.c_uint64_t]
         except:
             pass
