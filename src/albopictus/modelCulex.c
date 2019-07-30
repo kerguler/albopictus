@@ -94,8 +94,8 @@ void set_gamma_mode(char mode) {
 //double timeof = 0;
 //double timeafter = 0;
 
-void calculate(double *mean_air_temp,
-               double *daily_precipitation,
+void calculate(double *air_temp,
+               double *precipitation,
                double *evaporation,
                double *param,
                spop   *conn1,
@@ -115,7 +115,7 @@ void calculate(double *mean_air_temp,
 
   double deltaT = param[alpha_deltaT];
 
-  double Ta = mean_air_temp[TIME];
+  double Ta = air_temp[TIME];
   
   double Tw = Ta + deltaT;
 
@@ -123,7 +123,7 @@ void calculate(double *mean_air_temp,
    * Update the number of breeding sites
    */
   double revap = param[alpha_BS_nevap] * evaporation[TIME];
-  (*nBS) = param[alpha_BS_dprec] * daily_precipitation[TIME] + revap * (*nBS);
+  (*nBS) = param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
   (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
   /*
@@ -168,7 +168,7 @@ void calculate(double *mean_air_temp,
                0,
                d1mean, d1sd, // development (gamma-distributed)
                0,
-               p1_Tw, // death (fixed daily rate)
+               p1_Tw, // death (fixed rate)
                0, 0,
                0,
                0);
@@ -178,7 +178,7 @@ void calculate(double *mean_air_temp,
                0,
                d2mean, d2sd, // development (gamma-distributed)
                0,
-               p2_Tw, // death (fixed daily rate)
+               p2_Tw, // death (fixed rate)
                0, 0,
                0,
                0);
@@ -188,7 +188,7 @@ void calculate(double *mean_air_temp,
                0,
                d3mean, d3sd, // development (gamma-distributed)
                0,
-               p3_Tw, // death (fixed daily rate)
+               p3_Tw, // death (fixed rate)
                0, 0,
                0,
                0);
@@ -297,8 +297,8 @@ void sim_model(double               *envar,
                int                *control,
                double              *result,
                int                *success) {
-  double *mean_air_temp        = envar + 0*(*finalT);
-  double *daily_precipitation  = envar + 1*(*finalT);
+  double *air_temp             = envar + 0*(*finalT);
+  double *precipitation        = envar + 1*(*finalT);
   double *evaporation          = envar + 2*(*finalT);
 
   double *controlpar = 0;
@@ -338,12 +338,13 @@ void sim_model(double               *envar,
   coln2[TIME] = n2;
   coln3[TIME] = n3;
   coln4f[TIME] = n4f;
+  colnBS[TIME] = nBS;
   colK[TIME] = K;
   //
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
-    calculate(mean_air_temp,
-              daily_precipitation,
+    calculate(air_temp,
+              precipitation,
               evaporation,
               param,
               &conn1,
@@ -364,6 +365,7 @@ void sim_model(double               *envar,
     coln2[TIME] = n2;
     coln3[TIME] = n3;
     coln4f[TIME] = n4f;
+    colnBS[TIME] = nBS;
     colK[TIME] = K;
     if (isnan(n1) ||
         isnan(n2) ||
