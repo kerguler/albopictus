@@ -89,6 +89,7 @@ void set_gamma_mode(char mode) {
 #define f_egg(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
 #define f_dev(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
+#define f_exp(T,x1,x2,x3) (max(0.0, (x1)*exp((x2)+(x3)*(T))))
 
 //double timebefore = 0;
 //double timeof = 0;
@@ -96,7 +97,7 @@ void set_gamma_mode(char mode) {
 
 void calculate(double *air_temp,
                double *precipitation,
-               double *evaporation,
+               double *nevaporation,
                double *param,
                spop   *conn1,
                spop   *conn2,
@@ -122,7 +123,7 @@ void calculate(double *air_temp,
   /*
    * Update the number of breeding sites
    */
-  double revap = param[alpha_BS_nevap] * evaporation[TIME];
+  double revap = max(0.0, min(1.0, param[alpha_BS_nevap] * nevaporation[TIME]));
   (*nBS) = param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
   (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
@@ -135,11 +136,11 @@ void calculate(double *air_temp,
   double bigF4 = (0.25)*f_egg(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
 
   // Egg mortality
-  double p1_Tw = pow(f_death(Tw,param[alpha_n1_death_1],param[alpha_n1_death_2],param[alpha_n1_death_3]),0.25);
+  double p1_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n1_death_1],param[alpha_n1_death_2],param[alpha_n1_death_3]),0.25);
   // Larva mortality
-  double p2_Tw = pow(f_death(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25);
+  double p2_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25);
   // Pupa mortality
-  double p3_Tw = pow(f_death(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25);
+  double p3_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25);
 
   // Egg development time
   double d1mean = (4.0)*f_dev(Tw,param[alpha_n1_mean_1],param[alpha_n1_mean_2],param[alpha_n1_mean_3]);
@@ -152,10 +153,10 @@ void calculate(double *air_temp,
   double d3sd   = (4.0)*f_dev(Tw,param[alpha_n3_std_1], param[alpha_n3_std_2], param[alpha_n3_std_3]);
 
   // Adult lifetime (from emergence)
-  double p4mean = (4.0)*f_dev(Ta,param[alpha_n4_mean_1],param[alpha_n4_mean_2],param[alpha_n4_mean_3]);
-  double p4sd   = (4.0)*f_dev(Ta,param[alpha_n4_std_1], param[alpha_n4_std_2], param[alpha_n4_std_3]);
+  double p4mean = (4.0)*f_exp(Ta,param[alpha_n4_mean_1],param[alpha_n4_mean_2],param[alpha_n4_mean_3]);
+  double p4sd   = (4.0)*f_exp(Ta,param[alpha_n4_std_1], param[alpha_n4_std_2], param[alpha_n4_std_3]);
 
-  // printf("%g %g,%g,%g %g,%g %g,%g %g,%g %g,%g\n",bigF4,p1_Tw,p2_Tw,p3_Tw,d1mean,d1sd,d2mean,d2sd,d3mean,d3sd,p4mean,p4sd);
+  // printf("%g,%g %g %g,%g,%g %g,%g %g,%g %g,%g %g,%g\n",Ta,Tw,bigF4,p1_Tw,p2_Tw,p3_Tw,d1mean,d1sd,d2mean,d2sd,d3mean,d3sd,p4mean,p4sd);
 
   /*
    * Survival first, and then, development.
@@ -278,6 +279,13 @@ void param_model(char **names, double *param) {
   param[alpha_n2_std_2]   = -1.50113421;
   param[alpha_n2_std_3]   = 0.02370162;
 
+  param[alpha_n3_mean_1]  = 19.41735844;
+  param[alpha_n3_mean_2]  = -1.25195579;
+  param[alpha_n3_mean_3]  = 0.02097719;
+  param[alpha_n3_std_1]   = 0.0;
+  param[alpha_n3_std_2]   = 0.0;
+  param[alpha_n3_std_3]   = 0.0;
+
   param[alpha_n4_mean_1]  = 2.0548142;
   param[alpha_n4_mean_2]  = 5.9171821;
   param[alpha_n4_mean_3]  = -0.1165213;
@@ -299,7 +307,7 @@ void sim_model(double               *envar,
                int                *success) {
   double *air_temp             = envar + 0*(*finalT);
   double *precipitation        = envar + 1*(*finalT);
-  double *evaporation          = envar + 2*(*finalT);
+  double *nevaporation         = envar + 2*(*finalT);
 
   double *controlpar = 0;
   if ((*control)) {
@@ -345,7 +353,7 @@ void sim_model(double               *envar,
     // Take a step
     calculate(air_temp,
               precipitation,
-              evaporation,
+              nevaporation,
               param,
               &conn1,
               &conn2,
