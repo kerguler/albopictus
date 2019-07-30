@@ -17,6 +17,7 @@ include src/albopictus/modelAalbopictus03.c
 include src/albopictus/modelAalbopictus08.c
 include src/albopictus/modelAalbopictus13.c
 include src/albopictus/modelAalbopictus18.c
+include src/albopictus/modelCulex.c
 include src/albopictus/modelStochCHIKV.c
 include src/albopictus/modelStochSand.c
 include src/albopictus/modelStochAalbopictus.c

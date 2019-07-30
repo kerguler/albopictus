@@ -1,6 +1,13 @@
 News
 ====
 
+1.12.2
+------
+
+* Release date: UNRELEASED*
+
+* Culex pipiens complex population dynamics model (first draft)
+
 1.12.1
 ------
 

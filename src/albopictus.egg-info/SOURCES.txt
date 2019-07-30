@@ -15,6 +15,7 @@ src/albopictus/modelAalbopictus08.c
 src/albopictus/modelAalbopictus08b.c
 src/albopictus/modelAalbopictus13.c
 src/albopictus/modelAalbopictus18.c
+src/albopictus/modelCulex.c
 src/albopictus/modelStochAaegypti.c
 src/albopictus/modelStochAalbopictus.c
 src/albopictus/modelStochCHIKV.c
