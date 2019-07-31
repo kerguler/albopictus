@@ -92,6 +92,7 @@ void set_gamma_mode(char mode) {
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
 #define f_dev(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_exp(T,x1,x2,x3) (max(0.0, (x1)*exp((x2)+(x3)*(T))))
+#define f_dsigi(T,x1,x2,x3) (max(0.0, min(1.0, 1.0-(x1)/((1.0+exp((x2)-(T)))*(1.0+exp((T)-(x3)))) )))
 
 //double timebefore = 0;
 //double timeof = 0;
@@ -144,9 +145,9 @@ void calculate(double *air_temp,
   // Egg mortality
   double p1_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n1_death_1],param[alpha_n1_death_2],param[alpha_n1_death_3]),0.25));
   // Larva mortality
-  double p2_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25));
+  double p2_Tw = 1.0 - pdens*(pow(1.0-f_dsigi(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25));
   // Pupa mortality
-  double p3_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25));
+  double p3_Tw = 1.0 - pdens*(pow(1.0-f_dsigi(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25));
 
   // Egg development time
   double d1mean = (4.0)*f_dev(Tw,param[alpha_n1_mean_1],param[alpha_n1_mean_2],param[alpha_n1_mean_3]);
@@ -262,13 +263,13 @@ void param_model(char **names, double *param) {
   param[alpha_n1_death_2] = -0.117725165;
   param[alpha_n1_death_3] = 0.003552023;
 
-  param[alpha_n2_death_1] = 0.2055655435;
-  param[alpha_n2_death_2] = -0.0185949078;
-  param[alpha_n2_death_3] = 0.0004422076;
+  param[alpha_n2_death_1] = 0.9878398;
+  param[alpha_n2_death_2] = 10.6100650;
+  param[alpha_n2_death_3] = 33.2006971;
 
-  param[alpha_n3_death_1] = 0.3508245562;
-  param[alpha_n3_death_2] = -0.0316446460;
-  param[alpha_n3_death_3] = 0.0008115464;
+  param[alpha_n3_death_1] = 0.9681704;
+  param[alpha_n3_death_2] = 11.7116140;
+  param[alpha_n3_death_3] = 32.3451635;
 
   param[alpha_n1_mean_1]  = 27.11593866;
   param[alpha_n1_mean_2]  = -1.84221694;
