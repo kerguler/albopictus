@@ -14,7 +14,7 @@ double time2here(void) {
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      45
+#define NumParAea      47
 #define NumMetAea      6
 
 // --------------------------------------------
@@ -86,6 +86,9 @@ void set_gamma_mode(char mode) {
 #define alpha_BS_dprec    43
 #define alpha_BS_nevap    44
 
+#define alpha_pdens_1     45
+#define alpha_pdens_2     46
+
 #define f_egg(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
 #define f_dev(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
@@ -123,7 +126,8 @@ void calculate(double *air_temp,
   /*
    * Update the number of breeding sites
    */
-  double revap = max(0.0, min(1.0, param[alpha_BS_nevap] * nevaporation[TIME]));
+  double eva = param[alpha_BS_nevap] * nevaporation[TIME];
+  double revap = eva ? exp(-1.0 / eva) : 0.0;
   (*nBS) = param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
   (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
@@ -132,15 +136,19 @@ void calculate(double *air_temp,
    * the new environmental conditions and breeding sites
    */
 
+  // Density-dependent decrease of survival with unscaled carrying capacity
+  double fdens = ((*n1) + (*n2) + (*n3)) / (*nBS);
+  double pdens = exp(-param[alpha_pdens_1]*pow(fdens,param[alpha_pdens_2]));
+
   // Fecundity
   double bigF4 = (0.25)*f_egg(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
 
   // Egg mortality
-  double p1_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n1_death_1],param[alpha_n1_death_2],param[alpha_n1_death_3]),0.25);
+  double p1_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n1_death_1],param[alpha_n1_death_2],param[alpha_n1_death_3]),0.25));
   // Larva mortality
-  double p2_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25);
+  double p2_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n2_death_1],param[alpha_n2_death_2],param[alpha_n2_death_3]),0.25));
   // Pupa mortality
-  double p3_Tw = 1.0-pow(1.0-f_death(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25);
+  double p3_Tw = 1.0 - pdens*(pow(1.0-f_death(Tw,param[alpha_n3_death_1],param[alpha_n3_death_2],param[alpha_n3_death_3]),0.25));
 
   // Egg development time
   double d1mean = (4.0)*f_dev(Tw,param[alpha_n1_mean_1],param[alpha_n1_mean_2],param[alpha_n1_mean_3]);
@@ -236,18 +244,18 @@ void numparModel(int *np, int *nm) {
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
     "coln1","coln2","coln3","coln4f","colnBS","colK",
-    "init_n1","init_n2","init_n3","init_n4f","init_nBS","init_K","F4_1","F4_2","F4_3","n1_death_1","n1_death_2","n1_death_3","n2_death_1","n2_death_2","n2_death_3","n3_death_1","n3_death_2","n3_death_3","n1_mean_1","n1_mean_2","n1_mean_3","n1_std_1","n1_std_2","n1_std_3","n2_mean_1","n2_mean_2","n2_mean_3","n2_std_1","n2_std_2","n2_std_3","n3_mean_1","n3_mean_2","n3_mean_3","n3_std_1","n3_std_2","n3_std_3","n4_mean_1","n4_mean_2","n4_mean_3","n4_std_1","n4_std_2","n4_std_3","deltaT","BS_dprec","BS_nevap"
+    "init_n1","init_n2","init_n3","init_n4f","init_nBS","init_K","F4_1","F4_2","F4_3","n1_death_1","n1_death_2","n1_death_3","n2_death_1","n2_death_2","n2_death_3","n3_death_1","n3_death_2","n3_death_3","n1_mean_1","n1_mean_2","n1_mean_3","n1_std_1","n1_std_2","n1_std_3","n2_mean_1","n2_mean_2","n2_mean_3","n2_std_1","n2_std_2","n2_std_3","n3_mean_1","n3_mean_2","n3_mean_3","n3_std_1","n3_std_2","n3_std_3","n4_mean_1","n4_mean_2","n4_mean_3","n4_std_1","n4_std_2","n4_std_3","deltaT","BS_dprec","BS_nevap","pdens_1","pdens_2"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
     names[i] = strdup(temp[i]);
   // ---
-  param[alpha_init_n1]    = 1.0;
-  param[alpha_init_n2]    = 1.0;
-  param[alpha_init_n3]    = 1.0;
-  param[alpha_init_n4f]   = 1.0;
-  param[alpha_init_nBS]   = 1.0;
-  param[alpha_init_K]     = 1.0;
+  param[alpha_init_n1]    = 1000.0;
+  param[alpha_init_n2]    = 1000.0;
+  param[alpha_init_n3]    = 1000.0;
+  param[alpha_init_n4f]   = 1000.0;
+  param[alpha_init_nBS]   = 1000.0;
+  param[alpha_init_K]     = 1000.0;
 
   param[alpha_F4_1]       = -25.49944116;
   param[alpha_F4_2]       = 2.64761782;
@@ -295,8 +303,11 @@ void param_model(char **names, double *param) {
 
   param[alpha_deltaT]     = 4.0;
 
-  param[alpha_BS_dprec]   = 0.001;
-  param[alpha_BS_nevap]   = 0.001;
+  param[alpha_BS_dprec]   = 100.0;
+  param[alpha_BS_nevap]   = 100.0;
+
+  param[alpha_pdens_1]    = 0.25;
+  param[alpha_pdens_2]    = 4.0;
 }
 
 void sim_model(double               *envar,
