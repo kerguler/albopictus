@@ -14,8 +14,8 @@ double time2here(void) {
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      47
-#define NumMetAea      6
+#define NumParAea      46
+#define NumMetAea      5
 
 // --------------------------------------------
 // Gamma distribution
@@ -35,59 +35,58 @@ void set_gamma_mode(char mode) {
 #define alpha_init_n3     2
 #define alpha_init_n4f    3
 #define alpha_init_nBS    4
-#define alpha_init_K      5
 
-#define alpha_F4_1        6
-#define alpha_F4_2        7
-#define alpha_F4_3        8
+#define alpha_F4_1        5
+#define alpha_F4_2        6
+#define alpha_F4_3        7
 
-#define alpha_n1_death_1  9
-#define alpha_n1_death_2  10
-#define alpha_n1_death_3  11
+#define alpha_n1_death_1  8
+#define alpha_n1_death_2  9
+#define alpha_n1_death_3  10
 
-#define alpha_n2_death_1  12
-#define alpha_n2_death_2  13
-#define alpha_n2_death_3  14
+#define alpha_n2_death_1  11
+#define alpha_n2_death_2  12
+#define alpha_n2_death_3  13
 
-#define alpha_n3_death_1  15
-#define alpha_n3_death_2  16
-#define alpha_n3_death_3  17
+#define alpha_n3_death_1  14
+#define alpha_n3_death_2  15
+#define alpha_n3_death_3  16
 
-#define alpha_n1_mean_1   18
-#define alpha_n1_mean_2   19
-#define alpha_n1_mean_3   20
-#define alpha_n1_std_1    21
-#define alpha_n1_std_2    22
-#define alpha_n1_std_3    23
+#define alpha_n1_mean_1   17
+#define alpha_n1_mean_2   18
+#define alpha_n1_mean_3   19
+#define alpha_n1_std_1    20
+#define alpha_n1_std_2    21
+#define alpha_n1_std_3    22
 
-#define alpha_n2_mean_1   24
-#define alpha_n2_mean_2   25
-#define alpha_n2_mean_3   26
-#define alpha_n2_std_1    27
-#define alpha_n2_std_2    28
-#define alpha_n2_std_3    29
+#define alpha_n2_mean_1   23
+#define alpha_n2_mean_2   24
+#define alpha_n2_mean_3   25
+#define alpha_n2_std_1    26
+#define alpha_n2_std_2    27
+#define alpha_n2_std_3    28
 
-#define alpha_n3_mean_1   30
-#define alpha_n3_mean_2   31
-#define alpha_n3_mean_3   32
-#define alpha_n3_std_1    33
-#define alpha_n3_std_2    34
-#define alpha_n3_std_3    35
+#define alpha_n3_mean_1   29
+#define alpha_n3_mean_2   30
+#define alpha_n3_mean_3   31
+#define alpha_n3_std_1    32
+#define alpha_n3_std_2    33
+#define alpha_n3_std_3    34
 
-#define alpha_n4_mean_1   36
-#define alpha_n4_mean_2   37
-#define alpha_n4_mean_3   38
-#define alpha_n4_std_1    39
-#define alpha_n4_std_2    40
-#define alpha_n4_std_3    41
+#define alpha_n4_mean_1   35
+#define alpha_n4_mean_2   36
+#define alpha_n4_mean_3   37
+#define alpha_n4_std_1    38
+#define alpha_n4_std_2    39
+#define alpha_n4_std_3    40
 
-#define alpha_deltaT      42
+#define alpha_deltaT      41
 
-#define alpha_BS_dprec    43
-#define alpha_BS_nevap    44
+#define alpha_BS_dprec    42
+#define alpha_BS_nevap    43
 
-#define alpha_pdens_1     45
-#define alpha_pdens_2     46
+#define alpha_pdens_1     44
+#define alpha_pdens_2     45
 
 #define f_egg(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
@@ -111,7 +110,6 @@ void calculate(double *air_temp,
                double *n3,
                double *n4f,
                double *nBS,
-               double *K,
                int    TIME) {
   // ---------------------
   // modelDelayAalbopictus
@@ -129,7 +127,7 @@ void calculate(double *air_temp,
   double eva = param[alpha_BS_nevap] * nevaporation[TIME];
   double revap = eva ? exp(-1.0 / eva) : 0.0;
   (*nBS) = param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
-  (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
+  // (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
   /*
    * Update survival and development rates/probabilities according to
@@ -243,8 +241,8 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln1","coln2","coln3","coln4f","colnBS","colK",
-    "init_n1","init_n2","init_n3","init_n4f","init_nBS","init_K","F4_1","F4_2","F4_3","n1_death_1","n1_death_2","n1_death_3","n2_death_1","n2_death_2","n2_death_3","n3_death_1","n3_death_2","n3_death_3","n1_mean_1","n1_mean_2","n1_mean_3","n1_std_1","n1_std_2","n1_std_3","n2_mean_1","n2_mean_2","n2_mean_3","n2_std_1","n2_std_2","n2_std_3","n3_mean_1","n3_mean_2","n3_mean_3","n3_std_1","n3_std_2","n3_std_3","n4_mean_1","n4_mean_2","n4_mean_3","n4_std_1","n4_std_2","n4_std_3","deltaT","BS_dprec","BS_nevap","pdens_1","pdens_2"
+    "coln1","coln2","coln3","coln4f","colnBS",
+    "init_n1","init_n2","init_n3","init_n4f","init_nBS","F4_1","F4_2","F4_3","n1_death_1","n1_death_2","n1_death_3","n2_death_1","n2_death_2","n2_death_3","n3_death_1","n3_death_2","n3_death_3","n1_mean_1","n1_mean_2","n1_mean_3","n1_std_1","n1_std_2","n1_std_3","n2_mean_1","n2_mean_2","n2_mean_3","n2_std_1","n2_std_2","n2_std_3","n3_mean_1","n3_mean_2","n3_mean_3","n3_std_1","n3_std_2","n3_std_3","n4_mean_1","n4_mean_2","n4_mean_3","n4_std_1","n4_std_2","n4_std_3","deltaT","BS_dprec","BS_nevap","pdens_1","pdens_2"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -255,7 +253,6 @@ void param_model(char **names, double *param) {
   param[alpha_init_n3]    = 1000.0;
   param[alpha_init_n4f]   = 1000.0;
   param[alpha_init_nBS]   = 1000.0;
-  param[alpha_init_K]     = 1000.0;
 
   param[alpha_F4_1]       = -25.49944116;
   param[alpha_F4_2]       = 2.64761782;
@@ -331,7 +328,6 @@ void sim_model(double               *envar,
   double *coln3   = result + 3*(*finalT);
   double *coln4f  = result + 4*(*finalT);
   double *colnBS  = result + 5*(*finalT);
-  double *colK    = result + 6*(*finalT);
 
   int TIME = 0;
   (*success) = 2;
@@ -341,7 +337,6 @@ void sim_model(double               *envar,
   double n3 = param[alpha_init_n3];
   double n4f = param[alpha_init_n4f];
   double nBS = param[alpha_init_nBS];
-  double K = param[alpha_init_K];
   //
   spop conn1 = spop_init(0,gamma_mode);
   spop conn2 = spop_init(0,gamma_mode);
@@ -358,7 +353,6 @@ void sim_model(double               *envar,
   coln3[TIME] = n3;
   coln4f[TIME] = n4f;
   colnBS[TIME] = nBS;
-  colK[TIME] = K;
   //
   for (TIME=1; TIME<(*finalT); TIME++) {
     // Take a step
@@ -375,7 +369,6 @@ void sim_model(double               *envar,
               &n3,
               &n4f,
               &nBS,
-              &K,
               TIME);
     //
     // Record state
@@ -385,15 +378,13 @@ void sim_model(double               *envar,
     coln3[TIME] = n3;
     coln4f[TIME] = n4f;
     colnBS[TIME] = nBS;
-    colK[TIME] = K;
     if (isnan(n1) ||
         isnan(n2) ||
         isnan(n3) ||
         isnan(n4f) ||
-        isnan(nBS) ||
-        isnan(K)) {
+        isnan(nBS)) {
       //
-      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g,%g\n",TIME,n1,n2,n3,n4f,nBS,K);
+      printf("ERROR_NAN: %d,%g,%g,%g,%g,%g\n",TIME,n1,n2,n3,n4f,nBS);
       printf("ERROR_PAR: ");
       int i;
       for (i=0; i<NumParAea; i++)
