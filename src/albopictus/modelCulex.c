@@ -14,7 +14,7 @@ double time2here(void) {
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      47
+#define NumParAea      48
 #define NumMetAea      5
 
 // --------------------------------------------
@@ -81,13 +81,14 @@ void set_gamma_mode(char mode) {
 #define alpha_n4_std_3    40
 
 #define alpha_deltaT      41
+#define alpha_avoidT      42
 
-#define alpha_BS_dprec    42
-#define alpha_BS_nevap    43
-#define alpha_BS_const    44
+#define alpha_BS_dprec    43
+#define alpha_BS_nevap    44
+#define alpha_BS_const    45
 
-#define alpha_pdens_1     45
-#define alpha_pdens_2     46
+#define alpha_pdens_1     46
+#define alpha_pdens_2     47
 
 #define f_egg(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
@@ -161,8 +162,9 @@ void calculate(double *air_temp,
   double d3sd   = (4.0)*f_dev(Tw,param[alpha_n3_std_1], param[alpha_n3_std_2], param[alpha_n3_std_3]);
 
   // Adult lifetime (from emergence)
-  double p4mean = (4.0)*f_exp(Ta,param[alpha_n4_mean_1],param[alpha_n4_mean_2],param[alpha_n4_mean_3]);
-  double p4sd   = (4.0)*f_exp(Ta,param[alpha_n4_std_1], param[alpha_n4_std_2], param[alpha_n4_std_3]);
+  double Teff = Ta > param[alpha_avoidT] ? param[alpha_avoidT] : Ta;
+  double p4mean = (4.0)*f_exp(Teff,param[alpha_n4_mean_1],param[alpha_n4_mean_2],param[alpha_n4_mean_3]);
+  double p4sd   = (4.0)*f_exp(Teff,param[alpha_n4_std_1], param[alpha_n4_std_2], param[alpha_n4_std_3]);
 
   // printf("%g,%g %g %g,%g,%g %g,%g %g,%g %g,%g %g,%g\n",Ta,Tw,bigF4,p1_Tw,p2_Tw,p3_Tw,d1mean,d1sd,d2mean,d2sd,d3mean,d3sd,p4mean,p4sd);
 
@@ -286,6 +288,7 @@ void param_model(char **names, double *param) {
     "n4_std_2",
     "n4_std_3",
     "deltaT",
+    "avoidT",
     "BS_dprec",
     "BS_nevap",
     "BS_const",
@@ -347,6 +350,7 @@ void param_model(char **names, double *param) {
   param[alpha_n4_std_3]   = -0.1049982;
 
   param[alpha_deltaT]     = 0.0;
+  param[alpha_avoidT]     = 100.0;
 
   param[alpha_BS_dprec]   = 100.0;
   param[alpha_BS_nevap]   = 100.0;
