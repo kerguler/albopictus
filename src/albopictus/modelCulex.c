@@ -14,7 +14,7 @@ double time2here(void) {
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      46
+#define NumParAea      47
 #define NumMetAea      5
 
 // --------------------------------------------
@@ -84,9 +84,10 @@ void set_gamma_mode(char mode) {
 
 #define alpha_BS_dprec    42
 #define alpha_BS_nevap    43
+#define alpha_BS_const    44
 
-#define alpha_pdens_1     44
-#define alpha_pdens_2     45
+#define alpha_pdens_1     45
+#define alpha_pdens_2     46
 
 #define f_egg(T,x1,x2,x3) (max(0.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0)))
 #define f_death(T,x1,x2,x3) (max(0.0, min(1.0, (x1) + (x2)*(T) + (x3)*pow((T),2.0))))
@@ -119,7 +120,7 @@ void calculate(double *air_temp,
   double deltaT = param[alpha_deltaT];
 
   double Ta = air_temp[TIME];
-  
+
   double Tw = Ta + deltaT;
 
   /*
@@ -127,7 +128,7 @@ void calculate(double *air_temp,
    */
   double eva = param[alpha_BS_nevap] * nevaporation[TIME];
   double revap = eva ? exp(-1.0 / eva) : 0.0;
-  (*nBS) = param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
+  (*nBS) = param[alpha_BS_const] + param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
   // (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
   /*
@@ -243,7 +244,53 @@ void numparModel(int *np, int *nm) {
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
     "coln1","coln2","coln3","coln4f","colnBS",
-    "init_n1","init_n2","init_n3","init_n4f","init_nBS","F4_1","F4_2","F4_3","n1_death_1","n1_death_2","n1_death_3","n2_death_1","n2_death_2","n2_death_3","n3_death_1","n3_death_2","n3_death_3","n1_mean_1","n1_mean_2","n1_mean_3","n1_std_1","n1_std_2","n1_std_3","n2_mean_1","n2_mean_2","n2_mean_3","n2_std_1","n2_std_2","n2_std_3","n3_mean_1","n3_mean_2","n3_mean_3","n3_std_1","n3_std_2","n3_std_3","n4_mean_1","n4_mean_2","n4_mean_3","n4_std_1","n4_std_2","n4_std_3","deltaT","BS_dprec","BS_nevap","pdens_1","pdens_2"
+    "init_n1",
+    "init_n2",
+    "init_n3",
+    "init_n4f",
+    "init_nBS",
+    "F4_1",
+    "F4_2",
+    "F4_3",
+    "n1_death_1",
+    "n1_death_2",
+    "n1_death_3",
+    "n2_death_1",
+    "n2_death_2",
+    "n2_death_3",
+    "n3_death_1",
+    "n3_death_2",
+    "n3_death_3",
+    "n1_mean_1",
+    "n1_mean_2",
+    "n1_mean_3",
+    "n1_std_1",
+    "n1_std_2",
+    "n1_std_3",
+    "n2_mean_1",
+    "n2_mean_2",
+    "n2_mean_3",
+    "n2_std_1",
+    "n2_std_2",
+    "n2_std_3",
+    "n3_mean_1",
+    "n3_mean_2",
+    "n3_mean_3",
+    "n3_std_1",
+    "n3_std_2",
+    "n3_std_3",
+    "n4_mean_1",
+    "n4_mean_2",
+    "n4_mean_3",
+    "n4_std_1",
+    "n4_std_2",
+    "n4_std_3",
+    "deltaT",
+    "BS_dprec",
+    "BS_nevap",
+    "BS_const",
+    "pdens_1",
+    "pdens_2"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -299,10 +346,11 @@ void param_model(char **names, double *param) {
   param[alpha_n4_std_2]   = 4.8608867;
   param[alpha_n4_std_3]   = -0.1049982;
 
-  param[alpha_deltaT]     = 4.0;
+  param[alpha_deltaT]     = 0.0;
 
   param[alpha_BS_dprec]   = 100.0;
   param[alpha_BS_nevap]   = 100.0;
+  param[alpha_BS_const]   = 0.0;
 
   param[alpha_pdens_1]    = 0.25;
   param[alpha_pdens_2]    = 4.0;
