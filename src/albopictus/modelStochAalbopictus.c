@@ -169,7 +169,7 @@ char calculate(double *photoperiod,
    *
    * Update the number of breeding sites
    */
-  (*nBS) = param[alpha_BS_pdens] * (*popdens) +
+  (*nBS) = param[alpha_BS_pdens] * (popdens[TIME]) +
     param[alpha_BS_dprec] * daily_precipitation[TIME] +
     param[alpha_BS_nevap] * (*nBS);
   (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
@@ -180,7 +180,8 @@ char calculate(double *photoperiod,
    */
   // Density of the immature stages
   // Assume uniform distribution across all breeding sites
-  double n23dens = (double)((*n2) + (*n3)) / (double)(*K);
+  // 2019/09/23 - ErgulerK: K -> nBS
+  double n23dens = (double)((*n2) + (*n3)) / (double)(*nBS);
   double densd = expd(n23dens,param[alpha_n23_surv]);
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
   // Fecundity (per adult female)
@@ -434,7 +435,7 @@ void sim_model(double               *envar,
   double *mean_air_temp        = envar + 1*(*finalT);
   double *daily_precipitation  = envar + 2*(*finalT);
   double *popdens              = envar + 3*(*finalT);
-  double *daily_capture        = envar + 3*(*finalT) + 1;
+  double *daily_capture        = envar + 4*(*finalT);
   double *controlpar = 0;
   if ((*control)) {
     controlpar = param + NumParAea;
