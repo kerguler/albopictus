@@ -181,9 +181,14 @@ char calculate(double *photoperiod,
   // Density of the immature stages
   // Assume uniform distribution across all breeding sites
   // 2019/09/23 - ErgulerK: K -> nBS
+  // 2019/09/24 - ErgulerK: Instead of the average of previous precipitation events, I propose to use the aggregate, i.e. the weighted sum
   double n23dens = (double)((*n2) + (*n3)) / (double)(*nBS);
+  //
+  // The effect of density on the survival of immature stages
   double densd = expd(n23dens,param[alpha_n23_surv]);
+  // The effect of density on the development of immature stages
   double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
+  //
   // Fecundity (per adult female)
   // WARNINNG: Existing parameters are fixed for daily egg laying
   //           The following is aimed at egg laying per gonotrophic cycle
@@ -248,9 +253,6 @@ char calculate(double *photoperiod,
                       0,
                       0);
   if (test) return 1;
-  int quie = gsl_ran_binomial(RAND_GSL,p0_Ta,(*nh)); // Number of surviving quiescent eggs (survival is similar to diapausing eggs)
-  int quieh = gsl_ran_binomial(RAND_GSL,fracHatch,quie); // Number of surviving quiescent eggs to hatch
-  quie -= quieh;
   //
   // Larvae
   test = spop_iterate((*conn2),
@@ -296,15 +298,23 @@ char calculate(double *photoperiod,
                       0);
   if (test) return 1;
   //
-  // Adult females surviving and completing ovicyle
-  int n4_reproduce = (*conn4)->developed.i;
-  // Reintroduce ovipositioning adult females to the population
-  spop_popadd((*conn4), (*conn4)->devtable);
+  int quie = gsl_ran_binomial(RAND_GSL,p0_Ta,(*nh)); // Number of surviving quiescent eggs (survival is similar to diapausing eggs)
+  int quieh = gsl_ran_binomial(RAND_GSL,fracHatch,quie); // Number of surviving quiescent eggs to hatch
+  quie -= quieh;
   //
   // Diapausing egg survival
   // Tagged eggs always become diapausing eggs
   int dp_eggs = gsl_ran_binomial(RAND_GSL,p0_Ta,(*n0));
   dp_eggs += (*conn10)->developed.i;
+  //
+  int nquie = gsl_ran_binomial(RAND_GSL,fracQuie,dp_eggs);
+  quie += nquie;
+  dp_eggs -= nquie;
+  //
+  // Adult females surviving and completing ovicyle
+  int n4_reproduce = (*conn4)->developed.i;
+  // Reintroduce ovipositioning adult females to the population
+  spop_popadd((*conn4), (*conn4)->devtable);
   //
   // Perform state transformations
   spop_popadd((*conn4), (*conn4j)->devtable);
@@ -324,10 +334,6 @@ char calculate(double *photoperiod,
   int tagged = gsl_ran_binomial(RAND_GSL,fracDiap,freeeggs);
   spop_add((*conn10),0,0,0,tagged); // Tagged eggs
   spop_add((*conn1),0,0,0,(freeeggs-tagged)); // Normal eggs
-  //
-  int nquie = gsl_ran_binomial(RAND_GSL,fracQuie,dp_eggs);
-  quie += nquie;
-  dp_eggs -= nquie;
   //
   // Update all stages and state variables
   (*n0) = dp_eggs;
