@@ -82,9 +82,9 @@ void set_gamma_mode(char mode) {
 #define alpha_ta_thr      32
 #define alpha_tq_thr      33
 
-#define alpha_gtc_1       34
-#define alpha_gtc_2       35
-#define alpha_gtc_3       36
+#define alpha_tbm_1       34
+#define alpha_tbm_2       35
+#define alpha_tbm_3       36
 
 #define alpha_p0_1        37
 #define alpha_p0_2        38
@@ -108,15 +108,15 @@ void set_gamma_mode(char mode) {
 #define ratk(x, T1, T2, K, c) (pow((c)*((x)-(T1))*(1.0-exp((K)*((x)-(T2)))),2))
 
 double fun_p0Ta(double Ta, double *param) {return flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);}
-double fun_p1Tw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p1_1],param[alpha_p1_2],param[alpha_p1_3]);}
-double fun_p2Tw_raw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3]);}
-double fun_p3Tw_raw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3]);}
+double fun_p1Tw(double Tw, double *param) {return dsig(Tw,param[alpha_p1_1],param[alpha_p1_2],param[alpha_p1_3]);}
+double fun_p2Tw_raw(double Tw, double *param) {return dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3]);}
+double fun_p3Tw_raw(double Tw, double *param) {return dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3]);}
 double fun_d1Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d1_1],param[alpha_d1_2],param[alpha_d1_3]));}
 double fun_d2Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d2_1],param[alpha_d2_2],param[alpha_d2_3]));}
 double fun_d3Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d3_1],param[alpha_d3_2],param[alpha_d3_3]));}
 double fun_F4(double Ta, double *param) {return Ta<=param[alpha_F4_1] || Ta>=param[alpha_F4_2] ? 0.0 : ratk(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3],param[alpha_F4_4]);}
 double fun_dens(double n23dens, double *param) {return expo(n23dens,param[alpha_n23_surv]);}
-double fun_gtcTa(double Ta, double *param) {return poly(Ta,param[alpha_gtc_1],param[alpha_gtc_2],param[alpha_gtc_3]);}
+double fun_tbmTa(double Ta, double *param) {return poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);}
 double fun_d4Ta_mean(double Ta, double *param) {return dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);}
 double fun_d4Ta_std(double dd4) {return gamma_matrix_sd*dd4;}
 
@@ -194,6 +194,8 @@ char calculate(double *photoperiod,
   double densd = fun_dens(n23dens,param);
   //
   // Fecundity (per adult female per day)
+  // Since oviposition frequency is different for Aedes albopictus,
+  // it is best to model fecundity as a daily event.
   double bigF4 = fun_F4(Ta,param);
   //
   // Excess rain flushes the aquatic life stages
@@ -202,11 +204,11 @@ char calculate(double *photoperiod,
   // Egg survival (diapausing eggs)
   double p0_Ta = fun_p0Ta(Ta,param);
   // Egg mortality (non-diapausing eggs)
-  double p1_Tw = fun_p1Tw(Tw,param);
+  double p1_Tw = 1.0 - fun_p1Tw(Tw,param);
   // Larval mortality
-  double p2_Tw = fun_p2Tw_raw(Tw,param)*densd*flush_surv;
+  double p2_Tw = 1.0 - fun_p2Tw_raw(Tw,param)*densd*flush_surv;
   // Pupal mortality
-  double p3_Tw = fun_p3Tw_raw(Tw,param)*densd*flush_surv;
+  double p3_Tw = 1.0 - fun_p3Tw_raw(Tw,param)*densd*flush_surv;
   
   // Egg development time
   double d1 = fun_d1Tw(Tw,param);
@@ -215,10 +217,8 @@ char calculate(double *photoperiod,
   // Pupal development time
   double d3 = fun_d3Tw(Tw,param);
 
-  // Gonotrophic cycle length (also, time to first blood meal)
-  // Since oviposition frequency is different for Aedes albopictus,
-  // it is best to model fecundity as a daily event.
-  double alpha_ovipos = fun_gtcTa(Ta,param);
+  // Time to first blood meal
+  double alpha_ovipos = fun_tbmTa(Ta,param);
 
   // Adult lifetime (from emergence)
   double dd4 = fun_d4Ta_mean(Ta,param);
@@ -375,7 +375,7 @@ void numparModel(int *np, int *nm) {
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
     "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie","alpha_flush_thr","alpha_flush_surv",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","F4.4","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","gtc.1","gtc.2","gtc.3","p0.1","p0.2","alpha_capture"
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","F4.4","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","alpha_capture"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -403,9 +403,9 @@ void param_model(char **names, double *param) {
   param[alpha_d2_1] = 44.59021955694031;
   param[alpha_d2_2] = -2.613778489396158;
   param[alpha_d2_3] = 0.04627568522818735;
-  param[alpha_d3_1] = 8.92627601829611;
-  param[alpha_d3_2] = -0.36161169585829006;
-  param[alpha_d3_3] = 0.0039784277144151396;
+  param[alpha_d3_1] = 8.92627602;
+  param[alpha_d3_2] = -0.377139162;
+  param[alpha_d3_3] = 0.00464125318;
   param[alpha_n23_surv] = 10.0;
   param[alpha_deltaT] = 0.0;
 
@@ -418,9 +418,9 @@ void param_model(char **names, double *param) {
   param[alpha_ta_thr] = 20.0;
   param[alpha_tq_thr] = 10.0;
 
-  param[alpha_gtc_1] = 29.99806440902287;
-  param[alpha_gtc_2] = -3.04904871;
-  param[alpha_gtc_3] = 0.05572264;
+  param[alpha_tbm_1] = 52.54632144;
+  param[alpha_tbm_2] = -3.81802776;
+  param[alpha_tbm_3] = 0.07403983;
 
   param[alpha_p0_1] = 0.7975103960182536;
   param[alpha_p0_2] = 0.07409437745556843;
