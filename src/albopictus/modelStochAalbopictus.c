@@ -29,7 +29,7 @@ extern gsl_rng *RAND_GSL;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      47
+#define NumParAea      42
 #define NumMetAea      18
 
 // --------------------------------------------
@@ -60,45 +60,39 @@ void set_gamma_mode(char mode) {
 #define alpha_F4_1        12
 #define alpha_F4_2        13
 #define alpha_F4_3        14
-#define alpha_d1_1        15
-#define alpha_d1_2        16
-#define alpha_d1_3        17
-#define alpha_d2_1        18
-#define alpha_d2_2        19
-#define alpha_d2_3        20
-#define alpha_d3_1        21
-#define alpha_d3_2        22
-#define alpha_d3_3        23
-#define alpha_n23_surv    24
-#define alpha_deltaT      25
+#define alpha_F4_4        15
+#define alpha_d1_1        16
+#define alpha_d1_2        17
+#define alpha_d1_3        18
+#define alpha_d2_1        19
+#define alpha_d2_2        20
+#define alpha_d2_3        21
+#define alpha_d3_1        22
+#define alpha_d3_2        23
+#define alpha_d3_3        24
+#define alpha_n23_surv    25
+#define alpha_deltaT      26
 
-#define alpha_BS_pdens    26
-#define alpha_BS_dprec    27
-#define alpha_BS_nevap    28
+#define alpha_BS_pdens    27
+#define alpha_BS_dprec    28
+#define alpha_BS_nevap    29
 
-#define alpha_dp_egg      29
-#define alpha_dp_thr      30
-#define alpha_ta_thr      31
-#define alpha_tq_thr      32
+#define alpha_dp_egg      30
+#define alpha_dp_thr      31
+#define alpha_ta_thr      32
+#define alpha_tq_thr      33
 
-#define alpha_tbm_1       33
-#define alpha_tbm_2       34
-#define alpha_tbm_3       35
+#define alpha_gtc_1       34
+#define alpha_gtc_2       35
+#define alpha_gtc_3       36
 
-#define alpha_gtc_1       36
-#define alpha_gtc_2       37
-#define alpha_gtc_3       38
+#define alpha_p0_1        37
+#define alpha_p0_2        38
 
-#define alpha_p0_1        39
-#define alpha_p0_2        40
+#define alpha_capture     39
 
-#define alpha_n23_1       41
-#define alpha_n23_2       42
-#define alpha_n23_3       43
-#define alpha_n23_4       44
-#define alpha_n23_5       45
-
-#define alpha_capture     46
+#define alpha_flush_thr   40
+#define alpha_flush_surv  41
 
 #define alpha_ta_thr_std  (0.5)
 #define alpha_dp_thr_std  (10.0/24.0/60.0)
@@ -108,10 +102,23 @@ void set_gamma_mode(char mode) {
 #define dsig(x, a1, a2, a3) (max(0.0, min(1.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
 #define dsig2(x, a1, a2, a3) (max(0.0, min(100.0, (a1)/((1.0+exp((a2)-(x)))*(1.0+exp((x)-(a3)))))))
 #define poly(x, a1, a2, a3) (max(0.0, (a1) + (a2)*(x) + (a3)*pow((x),2)))
-#define expd(x, k) (exp(-(k)*(x)))
-#define fpow(x, a1, a2) (min(1.0, (a1)*pow((x),(a2))))
 #define Tthr(T,Tmn,Tstd) (1.0/(1.0+exp(((Tmn)-(T))/(Tstd))))
 #define pdiap(P,Pmn,Pstd,tt) (1.0-(tt)-(1.0-(tt))/((1.0+exp(((Pmn)-(P))/(Pstd)))))
+#define expo(x, n) (exp(-pow((x),(n))))
+#define ratk(x, T1, T2, K, c) (pow((c)*((x)-(T1))*(1.0-exp((K)*((x)-(T2)))),2))
+
+double fun_p0Ta(double Ta, double *param) {return flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);}
+double fun_p1Tw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p1_1],param[alpha_p1_2],param[alpha_p1_3]);}
+double fun_p2Tw_raw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3]);}
+double fun_p3Tw_raw(double Tw, double *param) {return 1.0 - dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3]);}
+double fun_d1Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d1_1],param[alpha_d1_2],param[alpha_d1_3]));}
+double fun_d2Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d2_1],param[alpha_d2_2],param[alpha_d2_3]));}
+double fun_d3Tw(double Tw, double *param) {return max(1.0, poly(Tw,param[alpha_d3_1],param[alpha_d3_2],param[alpha_d3_3]));}
+double fun_F4(double Ta, double *param) {return Ta<=param[alpha_F4_1] || Ta>=param[alpha_F4_2] ? 0.0 : ratk(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3],param[alpha_F4_4]);}
+double fun_dens(double n23dens, double *param) {return expo(n23dens,param[alpha_n23_surv]);}
+double fun_gtcTa(double Ta, double *param) {return poly(Ta,param[alpha_gtc_1],param[alpha_gtc_2],param[alpha_gtc_3]);}
+double fun_d4Ta_mean(double Ta, double *param) {return dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);}
+double fun_d4Ta_std(double dd4) {return gamma_matrix_sd*dd4;}
 
 //double timebefore = 0;
 //double timeof = 0;
@@ -144,7 +151,6 @@ char calculate(double *photoperiod,
                int    *n4fj,
                int    *n4f,
                double *nBS,
-               double *K,
                int    *d4,
                int    *d4s,
                int    *F4,
@@ -172,7 +178,7 @@ char calculate(double *photoperiod,
   (*nBS) = param[alpha_BS_pdens] * (popdens[TIME]) +
     param[alpha_BS_dprec] * daily_precipitation[TIME] +
     param[alpha_BS_nevap] * (*nBS);
-  (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
+  // (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
 
   /*
    * Update survival and development rates/probabilities according to
@@ -185,38 +191,38 @@ char calculate(double *photoperiod,
   double n23dens = (double)((*n2) + (*n3)) / (double)(*nBS);
   //
   // The effect of density on the survival of immature stages
-  double densd = expd(n23dens,param[alpha_n23_surv]);
-  // The effect of density on the development of immature stages
-  double densdev = fpow(n23dens,param[alpha_n23_1],param[alpha_n23_2]*poly(Tw,param[alpha_n23_3],param[alpha_n23_4],param[alpha_n23_5]));
+  double densd = fun_dens(n23dens,param);
   //
-  // Fecundity (per adult female)
-  // WARNINNG: Existing parameters are fixed for daily egg laying
-  //           The following is aimed at egg laying per gonotrophic cycle
-  //           Experimental data need to be updated
-  double bigF4 = poly(Ta,param[alpha_F4_1],param[alpha_F4_2],param[alpha_F4_3]);
-  
+  // Fecundity (per adult female per day)
+  double bigF4 = fun_F4(Ta,param);
+  //
+  // Excess rain flushes the aquatic life stages
+  double flush_surv = daily_precipitation[TIME] > param[alpha_flush_thr] ? param[alpha_flush_surv] : 1.0;
+  //
   // Egg survival (diapausing eggs)
-  double p0_Ta = flin(Ta,param[alpha_p0_1],param[alpha_p0_2]);
+  double p0_Ta = fun_p0Ta(Ta,param);
   // Egg mortality (non-diapausing eggs)
-  double p1_Tw = 1.0 - dsig(Tw,param[alpha_p1_1],param[alpha_p1_2],param[alpha_p1_3]);
+  double p1_Tw = fun_p1Tw(Tw,param);
   // Larval mortality
-  double p2_Tw = 1.0 - dsig(Tw,param[alpha_p2_1],param[alpha_p2_2],param[alpha_p2_3])*densd;
+  double p2_Tw = fun_p2Tw_raw(Tw,param)*densd*flush_surv;
   // Pupal mortality
-  double p3_Tw = 1.0 - dsig(Tw,param[alpha_p3_1],param[alpha_p3_2],param[alpha_p3_3])*densd;
+  double p3_Tw = fun_p3Tw_raw(Tw,param)*densd*flush_surv;
   
   // Egg development time
-  double d1 = max(1.0, poly(Tw,param[alpha_d1_1],param[alpha_d1_2],param[alpha_d1_3]));
+  double d1 = fun_d1Tw(Tw,param);
   // Larval development time
-  double d2 = max(1.0, poly(Tw,param[alpha_d2_1],param[alpha_d2_2],param[alpha_d2_3])*densdev);
+  double d2 = fun_d2Tw(Tw,param);
   // Pupal development time
-  double d3 = max(1.0, poly(Tw,param[alpha_d3_1],param[alpha_d3_2],param[alpha_d3_3])*densdev);
-  // Time to first blood meal
-  double alpha_blood = poly(Ta,param[alpha_tbm_1],param[alpha_tbm_2],param[alpha_tbm_3]);
-  // Gonotrophic cycle length
-  double alpha_ovipos = poly(Ta,param[alpha_gtc_1],param[alpha_gtc_2],param[alpha_gtc_3]);
+  double d3 = fun_d3Tw(Tw,param);
+
+  // Gonotrophic cycle length (also, time to first blood meal)
+  // Since oviposition frequency is different for Aedes albopictus,
+  // it is best to model fecundity as a daily event.
+  double alpha_ovipos = fun_gtcTa(Ta,param);
+
   // Adult lifetime (from emergence)
-  double dd4 = dsig2(Ta,param[alpha_d4_1],param[alpha_d4_2],param[alpha_d4_3]);
-  double dd4s = gamma_matrix_sd*dd4;
+  double dd4 = fun_d4Ta_mean(Ta,param);
+  double dd4s = fun_d4Ta_std(dd4);
 
   // Diapause and quiescence
   // quie -> larvae
@@ -279,7 +285,7 @@ char calculate(double *photoperiod,
   // Adult naive females
   test = spop_iterate((*conn4j),
                       0,
-                      alpha_blood, 0, // development (fixed-length)
+                      alpha_ovipos, 0, // development (fixed-length)
                       0,
                       0,
                       dd4, dd4s, // death (gamma-distributed)
@@ -290,7 +296,7 @@ char calculate(double *photoperiod,
   // Adult mature females
   test = spop_iterate((*conn4),
                       0,
-                      alpha_ovipos, 0, // gonotrophic cycle (fixed length)
+                      0, 0, // daily fecundity
                       0,
                       0,
                       dd4, dd4s, // death (gamma-distributed)
@@ -307,14 +313,14 @@ char calculate(double *photoperiod,
   int dp_eggs = gsl_ran_binomial(RAND_GSL,p0_Ta,(*n0));
   dp_eggs += (*conn10)->developed.i;
   //
+  // WARNING: Here, the eggs are produced and allowed to become quiescent immediately
+  //          However, they need to be exposed to cold temperatures before being allowed to hatch
   int nquie = gsl_ran_binomial(RAND_GSL,fracQuie,dp_eggs);
   quie += nquie;
   dp_eggs -= nquie;
   //
-  // Adult females surviving and completing ovicyle
-  int n4_reproduce = (*conn4)->developed.i;
-  // Reintroduce ovipositioning adult females to the population
-  spop_popadd((*conn4), (*conn4)->devtable);
+  // Adult females surviving and ovipositioning
+  int n4_reproduce = (*conn4)->size.i;
   //
   // Perform state transformations
   spop_popadd((*conn4), (*conn4j)->devtable);
@@ -368,8 +374,8 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","colK","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","gtc.1","gtc.2","gtc.3","p0.1","p0.2","n23.1","n23.2","n23.3","n23.4","n23.5","alpha_capture"
+    "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie","alpha_flush_thr","alpha_flush_surv",
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","F4.4","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","gtc.1","gtc.2","gtc.3","p0.1","p0.2","alpha_capture"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
@@ -387,9 +393,10 @@ void param_model(char **names, double *param) {
   param[alpha_d4_1] = 40.546569688329726;
   param[alpha_d4_2] = -3.0;
   param[alpha_d4_3] = 34.5;
-  param[alpha_F4_1] = -29.983659263234784;
-  param[alpha_F4_2] = 2.547065674987852;
-  param[alpha_F4_3] = -0.03703376793024484;
+  param[alpha_F4_1] = 15.4466728;
+  param[alpha_F4_2] = 44.8260538;
+  param[alpha_F4_3] = -0.0137863654;
+  param[alpha_F4_4] = 1.09767332;
   param[alpha_d1_1] = 13.468941558731592;
   param[alpha_d1_2] = -0.8652474262795845;
   param[alpha_d1_3] = 0.01891979289744318;
@@ -399,7 +406,7 @@ void param_model(char **names, double *param) {
   param[alpha_d3_1] = 8.92627601829611;
   param[alpha_d3_2] = -0.36161169585829006;
   param[alpha_d3_3] = 0.0039784277144151396;
-  param[alpha_n23_surv] = 3.873133206986801e-05;
+  param[alpha_n23_surv] = 10.0;
   param[alpha_deltaT] = 0.0;
 
   param[alpha_BS_pdens] = 0.00001;
@@ -411,24 +418,17 @@ void param_model(char **names, double *param) {
   param[alpha_ta_thr] = 20.0;
   param[alpha_tq_thr] = 10.0;
 
-  param[alpha_tbm_1] = 29.99806440902287;
-  param[alpha_tbm_2] = -1.8712756925767178;
-  param[alpha_tbm_3] = 0.03514278986605401;
-
   param[alpha_gtc_1] = 29.99806440902287;
-  param[alpha_gtc_2] = -1.8712756925767178;
-  param[alpha_gtc_3] = 0.03514278986605401;
+  param[alpha_gtc_2] = -3.04904871;
+  param[alpha_gtc_3] = 0.05572264;
 
   param[alpha_p0_1] = 0.7975103960182536;
   param[alpha_p0_2] = 0.07409437745556843;
 
-  param[alpha_n23_1] = 0.6080929959830579;
-  param[alpha_n23_2] = 0.1059944669627986;
-  param[alpha_n23_3] = -1.0925997735665425;
-  param[alpha_n23_4] = 0.25464919919205214;
-  param[alpha_n23_5] = -0.00504358886713356;
-
   param[alpha_capture] = -1.0;
+
+  param[alpha_flush_thr] = 10.0;
+  param[alpha_flush_surv] = 0.25;
 }
 
 void sim_model(double               *envar,
@@ -459,15 +459,14 @@ void sim_model(double               *envar,
   double *coln4fj   = result + 7*(*finalT);
   double *coln4f    = result + 8*(*finalT);
   double *colnBS    = result + 9*(*finalT);
-  double *colK      = result + 10*(*finalT);
-  double *cold4     = result + 11*(*finalT);
-  double *cold4s    = result + 12*(*finalT);
-  double *colF4     = result + 13*(*finalT);
-  double *colegg    = result + 14*(*finalT);
-  double *colcap    = result + 15*(*finalT);
-  double *colhatch  = result + 16*(*finalT);
-  double *coldiap   = result + 17*(*finalT);
-  double *colquie   = result + 18*(*finalT);
+  double *cold4     = result + 10*(*finalT);
+  double *cold4s    = result + 11*(*finalT);
+  double *colF4     = result + 12*(*finalT);
+  double *colegg    = result + 13*(*finalT);
+  double *colcap    = result + 14*(*finalT);
+  double *colhatch  = result + 15*(*finalT);
+  double *coldiap   = result + 16*(*finalT);
+  double *colquie   = result + 17*(*finalT);
 
   int TIME = 0;
   (*success) = 2;
@@ -481,7 +480,6 @@ void sim_model(double               *envar,
   int n4fj = 0;
   int n4f = 0;
   double nBS = 0.0;
-  double K = 0.0;
   int d4 = 0;
   int d4s = 0;
   int F4 = 0;
@@ -514,7 +512,6 @@ void sim_model(double               *envar,
   coln4fj[TIME] = (double)n4fj;
   coln4f[TIME] = (double)n4f;
   colnBS[TIME] = (double)nBS;
-  colK[TIME] = (double)K;
   cold4[TIME] = (double)d4;
   cold4s[TIME] = (double)d4s;
   colF4[TIME] = (double)F4;
@@ -548,7 +545,6 @@ void sim_model(double               *envar,
                      &n4fj,
                      &n4f,
                      &nBS,
-                     &K,
                      &d4,
                      &d4s,
                      &F4,
@@ -654,7 +650,6 @@ void sim_model(double               *envar,
     coln4fj[TIME] = (double)n4fj;
     coln4f[TIME] = (double)n4f;
     colnBS[TIME] = (double)nBS;
-    colK[TIME] = (double)K;
     cold4[TIME] = (double)d4;
     cold4s[TIME] = (double)d4s;
     colF4[TIME] = (double)F4;
@@ -663,7 +658,7 @@ void sim_model(double               *envar,
     colhatch[TIME] = (double)fhatch;
     coldiap[TIME] = (double)fdiap;
     colquie[TIME] = (double)fquie;
-    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || isnan(K) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg) || CHECK(cap) || isnan(fhatch) || isnan(fdiap) || isnan(fquie)) {
+    if (CHECK(n0) || CHECK(n10) || CHECK(n1) || CHECK(nh) || CHECK(n2) || CHECK(n3) || CHECK(n4fj) || CHECK(n4f) || isnan(nBS) || CHECK(d4) || CHECK(d4s) || CHECK(F4) || CHECK(egg) || CHECK(cap) || isnan(fhatch) || isnan(fdiap) || isnan(fquie)) {
       (*success) = 0;
       goto endall;
     }
