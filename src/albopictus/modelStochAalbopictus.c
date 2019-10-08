@@ -29,7 +29,7 @@ extern gsl_rng *RAND_GSL;
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 
-#define NumParAea      42
+#define NumParAea      43
 #define NumMetAea      18
 
 // --------------------------------------------
@@ -76,23 +76,24 @@ void set_gamma_mode(char mode) {
 #define alpha_BS_pdens    27
 #define alpha_BS_dprec    28
 #define alpha_BS_nevap    29
+#define alpha_K           30
 
-#define alpha_dp_egg      30
-#define alpha_dp_thr      31
-#define alpha_ta_thr      32
-#define alpha_tq_thr      33
+#define alpha_dp_egg      31
+#define alpha_dp_thr      32
+#define alpha_ta_thr      33
+#define alpha_tq_thr      34
 
-#define alpha_tbm_1       34
-#define alpha_tbm_2       35
-#define alpha_tbm_3       36
+#define alpha_tbm_1       35
+#define alpha_tbm_2       36
+#define alpha_tbm_3       37
 
-#define alpha_p0_1        37
-#define alpha_p0_2        38
+#define alpha_p0_1        38
+#define alpha_p0_2        39
 
-#define alpha_capture     39
+#define alpha_capture     40
 
-#define alpha_flush_thr   40
-#define alpha_flush_surv  41
+#define alpha_flush_thr   41
+#define alpha_flush_surv  42
 
 #define alpha_ta_thr_std  (0.5)
 #define alpha_dp_thr_std  (10.0/24.0/60.0)
@@ -188,7 +189,7 @@ char calculate(double *photoperiod,
   // Assume uniform distribution across all breeding sites
   // 2019/09/23 - ErgulerK: K -> nBS
   // 2019/09/24 - ErgulerK: Instead of the average of previous precipitation events, I propose to use the aggregate, i.e. the weighted sum
-  double n23dens = (double)((*n2) + (*n3)) / (double)(*nBS);
+  double n23dens = (double)((*n2) + (*n3)) / (param[alpha_K] * (double)(*nBS));
   //
   // The effect of density on the survival of immature stages
   double densd = fun_dens(n23dens,param);
@@ -412,6 +413,7 @@ void param_model(char **names, double *param) {
   param[alpha_BS_pdens] = 0.00001;
   param[alpha_BS_dprec] = 0.001;
   param[alpha_BS_nevap] = 0.9;
+  param[alpha_K]        = 1.0;
 
   param[alpha_dp_egg] = 1.0;
   param[alpha_dp_thr] = 0.4;
