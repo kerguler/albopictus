@@ -1,6 +1,13 @@
 News
 ====
 
+1.12.3
+------
+
+* Release date: 19 February 2020*
+
+* Bug fix for the sPop model (albopictus.population)
+
 1.12.2
 ------
 
@@ -19,7 +26,7 @@ News
 1.11.0
 ------
 
-* Release date: UNRELEASED*
+* Release date: 29 November 2018*
 
 * Ae. albopictus population dynamics model update
 * Ae. albopictus egg capture/removal is implemented
