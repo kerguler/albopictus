@@ -30,7 +30,7 @@ extern gsl_rng *RAND_GSL;
 #define min(a,b) ((a)<(b)?(a):(b))
 
 #define NumParAea      43
-#define NumMetAea      18
+#define NumMetAea      17
 
 // --------------------------------------------
 // Gamma distribution
@@ -375,8 +375,8 @@ void numparModel(int *np, int *nm) {
 
 void param_model(char **names, double *param) {
   char temp[NumMetAea+NumParAea][256] = {
-    "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie","alpha_flush_thr","alpha_flush_surv",
-    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","F4.4","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","alpha_capture"
+    "coln0","coln10","coln1","colnh","coln2","coln3","coln4fj","coln4f","colnBS","cold4","cold4s","colF4","colegg","colcap","colhatch","coldiap","colquie",
+    "p1.1","p1.2","p1.3","p2.1","p2.2","p2.3","p3.1","p3.2","p3.3","d4.1","d4.2","d4.3","F4.1","F4.2","F4.3","F4.4","d1.1","d1.2","d1.3","d2.1","d2.2","d2.3","d3.1","d3.2","d3.3","n23.surv","deltaT","BS.pdens","BS.dprec","BS.nevap","BS.alphaK","PP.init","PP.thr","PP.ta.thr","PP.tq.thr","tbm.1","tbm.2","tbm.3","p0.1","p0.2","alpha_capture","alpha_flush_thr","alpha_flush_surv"
   };
   int i;
   for (i=0; i<(NumMetAea+NumParAea); i++)
