@@ -134,6 +134,7 @@ void set_param(double *param) {
 char calculate(double *photoperiod,
                double *mean_air_temp,
                double *daily_precipitation,
+               double *nevaporation,
                double *popdens,
                double *daily_capture,
                double *param,
@@ -176,9 +177,11 @@ char calculate(double *photoperiod,
    *
    * Update the number of breeding sites
    */
+  double eva = param[alpha_BS_nevap] * nevaporation[TIME];
+  double revap = eva ? exp(-1.0 / eva) : 0.0;
   (*nBS) = param[alpha_BS_pdens] * (popdens[TIME]) +
-    param[alpha_BS_dprec] * daily_precipitation[TIME] +
-    param[alpha_BS_nevap] * (*nBS);
+           param[alpha_BS_dprec] * daily_precipitation[TIME] +
+           revap * (*nBS);
   // (*K) = param[alpha_BS_nevap] == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (param[alpha_BS_nevap]-1.0) / (pow(param[alpha_BS_nevap], (TIME+1))-1.0);
 
   /*
@@ -442,8 +445,9 @@ void sim_model(double               *envar,
   double *photoperiod          = envar + 0*(*finalT);
   double *mean_air_temp        = envar + 1*(*finalT);
   double *daily_precipitation  = envar + 2*(*finalT);
-  double *popdens              = envar + 3*(*finalT);
-  double *daily_capture        = envar + 4*(*finalT);
+  double *nevaporation         = envar + 3*(*finalT);
+  double *popdens              = envar + 4*(*finalT);
+  double *daily_capture        = envar + 5*(*finalT);
   double *controlpar = 0;
   if ((*control)) {
     controlpar = param + NumParAea;
@@ -529,6 +533,7 @@ void sim_model(double               *envar,
     test = calculate(photoperiod,
                      mean_air_temp,
                      daily_precipitation,
+                     nevaporation,
                      popdens,
                      daily_capture,
                      param,

@@ -129,7 +129,9 @@ void calculate(double *air_temp,
    */
   double eva = param[alpha_BS_nevap] * nevaporation[TIME];
   double revap = eva ? exp(-1.0 / eva) : 0.0;
-  (*nBS) = param[alpha_BS_const] + param[alpha_BS_dprec] * precipitation[TIME] + revap * (*nBS);
+  (*nBS) = param[alpha_BS_const] +
+           param[alpha_BS_dprec] * precipitation[TIME] +
+           revap * (*nBS);
   // (*K) = revap == 1.0 ? (*nBS) / (TIME+1.0) : (*nBS) * (revap-1.0) / (pow(revap, (TIME+1))-1.0);
 
   /*
