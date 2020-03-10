@@ -20,21 +20,21 @@ class prepareModel:
         try:
             self.set_sim_mode = self.model.set_sim_mode
             self.set_sim_mode.restype = None
-            self.set_sim_mode.argtypes = [npct.c_char]
+            self.set_sim_mode.argtypes = [ctypes.c_char]
         except:
             pass
         #
         try:
             self.set_gamma_mode = self.model.set_gamma_mode
             self.set_gamma_mode.restype = None
-            self.set_gamma_mode.argtypes = [npct.c_char]
+            self.set_gamma_mode.argtypes = [ctypes.c_char]
         except:
             pass
         #
         try:
             self.set_gamma_mem = self.model.set_gamma_mem
             self.set_gamma_mem.restype = None
-            self.set_gamma_mem.argtypes = [npct.c_uint64_t]
+            self.set_gamma_mem.argtypes = [ctypes.c_uint64]
         except:
             pass
         #
