@@ -64,7 +64,7 @@ void gamma_dist_destroy(void) {
   gamma_mean_sd_mem = 0;
   gamma_mean = NULL;
   //
-  printf("Gamma hash is successfully cleared\n");
+  // printf("Gamma hash is successfully cleared\n");
 }
 
 void gamma_dist_check(void) {

@@ -29,6 +29,17 @@ void *printmem(int type, void *pointer, size_t size, char *filen, int linen) {
 
 extern gsl_rng *RAND_GSL;
 
+double DPOP_EPS      = DBL_MIN;
+double DPOP_MAX_DAYS = 1000000;
+
+void set_DPOP_EPS(double eps) {
+    DPOP_EPS = eps;
+}
+
+void set_DPOP_MAX_DAYS(unsigned int days) {
+    DPOP_MAX_DAYS = days;
+}
+
 spop spop_init(unsigned char stochastic, unsigned char gamma_mode) {
   spop pop = (spop)malloc(sizeof(struct population_st));
   pop->individuals = 0;

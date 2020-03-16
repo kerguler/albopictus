@@ -1,6 +1,13 @@
 News
 ====
 
+1.12.5
+------
+
+* Release date: UNRELEASED*
+
+* Bug fixes
+
 1.12.4
 ------
 

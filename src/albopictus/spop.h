@@ -3,8 +3,8 @@
 
 #include <float.h>
 
-#define DPOP_EPS      DBL_MIN
-#define DPOP_MAX_DAYS 1000000
+double DPOP_EPS;
+double DPOP_MAX_DAYS;
 
 typedef union {
   unsigned int i;
@@ -38,6 +38,9 @@ typedef struct population_st {
   unsigned char gamma_mode;
   unsigned char stochastic;
 } *spop;
+
+void set_DPOP_EPS(double);
+void set_DPOP_MAX_DAYS(unsigned int);
 
 spop spop_init(unsigned char, unsigned char);
 void spop_empty(spop);
