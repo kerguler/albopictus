@@ -262,7 +262,8 @@ prob_func assign_prob_func(spop s, double prob, double mean, double sd) {
     // printf("Assigning calc_prob_raw\n");
     return calc_prob_raw;
   }
-  //
+  // For a wider range and an alternative implementation:
+  // http://people.math.sc.edu/Burkardt/c_src/prob/prob.html
   if (mean >= 0 && sd > 0) {
     switch (s->gamma_mode) {
     case MODE_GAMMA_RAW:
