@@ -145,7 +145,7 @@ class spop:
         self.devtable = self.pop.copy()
         if not pause:
             self.devtable[:,1] += 1
-        self.devtable[:,2] = 0
+            self.devtable[:,2] = 0
         self.devtable[:,3] = d
         self.devtable = self.devtable[self.devtable[:,3]>0,:]
         # 

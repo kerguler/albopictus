@@ -402,7 +402,7 @@ char spop_iterate(spop  s,
         spop_sdadd((spop)(s->devtable),
                    tmpn->age,
                    pause ? tmpn->devcycle : tmpn->devcycle + 1,
-                   0,
+                   pause ? tmpn->development : 0,
                    k);
       }
     }
