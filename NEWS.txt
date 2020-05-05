@@ -7,6 +7,8 @@ News
 * Release date: UNRELEASED*
 
 * Bug fixes
+* Included "flush" to the population dynamics model (sPop)
+* Optimized probability function (hash) in sPop (NOT WORKING)
 
 1.12.4
 ------

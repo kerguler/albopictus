@@ -49,15 +49,37 @@ from numpy.random import binomial
 
 prob_list = ['gamma','nbinom']
 
+hash = { p:{} for p in prob_list }
+
 def nbinom_dist_prob(array,mean,sd):
   p = numpy.float64(mean) / (sd * sd)
   r = mean * p / (1.0 - p)
   return 1.0 - (nbinom.sf(array+1,r,p))/(nbinom.sf(array,r,p))
 
+def nbinom_dist_hash(array,mean,sd):
+  ret = []
+  for a in array:
+      if not (mean in hash['nbinom']):
+          hash['nbinom'][mean] = {}
+      if not (sd in hash['nbinom'][mean]):
+          hash['nbinom'][mean][sd] = nbinom_dist_prob(a,mean,sd)
+      ret.append(hash['nbinom'][mean][sd])
+  return numpy.array(ret)
+
 def gamma_dist_prob(array,mean,sd):
   theta = numpy.float64(sd) * sd / mean
   k = mean / theta
   return 1.0 - (gamma.sf(array+1,k,0,theta)/gamma.sf(array,k,0,theta))
+
+def gamma_dist_hash(array,mean,sd):
+  ret = []
+  for a in array:
+      if not (mean in hash['gamma']):
+          hash['gamma'][mean] = {}
+      if not (sd in hash['gamma'][mean]):
+          hash['gamma'][mean][sd] = gamma_dist_prob(a,mean,sd)
+      ret.append(hash['gamma'][mean][sd])
+  return numpy.array(ret)
 
 class spop:
     def __init__(self,stochastic=True,prob='gamma'):
@@ -153,4 +175,8 @@ class spop:
         self.dead = numpy.sum(k)
         self.developed = numpy.sum(d)
         self.size = numpy.sum(self.pop[:,3])
-
+    #
+    def flush(self):
+        self.developed = 0
+        self.dead = 0
+        self.devtable = numpy.ndarray((0,4),dtype=numpy.int32 if self.stochastic else numpy.float64)
