@@ -118,6 +118,28 @@ void spop_print(spop s) {
   printf("Number of categories: %d\nOccupied categories: %d\n\\------------------>\n",s->ncat,s->cat);
 }
 
+void spop_print_to_csv(spop s) {
+  if (!s) return;
+  unsigned int count;
+  if (s->stochastic) {
+    printf("age,dev_cycle,dev,count\n");
+    for (count=0; count < s->cat; count++)
+      printf("%d,%d,%d,%d\n",
+             s->individuals[count].age,
+             s->individuals[count].devcycle,
+             s->individuals[count].development,
+             s->individuals[count].number.i);
+  } else {
+    printf("age,dev_cycle,dev,count\n");
+    for (count=0; count < s->cat; count++)
+      printf("%d,%d,%d,%g\n",
+             s->individuals[count].age,
+             s->individuals[count].devcycle,
+             s->individuals[count].development,
+             s->individuals[count].number.d);
+  }
+}
+
 void swap(spop s, individual_data *from, individual_data *to) {
   individual_data tmp;
   tmp.age = (*to).age; tmp.devcycle = (*to).devcycle; tmp.development = (*to).development;

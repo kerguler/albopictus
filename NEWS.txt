@@ -1,6 +1,14 @@
 News
 ====
 
+1.12.6
+------
+
+* Release date: UNRELEASED*
+
+* Included "extract" to the population dynamics model (sPop : Python)
+* Included "spop_print_to_csv" to the population dynamics model (sPop : C)
+
 1.12.5
 ------
 

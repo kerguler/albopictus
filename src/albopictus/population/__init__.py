@@ -45,7 +45,7 @@ Examples
 
 import numpy
 from scipy.stats import gamma, nbinom
-from numpy.random import binomial
+from numpy.random import binomial, choice
 
 prob_list = ['gamma','nbinom']
 
@@ -125,6 +125,25 @@ class spop:
         if isinstance(d,numpy.ndarray):
             d[numpy.isnan(d)] = 1.0
         return d
+    #
+    def extract(self,num):
+        if num <= 0 or self.size <= 0:
+            return []
+        if self.stochastic:
+            ret = self.pop.copy()
+            ret[:,3] = 0
+            for j in numpy.arange(num):
+                i = choice(numpy.arange(self.pop.shape[0]), p=self.pop[:,3] / self.size)
+                self.pop[i,3] -= 1
+                self.size -= 1
+                ret[i,3] += 1
+            ret = ret[ret[:,3]>0,:]
+        else:
+            ret = self.pop.copy()
+            ret[:,3] *= num / self.size
+            self.pop[:,3] -= ret[:,3]
+            self.size -= num
+        return ret
     #
     def iterate(self,dev=None,death=None,dev_mean=None,dev_sd=None,death_mean=None,death_sd=None,pause=False):
         if dev is None:

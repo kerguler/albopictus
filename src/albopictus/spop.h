@@ -46,6 +46,7 @@ spop spop_init(unsigned char, unsigned char);
 void spop_empty(spop);
 void spop_destroy(spop*);
 void spop_print(spop);
+void spop_print_to_csv(spop);
 
 void swap(spop, individual_data *, individual_data *);
 
