@@ -40,6 +40,14 @@ void set_DPOP_MAX_DAYS(unsigned int days) {
     DPOP_MAX_DAYS = days;
 }
 
+double get_DPOP_EPS() {
+    return DPOP_EPS;
+}
+
+unsigned int get_DPOP_MAX_DAYS() {
+    return DPOP_MAX_DAYS;
+}
+
 spop spop_init(unsigned char stochastic, unsigned char gamma_mode) {
   spop pop = (spop)malloc(sizeof(struct population_st));
   pop->individuals = 0;

@@ -368,6 +368,8 @@ void sim_model(double               *envar,
                int                *control,
                double              *result,
                int                *success) {
+  double dpop_eps = get_DPOP_EPS();
+  //
   double *air_temp             = envar + 0*(*finalT);
   double *precipitation        = envar + 1*(*finalT);
   double *nevaporation         = envar + 2*(*finalT);
@@ -397,10 +399,10 @@ void sim_model(double               *envar,
   spop conn2 = spop_init(0,gamma_mode);
   spop conn3 = spop_init(0,gamma_mode);
   spop conn4 = spop_init(0,gamma_mode);
-  if (n1 > DPOP_EPS) spop_add(conn1,0,0,0,n1);
-  if (n2 > DPOP_EPS) spop_add(conn2,0,0,0,n2);
-  if (n3 > DPOP_EPS) spop_add(conn3,0,0,0,n3);
-  if (n4f > DPOP_EPS) spop_add(conn4,0,0,0,n4f);
+  if (n1 > dpop_eps) spop_add(conn1,0,0,0,n1);
+  if (n2 > dpop_eps) spop_add(conn2,0,0,0,n2);
+  if (n3 > dpop_eps) spop_add(conn3,0,0,0,n3);
+  if (n4f > dpop_eps) spop_add(conn4,0,0,0,n4f);
   // Record state
   colT[TIME] = TIME;
   coln1[TIME] = n1;

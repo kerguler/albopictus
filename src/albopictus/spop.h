@@ -3,9 +3,6 @@
 
 #include <float.h>
 
-double DPOP_EPS;
-double DPOP_MAX_DAYS;
-
 typedef union {
   unsigned int i;
   double d;
@@ -41,6 +38,8 @@ typedef struct population_st {
 
 void set_DPOP_EPS(double);
 void set_DPOP_MAX_DAYS(unsigned int);
+double get_DPOP_EPS(void);
+unsigned int get_DPOP_MAX_DAYS(void);
 
 spop spop_init(unsigned char, unsigned char);
 void spop_empty(spop);

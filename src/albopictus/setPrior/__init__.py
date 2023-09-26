@@ -53,7 +53,7 @@ def readDataType(filename,begin=0):
         if dat[r] not in dat[:r]:
             dat[numpy.where(dat[r]==dat)[0]] = count
             count += 1
-    return numpy.array(dat,dtype=numpy.int)
+    return numpy.array(dat,dtype=numpy.int32)
 
 priors = {
     'n23.comb': ['n23.1', 'n23.2', 'n23.3', 'n23.4', 'n23.5'],

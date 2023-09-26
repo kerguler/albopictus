@@ -1,308 +1,12 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: albopictus
-Version: 1.12.6
+Version: 1.13.0
 Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.12.6
-Description: Environmentally-driven population dynamics model of Aedes albopictus
-        ====================================================================
-        
-        This is a python (v3.7) package implementing the environmentally-driven population dynamics model of Aedes albopictus. 
-        
-        Contents
-        --------
-        
-        1) Prerequisites
-        2) Linux installation
-        3) Usage
-        
-        1) Prerequisites
-        ----------------
-        
-        The model requires the Python packages
-        
-        	numpy
-            
-        	pkg_resources
-        
-        and the
-        
-        	GNU Scientific Library (development)
-        
-        for C, which are not included in this package.
-        
-        2) Linux installation
-        ---------------------
-        
-        1) Easy way:
-        
-        If you have pip installed, you can use the following command to download and install the package.
-        	pip install albopictus
-        
-        Alternatively, you can download the source code from PyPI and run pip on the latest version xxx.
-        	pip install albopictus-xxx.tar.gz
-        
-        2) Hard way:
-        
-        If pip is not available, you can unpack the package contents and perform a manual install.
-        	tar -xvzf albopictus-xxx.tar.gz
-            
-        	cd albopictus-xxx
-            
-        	python setup.py install
-        
-        This will install the package in the site-packages directory of your python distribution. If you do not have root privileges or you wish to install to a different directory, you can use the --prefix argument.
-        
-        	python setup.py install --prefix=<dir>
-        
-        In this case, please make sure that <dir> is in your PYTHONPATH, or you can add it with the following command.
-        
-        In bash shell:
-        	export PYTHONPATH=<dir>:$PYTHONPATH
-        In c shell:
-        	setenv PYTHONPATH <dir>:$PYTHONPATH
-        
-        Usage
-        -----
-        
-        Information for usage and contents are documented in the package, and can be accessed with the help utility.
-        
-        	import albopictus
-            
-        	help(albopictus)
-        
-        Credits
-        -------
-        
-        'modern-package-template' - http://pypi.python.org/pypi/modern-package-template
-        
-        
-        News
-        ====
-        
-        1.12.6
-        ------
-        
-        * Release date: UNRELEASED*
-        
-        * Included "extract" to the population dynamics model (sPop : Python)
-        * Included "spop_print_to_csv" to the population dynamics model (sPop : C)
-        
-        1.12.5
-        ------
-        
-        * Release date: UNRELEASED*
-        
-        * Bug fixes
-        * Included "flush" to the population dynamics model (sPop)
-        * Optimized probability function (hash) in sPop (NOT WORKING)
-        
-        1.12.4
-        ------
-        
-        * Release date: UNRELEASED*
-        
-        1.12.3
-        ------
-        
-        * Release date: 19 February 2020*
-        
-        * Bug fix for the sPop model (albopictus.population)
-        
-        1.12.2
-        ------
-        
-        * Release date: UNRELEASED*
-        
-        * Culex pipiens complex population dynamics model (first draft)
-        
-        1.12.1
-        ------
-        
-        * Release date: UNRELEASED*
-        
-        * Dynamic human population density for vector08 (from v.1.0 - 14 February 2017)
-        * Ability to change MAX_MEM for the gamma distribution module
-        
-        1.11.0
-        ------
-        
-        * Release date: 29 November 2018*
-        
-        * Ae. albopictus population dynamics model update
-        * Ae. albopictus egg capture/removal is implemented
-        * Ae. albopictus egg capture (total egg population laid each day is recorded)
-        * Ae. albopictus gonotrophic cycle length is introduced
-          (experimental data need to be updated for egg numbers per cycle not per day)
-        
-        1.9.3
-        -----
-        
-        * Release date: 1 August 2018*
-        
-        * getClimate and getLonLat updated for Python 3
-        
-        1.9.1
-        -----
-        
-        * Release date: 31 July 2018
-        
-        * spop module is now compatible with Python 3
-        
-        1.9
-        ---
-        
-        * Release date: 30 July 2018
-        
-        * Compatible with Python 3
-        
-        1.8.3
-        -----
-        
-        * Release date: UNRELEASED*
-        
-        * Bug fixes for cross-platform compatibility
-        
-        1.8
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Ae. albopictus population dynamics model update initiated
-        
-        1.7
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Age-structured deterministic and stochastic population dynamics model
-        
-        1.6
-        ---
-        
-        * Release date: 27 February 2017
-        
-        * This is the model as presented in
-          Erguler K, Pontiki I, Zittis G, Proestos Y, Christodoulou V, Tsirigotakis N, Antoniou M, Kasap OE, Alten B, Lelieveld J. Using longitudinal surveillance data to analyse the environmental dependence of vector populations: the case of sand flies. Scientific Reports. 2018 (submitted)
-        
-        1.5
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Sand fly model update (environmental dependence: functional dependence)
-        
-        1.4
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Sand fly model update
-        
-        1.3
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Preliminary study for a global albopictus-chikungunya model
-        * Testing a new hypothesis for diapause
-        
-        1.2
-        ---
-        
-        * Release date: 7 June 2017
-        
-        * Includes plotting routines for prior and posterior distributions
-        
-        1.1
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Preliminary study for a global albopictus-chikungunya model
-        
-        1.0
-        ---
-        
-        * Release date: 14 February 2017
-        
-        * Revised version of the chikungunya model as presented in
-          Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2017 (under review)
-        
-        0.9
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Preliminary study for a sand fly model
-        
-        0.8
-        ---
-        
-        * Release date: 16 November 2016
-        
-        * The 'chikv' model is updated to model spread with stable population sizes in patches
-        * The Ae. albopictus population dynamics model v.0.3 is available as vector03
-        * The prior distribution for vector03 is available as prior03
-        * This is the model as presented in
-          Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2016 (submitted)
-        
-        0.7
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * The 'chikv' model is updated to model spread with stable population sizes in patches
-        
-        0.6
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * The spatiotemporal 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
-        
-        0.5
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Hash function for Gamma distribution was implemented for improved flexibility and performance
-        
-        0.4
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Includes initial improvements on the vector population model
-        
-        0.3
-        ---
-        
-        * Release date: 9 February 2016
-        
-        * This is the model as presented in
-          Erguler K, Smith-Unna SE, Waldock J, Proestos Y, Christophides GK, Lelieveld J, Parham PE. Large-scale modelling of the environmentally-driven population dynamics of temperate Aedes albopictus (Skuse). PLOS ONE. 2016 (in press)
-        
-        * This version also includes posterior Q1b, which is sampled from posterior mode Q1 for subsequent research
-        
-        0.2
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Includes the prior distribution
-        
-        0.1
-        ---
-        
-        * Release date: UNRELEASED*
-        
-        * Initial commit
-        
-        
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.13.0
 Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily,albopictus,sandfly,chikv,chikungunya,phlebotomus,papatasi
 Platform: UNKNOWN
 Classifier: Intended Audience :: Science/Research
@@ -310,3 +14,311 @@ Classifier: Topic :: Scientific/Engineering
 Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
 Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
 Classifier: Topic :: Scientific/Engineering :: Medical Science Apps.
+License-File: LICENSE.txt
+
+Environmentally-driven population dynamics model of Aedes albopictus
+====================================================================
+
+This is a python (v3.7) package implementing the environmentally-driven population dynamics model of Aedes albopictus. 
+
+Contents
+--------
+
+1) Prerequisites
+2) Linux installation
+3) Usage
+
+1) Prerequisites
+----------------
+
+The model requires the Python packages
+
+	numpy
+    
+	pkg_resources
+
+and the
+
+	GNU Scientific Library (development)
+
+for C, which are not included in this package.
+
+2) Linux installation
+---------------------
+
+1) Easy way:
+
+If you have pip installed, you can use the following command to download and install the package.
+	pip install albopictus
+
+Alternatively, you can download the source code from PyPI and run pip on the latest version xxx.
+	pip install albopictus-xxx.tar.gz
+
+2) Hard way:
+
+If pip is not available, you can unpack the package contents and perform a manual install.
+	tar -xvzf albopictus-xxx.tar.gz
+    
+	cd albopictus-xxx
+    
+	python setup.py install
+
+This will install the package in the site-packages directory of your python distribution. If you do not have root privileges or you wish to install to a different directory, you can use the --prefix argument.
+
+	python setup.py install --prefix=<dir>
+
+In this case, please make sure that <dir> is in your PYTHONPATH, or you can add it with the following command.
+
+In bash shell:
+	export PYTHONPATH=<dir>:$PYTHONPATH
+In c shell:
+	setenv PYTHONPATH <dir>:$PYTHONPATH
+
+Usage
+-----
+
+Information for usage and contents are documented in the package, and can be accessed with the help utility.
+
+	import albopictus
+    
+	help(albopictus)
+
+Credits
+-------
+
+'modern-package-template' - http://pypi.python.org/pypi/modern-package-template
+
+
+News
+====
+
+1.13.0
+------
+
+* Release date: 13 September 2023*
+
+* Initial draft of sPop v.2 with accumulative development (sPop2: Python)
+* Minor fix: numpy.int -> numpy.int32
+* Minor fix: DPOP_EPS double symbol
+
+1.12.6
+------
+
+* Release date: UNRELEASED*
+
+* Included "extract" to the population dynamics model (sPop : Python)
+* Included "spop_print_to_csv" to the population dynamics model (sPop : C)
+
+1.12.5
+------
+
+* Release date: UNRELEASED*
+
+* Bug fixes
+* Included "flush" to the population dynamics model (sPop)
+* Optimized probability function (hash) in sPop (NOT WORKING)
+
+1.12.4
+------
+
+* Release date: UNRELEASED*
+
+1.12.3
+------
+
+* Release date: 19 February 2020*
+
+* Bug fix for the sPop model (albopictus.population)
+
+1.12.2
+------
+
+* Release date: UNRELEASED*
+
+* Culex pipiens complex population dynamics model (first draft)
+
+1.12.1
+------
+
+* Release date: UNRELEASED*
+
+* Dynamic human population density for vector08 (from v.1.0 - 14 February 2017)
+* Ability to change MAX_MEM for the gamma distribution module
+
+1.11.0
+------
+
+* Release date: 29 November 2018*
+
+* Ae. albopictus population dynamics model update
+* Ae. albopictus egg capture/removal is implemented
+* Ae. albopictus egg capture (total egg population laid each day is recorded)
+* Ae. albopictus gonotrophic cycle length is introduced
+  (experimental data need to be updated for egg numbers per cycle not per day)
+
+1.9.3
+-----
+
+* Release date: 1 August 2018*
+
+* getClimate and getLonLat updated for Python 3
+
+1.9.1
+-----
+
+* Release date: 31 July 2018
+
+* spop module is now compatible with Python 3
+
+1.9
+---
+
+* Release date: 30 July 2018
+
+* Compatible with Python 3
+
+1.8.3
+-----
+
+* Release date: UNRELEASED*
+
+* Bug fixes for cross-platform compatibility
+
+1.8
+---
+
+* Release date: UNRELEASED*
+
+* Ae. albopictus population dynamics model update initiated
+
+1.7
+---
+
+* Release date: UNRELEASED*
+
+* Age-structured deterministic and stochastic population dynamics model
+
+1.6
+---
+
+* Release date: 27 February 2017
+
+* This is the model as presented in
+  Erguler K, Pontiki I, Zittis G, Proestos Y, Christodoulou V, Tsirigotakis N, Antoniou M, Kasap OE, Alten B, Lelieveld J. Using longitudinal surveillance data to analyse the environmental dependence of vector populations: the case of sand flies. Scientific Reports. 2018 (submitted)
+
+1.5
+---
+
+* Release date: UNRELEASED*
+
+* Sand fly model update (environmental dependence: functional dependence)
+
+1.4
+---
+
+* Release date: UNRELEASED*
+
+* Sand fly model update
+
+1.3
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a global albopictus-chikungunya model
+* Testing a new hypothesis for diapause
+
+1.2
+---
+
+* Release date: 7 June 2017
+
+* Includes plotting routines for prior and posterior distributions
+
+1.1
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a global albopictus-chikungunya model
+
+1.0
+---
+
+* Release date: 14 February 2017
+
+* Revised version of the chikungunya model as presented in
+  Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2017 (under review)
+
+0.9
+---
+
+* Release date: UNRELEASED*
+
+* Preliminary study for a sand fly model
+
+0.8
+---
+
+* Release date: 16 November 2016
+
+* The 'chikv' model is updated to model spread with stable population sizes in patches
+* The Ae. albopictus population dynamics model v.0.3 is available as vector03
+* The prior distribution for vector03 is available as prior03
+* This is the model as presented in
+  Erguler K, Chandra NL, Proestos Y, Lelieveld J, Christophides GK, Parham PE. A large-scale stochastic spatiotemporal model for Aedes albopictus-borne chikungunya epidemiology. PLOS ONE. 2016 (submitted)
+
+0.7
+---
+
+* Release date: UNRELEASED*
+
+* The 'chikv' model is updated to model spread with stable population sizes in patches
+
+0.6
+---
+
+* Release date: UNRELEASED*
+
+* The spatiotemporal 'chikv' model is added, which models the Ae. albopictus-borne Chikungunya transmission
+
+0.5
+---
+
+* Release date: UNRELEASED*
+
+* Hash function for Gamma distribution was implemented for improved flexibility and performance
+
+0.4
+---
+
+* Release date: UNRELEASED*
+
+* Includes initial improvements on the vector population model
+
+0.3
+---
+
+* Release date: 9 February 2016
+
+* This is the model as presented in
+  Erguler K, Smith-Unna SE, Waldock J, Proestos Y, Christophides GK, Lelieveld J, Parham PE. Large-scale modelling of the environmentally-driven population dynamics of temperate Aedes albopictus (Skuse). PLOS ONE. 2016 (in press)
+
+* This version also includes posterior Q1b, which is sampled from posterior mode Q1 for subsequent research
+
+0.2
+---
+
+* Release date: UNRELEASED*
+
+* Includes the prior distribution
+
+0.1
+---
+
+* Release date: UNRELEASED*
+
+* Initial commit
+
+
+

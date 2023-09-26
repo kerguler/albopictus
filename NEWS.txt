@@ -1,6 +1,15 @@
 News
 ====
 
+1.13.0
+------
+
+* Release date: 13 September 2023*
+
+* Initial draft of sPop v.2 with accumulative development (sPop2: Python)
+* Minor fix: numpy.int -> numpy.int32
+* Minor fix: DPOP_EPS double symbol
+
 1.12.6
 ------
 

@@ -1,5 +1,5 @@
-#ifndef SPOP_H
-#define SPOP_H
+#ifndef SPOP01_H
+#define SPOP01_H
 
 typedef struct people_st
 {
