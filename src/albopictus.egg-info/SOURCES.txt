@@ -22,6 +22,7 @@ src/albopictus/modelAalbopictus18.c
 src/albopictus/modelCulex.c
 src/albopictus/modelStochAaegypti.c
 src/albopictus/modelStochAalbopictus.c
+src/albopictus/modelStochCDZ.c
 src/albopictus/modelStochCHIKV.c
 src/albopictus/modelStochSand.c
 src/albopictus/modelStochSand13.c
