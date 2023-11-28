@@ -1,14 +1,13 @@
 Metadata-Version: 2.1
 Name: albopictus
-Version: 1.14.1
+Version: 1.15.0
 Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
+Download-URL: https://github.com/kerguler/albopictus/tarball/1.15.0
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.14.1
 Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily,albopictus,sandfly,chikv,chikungunya,phlebotomus,papatasi
-Platform: UNKNOWN
 Classifier: Intended Audience :: Science/Research
 Classifier: Topic :: Scientific/Engineering
 Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
@@ -92,13 +91,14 @@ Credits
 News
 ====
 
-1.14.1
+1.15.0
 ------
 
-* Release date: UNRELEASED*
+* Release date: 16 November 2023*
 
 * CDZ: Chikungunya - Dengue - Zika model
 * Memory fix in modelStochCHIKV
+* Updated packaging
 
 1.13.0
 ------
@@ -327,6 +327,4 @@ News
 * Release date: UNRELEASED*
 
 * Initial commit
-
-
 

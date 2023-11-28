@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "albopictus"
+version = "1.15.0"
+authors = [
+  { name="Kamil Erguler", email="k.erguler@cyi.ac.cy" },
+]
+description = "Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL-3.0-only",
+    "Operating System :: OS Independent",
+]
+readme = {file = "README.txt", content-type = "text/x-rst"}
+keywords = ['stage', 'age', 'structured', 'gridded', 'global', 'diapause', 'breeding', 'egg', 'larva', 'pupa',
+            'adult', 'mosquito', 'temperature', 'precipitation', 'density', 'photoperiod', 'survival',
+            'development', 'fecundity', 'Bayesian', 'difference', 'daily', 'albopictus', 'sandfly', 'chikv',
+            'chikungunya', 'phlebotomus', 'papatasi']
+classifiers=['Intended Audience :: Science/Research',
+             'Topic :: Scientific/Engineering',
+             'Topic :: Scientific/Engineering :: Atmospheric Science',
+             'Topic :: Scientific/Engineering :: Bio-Informatics',
+             'Topic :: Scientific/Engineering :: Medical Science Apps.']
+
+[project.urls]
+"Homepage" = "https://github.com/kerguler/albopictus"
+"Bug Tracker" = "https://github.com/kerguler/albopictus/issues"

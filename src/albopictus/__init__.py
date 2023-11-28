@@ -120,7 +120,7 @@ Examples
 
 """
 
-__version__ = '1.14.1'
+__version__ = '1.15.0'
 
 # modelAalbopictus - climateData ------------------------- //
 from distutils.sysconfig import get_python_lib

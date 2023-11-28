@@ -293,6 +293,11 @@ void calculate(double *photoperiod,
   nn3 *= 0.5;
   incubator_add(&conn4,nn3,0.0);
   (*n4f) += nn3;
+  //
+  if (TIME < 100) {
+    incubator_print(conn2);
+    printf("hatch=%g\tp2_Tw=%g\td2=%g\tn2=%g\tnn2=%g\n\n",hatch,p2_Tw,d2,(*n2),nn2);
+  }
 }
 
 // --------------------------------------------

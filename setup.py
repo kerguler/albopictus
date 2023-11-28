@@ -29,7 +29,7 @@ class _CommandInstallCythonized(_install_lib):
         # batch rename the outfiles:
         # for each file, match string between
         # second last and last dot and trim it
-        matcher = re.compile('\.([^.]+)\.so$')
+        matcher = re.compile(r'\.([^.]+)\.so$')
         return [batch_rename(file, re.sub(matcher, '.so', file))
                 for file in outfiles]
 
