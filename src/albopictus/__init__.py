@@ -150,6 +150,7 @@ from albopictus.readModel import prepareModel
 vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
 vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
 vector08b = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08b.so"))
+vector08c = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08c.so"))
 vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
 vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
 vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAalbopictus.so"), "vectorst")

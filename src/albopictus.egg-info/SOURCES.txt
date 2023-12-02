@@ -17,6 +17,7 @@ src/albopictus/incubator03.h
 src/albopictus/modelAalbopictus03.c
 src/albopictus/modelAalbopictus08.c
 src/albopictus/modelAalbopictus08b.c
+src/albopictus/modelAalbopictus08c.c
 src/albopictus/modelAalbopictus13.c
 src/albopictus/modelAalbopictus18.c
 src/albopictus/modelCulex.c

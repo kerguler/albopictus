@@ -94,11 +94,11 @@ News
 1.15.0
 ------
 
-* Release date: 16 November 2023*
+* Release date: 30 November 2023*
 
 * CDZ: Chikungunya - Dengue - Zika model
 * Memory fix in modelStochCHIKV
-* Updated packaging
+* modelAlbopictus08c: minor bug fix (pupa -> juveniles)
 
 1.13.0
 ------
