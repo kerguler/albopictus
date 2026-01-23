@@ -1,19 +1,24 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: albopictus
-Version: 1.15.0
+Version: 1.16.0
 Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
-Download-URL: https://github.com/kerguler/albopictus/tarball/1.15.0
+Download-URL: https://github.com/kerguler/albopictus/tarball/attr: albopictus.__version__
 Author: Kamil Erguler
 Author-email: k.erguler@cyi.ac.cy
 License: GPLv3
-Keywords: stage,age,structured,gridded,global,diapause,breeding,egg,larva,pupa,adult,mosquito,temperature,precipitation,density,photoperiod,survival,development,fecundity,Bayesian,difference,daily,albopictus,sandfly,chikv,chikungunya,phlebotomus,papatasi
+Keywords: stage, age, structured, gridded, global, diapause, breeding, egg, larva, pupa,,adult, mosquito, temperature, precipitation, density, photoperiod, survival,,development, fecundity, Bayesian, difference, daily, albopictus, sandfly, chikv,,chikungunya, phlebotomus, papatasi
 Classifier: Intended Audience :: Science/Research
 Classifier: Topic :: Scientific/Engineering
 Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
 Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
 Classifier: Topic :: Scientific/Engineering :: Medical Science Apps.
+Description-Content-Type: text/plain
 License-File: LICENSE.txt
+Requires-Dist: numpy
+Requires-Dist: scipy
+Dynamic: download-url
+Dynamic: license-file
 
 Environmentally-driven population dynamics model of Aedes albopictus
 ====================================================================
@@ -87,14 +92,22 @@ Credits
 
 'modern-package-template' - http://pypi.python.org/pypi/modern-package-template
 
-
 News
 ====
+
+1.16.0
+------
+
+* Release date: UNRELEASED*
+
+* Replaced distutils with setuptools
+
+* Fixes for plotPos
 
 1.15.0
 ------
 
-* Release date: 30 November 2023*
+* Release date: 2 December 2023*
 
 * CDZ: Chikungunya - Dengue - Zika model
 * Memory fix in modelStochCHIKV

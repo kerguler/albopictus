@@ -1,6 +1,15 @@
 News
 ====
 
+1.16.0
+------
+
+* Release date: UNRELEASED*
+
+* Replaced distutils with setuptools
+
+* Fixes for plotPos
+
 1.15.0
 ------
 

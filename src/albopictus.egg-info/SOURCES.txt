@@ -3,6 +3,7 @@ LICENSE.txt
 MANIFEST.in
 NEWS.txt
 README.txt
+pyproject.toml
 setup.cfg
 setup.py
 src/albopictus/ *Minibuf-1*
