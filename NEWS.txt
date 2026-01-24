@@ -1,14 +1,16 @@
 News
 ====
 
-1.16.0
+2.0.0
 ------
 
-* Release date: UNRELEASED*
+* Release date: 24 January 2026*
 
-* Replaced distutils with setuptools
+* A great deal has changed since the first release of modelAlbopictus — not least the arrival of Python 3. In this release, we have modernised the albopictus package to ensure compatibility with current Python versions and contemporary scientific libraries. Along the way, several bugs were fixed, and the climate variables used in the example workflows were updated to reflect recent improvements in the underlying models.
 
-* Fixes for plotPos
+* This release also introduces default model–parameter configurations provided as model–posterior-mode pairs: "vector"–"vecpar" and "chikv"–"chikp". As always, please get in touch if you encounter any issues or unexpected behaviour.
+
+* Additional changes: replaced distutils with setuptools, minor fixes for plotPos
 
 1.15.0
 ------

@@ -96,8 +96,8 @@ Examples
      import albopictus as aa
 
      # The following line simulates the model at the first environmental grid point
-     # of Bologna using the first parameter vector of the posterior mode Q4.
-     sim = aa.vector.simPar(aa.clim['BO'][0],aa.param['Q4'][0])
+     # of Bologna using the first parameter of the default posterior mode.
+     sim = aa.vector.simPar(aa.clim['BO'][0],aa.vecpar[0])
 
      # This will generate the vector abundance dataset required for transmission simulation
      clim = [{
@@ -106,8 +106,8 @@ Examples
      }]
 
      # The following lines simulate chikv transmission for the simulated abundance data
-     # using the first parameter vector of the posterior mode QI.
-     pr = np.array(aa.param['QI'][0]).copy()
+     # using the first parameter of the default posterior mode.
+     pr = np.array(aa.chikp[0]).copy()
      pr[aa.chikv.parids['introduce_time']] = 200
      simc = aa.chikv.simSpread(clim,[[1.0]],pr)
 
@@ -120,7 +120,7 @@ Examples
 
 """
 
-__version__ = '1.16.0'
+__version__ = '2.0.0'
 
 # modelAalbopictus - climateData ------------------------- //
 from distutils.sysconfig import get_python_lib
@@ -170,7 +170,12 @@ sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so
 
 # Set defaults ------------------------------------------- //
 
-vector = vector08b
+vector = vector08c
+vecpar = param['Q4.a100+1']
+
+chikv = chikv
+chikp = param['QI']
+
 prior = prior08
 
 # Accessories -------------------------------------------- //
