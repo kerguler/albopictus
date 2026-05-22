@@ -1,4 +1,3 @@
-from distutils.sysconfig import get_python_lib
 import pkg_resources
 import numpy
 
