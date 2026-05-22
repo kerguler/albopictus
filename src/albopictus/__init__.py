@@ -120,21 +120,35 @@ Examples
 
 """
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 # modelAalbopictus - climateData ------------------------- //
-import pkg_resources
+from importlib_resources import files, as_file
 import numpy
 import json
 from datetime import date
 
-param = json.load(open(pkg_resources.resource_filename(__name__, "data/posterior.json"),"r"))
-prior03 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior03.json"),"r"))
-prior08 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior08.json"),"r"))
-prior13 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior13.json"),"r"))
-prior18 = json.load(open(pkg_resources.resource_filename(__name__, "data/prior18.json"),"r"))
-priorae = json.load(open(pkg_resources.resource_filename(__name__, "data/priorAeae.json"),"r"))
-clim = json.load(open(pkg_resources.resource_filename(__name__, "data/climate.json"),"r"))
+with (files(__package__) / "data" / "posterior.json").open("r", encoding="utf-8") as f:
+    param = json.load(f)
+
+with (files(__package__) / "data" / "prior03.json").open("r", encoding="utf-8") as f:
+    prior03 = json.load(f)
+
+with (files(__package__) / "data" / "prior08.json").open("r", encoding="utf-8") as f:
+    prior08 = json.load(f)
+
+with (files(__package__) / "data" / "prior13.json").open("r", encoding="utf-8") as f:
+    prior13 = json.load(f)
+
+with (files(__package__) / "data" / "prior18.json").open("r", encoding="utf-8") as f:
+    prior18 = json.load(f)
+
+with (files(__package__) / "data" / "priorAeae.json").open("r", encoding="utf-8") as f:
+    priorae = json.load(f)
+
+with (files(__package__) / "data" / "climate.json").open("r", encoding="utf-8") as f:
+    clim = json.load(f)
+
 for pr in clim:
     for clm in clim[pr]:
         clm['dates'] = [date.fromordinal(d) for d in clm['dates']]
@@ -146,26 +160,49 @@ prvn = ["BO","FE","MO","PC","PR","RA","RE"]
 
 from albopictus.readModel import prepareModel
 
-vector03 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus03.so"))
-vector08 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08.so"))
-vector08b = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08b.so"))
-vector08c = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus08c.so"))
-vector13 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus13.so"))
-vector18 = prepareModel(pkg_resources.resource_filename(__name__, "modelAalbopictus18.so"))
-vectorst = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAalbopictus.so"), "vectorst")
-vectorae = prepareModel(pkg_resources.resource_filename(__name__, "modelStochAaegypti.so"), "vectorae")
+with as_file(files(__package__) / "modelAalbopictus03.so") as model_path:
+    vector03 = prepareModel(str(model_path))
 
-chikv = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCHIKV.so"), "chikv")
-cdz = prepareModel(pkg_resources.resource_filename(__name__, "modelStochCDZ.so"), "cdz")
+with as_file(files(__package__) / "modelAalbopictus08.so") as model_path:
+    vector08 = prepareModel(str(model_path))
+
+with as_file(files(__package__) / "modelAalbopictus08b.so") as model_path:
+    vector08b = prepareModel(str(model_path))
+
+with as_file(files(__package__) / "modelAalbopictus08c.so") as model_path:
+    vector08c = prepareModel(str(model_path))
+
+with as_file(files(__package__) / "modelAalbopictus13.so") as model_path:
+    vector13 = prepareModel(str(model_path))
+
+with as_file(files(__package__) / "modelAalbopictus18.so") as model_path:
+    vector18 = prepareModel(str(model_path))
+
+with as_file(files(__package__) / "modelStochAalbopictus.so") as model_path:
+    vectorst = prepareModel(str(model_path), "vectorst")
+
+with as_file(files(__package__) / "modelStochAaegypti.so") as model_path:
+    vectorae = prepareModel(str(model_path), "vectorae")
+
+
+with as_file(files(__package__) / "modelStochCHIKV.so") as model_path:
+    chikv = prepareModel(str(model_path), "chikv")
+
+with as_file(files(__package__) / "modelStochCDZ.so") as model_path:
+    cdz = prepareModel(str(model_path), "cdz")
 
 # modelCulex --------------------------------------------- //
 
-culex = prepareModel(pkg_resources.resource_filename(__name__, "modelCulex.so"))
+with as_file(files(__package__) / "modelCulex.so") as model_path:
+    culex = prepareModel(str(model_path))
 
 # modelStochSand - climateData --------------------------- //
 
-priorSand = json.load(open(pkg_resources.resource_filename(__name__, "data/priorSand.json"),"r"))
-sand = prepareModel(pkg_resources.resource_filename(__name__, "modelStochSand.so"), "sandfly")
+with (files(__package__) / "data" / "priorSand.json").open("r", encoding="utf-8") as f:
+    priorSand = json.load(f)
+
+with as_file(files(__package__) / "modelStochSand.so") as model_path:
+    sand = prepareModel(str(model_path), "sandfly")
 
 # Set defaults ------------------------------------------- //
 

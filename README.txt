@@ -16,8 +16,6 @@ Contents
 The model requires the Python packages
 
 	numpy
-    
-	pkg_resources
 
 and the
 

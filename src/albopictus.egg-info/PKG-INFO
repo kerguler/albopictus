@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: albopictus
-Version: 2.0.3
+Version: 2.0.4
 Summary: Large-scale environment-driven population dynamics and disease spread models for vector-borne diseases
 Home-page: https://github.com/kerguler/albopictus
 Download-URL: https://github.com/kerguler/albopictus/tarball/attr: albopictus.__version__
@@ -38,8 +38,6 @@ Contents
 The model requires the Python packages
 
 	numpy
-    
-	pkg_resources
 
 and the
 
@@ -95,6 +93,7 @@ Credits
 News
 ====
 
+2.0.4 (pkg_resources removed)
 2.0.3 (distutils removed)
 2.0.2
 ------
